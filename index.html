@@ -36,14 +36,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #030712;
-            --cyan-glow: #38bdf8;
-            --blue-glow: #2563eb;
-            --purple-glow: #4f46e5;
-            --text-white: #ffffff;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -55,79 +47,18 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-white);
+            background: #02040a;
+            color: #ffffff;
         }
 
-        /* Lassan animált, dinamikus gradiens háttér */
-        .background-container {
+        /* Canvas háttér tároló */
+        #sky-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #020617 0%, #0b192c 30%, #041226 60%, #020617 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 20s ease infinite;
             z-index: 1;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Hirtelen villanások (Lightning / Flash) réteg */
-        .flash-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.4) 0%, rgba(37, 99, 235, 0.15) 50%, transparent 80%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 2;
-            animation: randomFlicker 7s infinite;
-        }
-
-        @keyframes randomFlicker {
-            0%, 89%, 93%, 97%, 100% { opacity: 0; transform: scale(1); }
-            90% { opacity: 0.85; transform: scale(1.05); filter: brightness(1.8); }
-            92% { opacity: 0.1; }
-            94% { opacity: 0.95; transform: scale(1.02); filter: brightness(2.2); }
-            95% { opacity: 0.3; }
-            96% { opacity: 0.7; }
-        }
-
-        #particle-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 3;
-            pointer-events: none;
-        }
-
-        /* Fénygömb aura effektek - lassú pulzálás */
-        .glow-orb {
-            position: absolute;
-            width: 700px;
-            height: 700px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(30, 58, 138, 0) 70%);
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2;
-            animation: pulseGlow 12s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.4; }
-            100% { transform: translate(-50%, -50%) scale(1.25); opacity: 0.85; }
         }
 
         /* Fő tartalom tároló */
@@ -145,13 +76,13 @@
 
         /* Üveghatású kártya hordozó */
         .hero-card {
-            background: rgba(15, 23, 42, 0.45);
+            background: rgba(8, 15, 30, 0.45);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 28px;
             padding: 60px 80px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5),
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
                         inset 0 1px 0 rgba(255, 255, 255, 0.15);
             max-width: 900px;
             width: 90%;
@@ -172,7 +103,7 @@
             line-height: 1.2;
             margin-bottom: 8px;
             padding: 4px 10px;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
             white-space: nowrap;
         }
 
@@ -197,7 +128,7 @@
         .subtitle-sub {
             font-size: clamp(1.1rem, 3vw, 2.2rem);
             font-weight: 300;
-            color: rgba(56, 189, 248, 0.9);
+            color: rgba(224, 242, 254, 0.95);
             letter-spacing: 0.18em;
             text-transform: uppercase;
             min-height: 1.3em;
@@ -249,25 +180,15 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
         }
 
-        /* Mobil nézet finomhangolás */
         @media (max-width: 600px) {
-            .hero-card {
-                padding: 40px 20px;
-            }
-            .title {
-                white-space: normal;
-                word-break: break-word;
-            }
+            .hero-card { padding: 40px 20px; }
+            .title { white-space: normal; word-break: break-word; }
         }
     </style>
 </head>
 <body>
 
-    <div class="background-container">
-        <div class="flash-overlay"></div>
-        <div class="glow-orb"></div>
-        <canvas id="particle-canvas"></canvas>
-    </div>
+    <canvas id="sky-canvas"></canvas>
 
     <main class="content-container">
         <div class="hero-card">
@@ -283,7 +204,7 @@
     </main>
 
     <script>
-        // 1. Gépelő (Typewriter) Animáció a "Coming Soon..." szöveghez
+        // --- 1. Gépelő effektus ---
         const textToType = "Coming Soon...";
         const typedTextElement = document.getElementById("typed-text");
         let charIndex = 0;
@@ -295,68 +216,125 @@
                 setTimeout(typeEffect, 120);
             }
         }
-
         setTimeout(typeEffect, 600);
 
-        // 2. Háttér részecske animáció Canvas-szel
-        const canvas = document.getElementById('particle-canvas');
+        // --- 2. Telihold és éjszakai égbolt Canvas animáció ---
+        const canvas = document.getElementById('sky-canvas');
         const ctx = canvas.getContext('2d');
 
-        let particlesArray = [];
-        const numberOfParticles = 50;
+        let width, height;
+        let stars = [];
 
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initStars();
         }
 
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.3;
-                this.speedY = (Math.random() - 0.5) * 0.3;
-                this.opacity = Math.random() * 0.5 + 0.2;
+        function initStars() {
+            stars = [];
+            const count = Math.floor((width * height) / 3000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 1.5 + 0.3,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
             }
+        }
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+        window.addEventListener('resize', resize);
+        resize();
 
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-            }
+        let pulseAngle = 0;
 
-            draw() {
-                ctx.fillStyle = `rgba(186, 230, 253, ${this.opacity})`;
+        function drawSky() {
+            // Éjszakai égbolt gradiens
+            const skyGradient = ctx.createRadialGradient(
+                width * 0.5, height * 0.35, 50,
+                width * 0.5, height * 0.35, width * 0.9
+            );
+            skyGradient.addColorStop(0, '#0f172a');
+            skyGradient.addColorStop(0.5, '#070d19');
+            skyGradient.addColorStop(1, '#02040a');
+            ctx.fillStyle = skyGradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Csillagok rajzolása és pislákolása
+            stars.forEach(s => {
+                s.alpha += s.speed;
+                if (s.alpha > 1 || s.alpha < 0.2) s.speed *= -1;
+                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
                 ctx.fill();
-            }
+            });
+
+            // Telihold pozíciója
+            const moonX = width * 0.5;
+            const moonY = height * 0.35;
+            const moonRadius = Math.min(width, height) * 0.12;
+
+            pulseAngle += 0.015;
+            const glowPulse = Math.sin(pulseAngle) * 15;
+
+            // Hold külső ragyogása (Aura)
+            const outerGlow = ctx.createRadialGradient(
+                moonX, moonY, moonRadius * 0.8,
+                moonX, moonY, moonRadius * 3 + glowPulse
+            );
+            outerGlow.addColorStop(0, 'rgba(224, 242, 254, 0.45)');
+            outerGlow.addColorStop(0.3, 'rgba(186, 230, 253, 0.15)');
+            outerGlow.addColorStop(1, 'rgba(14, 165, 233, 0)');
+            ctx.fillStyle = outerGlow;
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, moonRadius * 3 + glowPulse, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Telihold teste
+            const moonBody = ctx.createRadialGradient(
+                moonX - moonRadius * 0.3, moonY - moonRadius * 0.3, moonRadius * 0.1,
+                moonX, moonY, moonRadius
+            );
+            moonBody.addColorStop(0, '#ffffff');
+            moonBody.addColorStop(0.75, '#f0f9ff');
+            moonBody.addColorStop(1, '#e0f2fe');
+
+            ctx.fillStyle = moonBody;
+            ctx.beginPath();
+            ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
+            ctx.shadowColor = 'rgba(224, 242, 254, 0.9)';
+            ctx.shadowBlur = 40;
+            ctx.fill();
+            ctx.shadowBlur = 0; // shadow reset
+
+            // Hold kráterek / felszíni textúra
+            ctx.fillStyle = 'rgba(186, 230, 253, 0.18)';
+            const craters = [
+                { x: -0.2, y: -0.1, r: 0.22 },
+                { x: 0.25, y: 0.2, r: 0.18 },
+                { x: -0.1, y: 0.35, r: 0.15 },
+                { x: 0.3, y: -0.25, r: 0.12 },
+                { x: 0.05, y: -0.3, r: 0.09 }
+            ];
+
+            craters.forEach(c => {
+                ctx.beginPath();
+                ctx.arc(
+                    moonX + c.x * moonRadius,
+                    moonY + c.y * moonRadius,
+                    c.r * moonRadius,
+                    0, Math.PI * 2
+                );
+                ctx.fill();
+            });
+
+            requestAnimationFrame(drawSky);
         }
 
-        function initParticles() {
-            particlesArray = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-            requestAnimationFrame(animateParticles);
-        }
-
-        initParticles();
-        animateParticles();
+        drawSky();
     </script>
 </body>
 </html>
