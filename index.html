@@ -9,13 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient-start: #060b19;
-            --bg-gradient-mid: #0a192f;
-            --bg-gradient-end: #020c1b;
-            --accent-glow: #1e3a8a;
+            --bg-dark: #030712;
             --cyan-glow: #38bdf8;
+            --blue-glow: #2563eb;
+            --purple-glow: #4f46e5;
             --text-white: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.7);
         }
 
         * {
@@ -29,19 +27,50 @@
             height: 100%;
             overflow: hidden;
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #060b19;
+            background: var(--bg-dark);
             color: var(--text-white);
         }
 
-        /* Háttér animált canvas és gradiens */
+        /* Lassan animált, dinamikus gradiens háttér */
         .background-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 50% 40%, #0d254c 0%, #060b19 70%, #020611 100%);
+            background: linear-gradient(135deg, #020617 0%, #0b192c 30%, #041226 60%, #020617 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
             z-index: 1;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Hirtelen villanások (Lightning / Flash) réteg */
+        .flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.4) 0%, rgba(37, 99, 235, 0.15) 50%, transparent 80%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 2;
+            animation: randomFlicker 7s infinite;
+        }
+
+        @keyframes randomFlicker {
+            0%, 89%, 93%, 97%, 100% { opacity: 0; transform: scale(1); }
+            90% { opacity: 0.85; transform: scale(1.05); filter: brightness(1.8); }
+            92% { opacity: 0.1; }
+            94% { opacity: 0.95; transform: scale(1.02); filter: brightness(2.2); }
+            95% { opacity: 0.3; }
+            96% { opacity: 0.7; }
         }
 
         #particle-canvas {
@@ -50,27 +79,27 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2;
+            z-index: 3;
             pointer-events: none;
         }
 
-        /* Fénygömb aura effektek */
+        /* Fénygömb aura effektek - lassú pulzálás */
         .glow-orb {
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 700px;
+            height: 700px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(30, 58, 138, 0) 70%);
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(30, 58, 138, 0) 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 2;
-            animation: pulseGlow 8s ease-in-out infinite alternate;
+            animation: pulseGlow 12s ease-in-out infinite alternate;
         }
 
         @keyframes pulseGlow {
-            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-            100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.9; }
+            0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.4; }
+            100% { transform: translate(-50%, -50%) scale(1.25); opacity: 0.85; }
         }
 
         /* Fő tartalom tároló */
@@ -88,14 +117,14 @@
 
         /* Üveghatású kártya hordozó */
         .hero-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
             padding: 60px 80px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
             max-width: 900px;
             width: 90%;
             animation: cardFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -106,44 +135,43 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Főcím: nyirigabor.hu */
+        /* Főcím javítva */
         .title {
-            font-size: clamp(3.2rem, 8vw, 6.5rem);
+            font-size: clamp(2.8rem, 7vw, 5.8rem);
             font-weight: 900;
             color: #ffffff;
-            letter-spacing: -0.03em;
-            line-height: 1.05;
-            margin-bottom: 12px;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(180deg, #ffffff 30%, rgba(255, 255, 255, 0.75) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            padding: 4px 10px;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            white-space: nowrap;
         }
 
         /* Elválasztó animált csík */
         .divider {
-            width: 80px;
+            width: 100px;
             height: 4px;
             background: linear-gradient(90deg, #38bdf8, #818cf8);
             margin: 20px auto 28px auto;
             border-radius: 2px;
-            animation: expandDivider 1.5s ease-out forwards;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.7);
         }
 
-        @keyframes expandDivider {
-            from { width: 0px; opacity: 0; }
-            to { width: 100px; opacity: 1; }
+        /* Alcím box */
+        .subtitle-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Alcím: Coming Soon... */
-        .subtitle {
-            font-size: clamp(1.4rem, 4vw, 2.5rem);
+        .subtitle-sub {
+            font-size: clamp(1.1rem, 3vw, 2.2rem);
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(56, 189, 248, 0.9);
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            margin-bottom: 0;
             min-height: 1.3em;
         }
 
@@ -166,10 +194,10 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 16px;
+            padding: 6px 18px;
             border-radius: 20px;
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.3);
             color: #38bdf8;
             font-size: 0.85rem;
             font-weight: 600;
@@ -196,10 +224,11 @@
         /* Mobil nézet finomhangolás */
         @media (max-width: 600px) {
             .hero-card {
-                padding: 40px 24px;
+                padding: 40px 20px;
             }
-            .divider {
-                margin: 16px auto 20px auto;
+            .title {
+                white-space: normal;
+                word-break: break-word;
             }
         }
     </style>
@@ -207,6 +236,7 @@
 <body>
 
     <div class="background-container">
+        <div class="flash-overlay"></div>
         <div class="glow-orb"></div>
         <canvas id="particle-canvas"></canvas>
     </div>
@@ -218,12 +248,14 @@
             </div>
             <h1 class="title">nyirigabor.hu</h1>
             <div class="divider"></div>
-            <p class="subtitle"><span id="typed-text"></span><span class="cursor">&nbsp;</span></p>
+            <div class="subtitle-box">
+                <div class="subtitle-sub"><span id="typed-text"></span><span class="cursor">&nbsp;</span></div>
+            </div>
         </div>
     </main>
 
     <script>
-        // --- 1. Gépelő (Typewriter) Animáció a "Coming Soon..." szöveghez ---
+        // 1. Gépelő (Typewriter) Animáció a "Coming Soon..." szöveghez
         const textToType = "Coming Soon...";
         const typedTextElement = document.getElementById("typed-text");
         let charIndex = 0;
@@ -236,16 +268,14 @@
             }
         }
 
-        // Indítás kis késleltetéssel a kártya beúszása után
         setTimeout(typeEffect, 600);
 
-
-        // --- 2. Finom háttér részecske (Particle) animáció Canvas-szel ---
+        // 2. Háttér részecske animáció Canvas-szel
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
 
         let particlesArray = [];
-        const numberOfParticles = 45;
+        const numberOfParticles = 50;
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -260,8 +290,8 @@
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
                 this.size = Math.random() * 2 + 0.5;
-                this.speedX = (Math.random() - 0.5) * 0.4;
-                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
                 this.opacity = Math.random() * 0.5 + 0.2;
             }
 
