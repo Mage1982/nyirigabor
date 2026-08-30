@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>nyirigabor.hu — Coming Soon</title>
+    <title>Nyíri Gábor — Digitális Névjegykártya</title>
 
     <!-- Basic SEO -->
-    <meta name="description" content="nyirigabor.hu — A weboldal hamarosan indul.">
+    <meta name="description" content="Nyíri Gábor — Digitális névjegykártya és elérhetőségek.">
     <meta name="robots" content="index, follow">
 
     <!-- Open Graph / Facebook / LinkedIn / Messenger -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://nyirigabor.hu/">
-    <meta property="og:title" content="nyirigabor.hu — Coming Soon">
-    <meta property="og:description" content="nyirigabor.hu — A weboldal hamarosan indul.">
+    <meta property="og:title" content="Nyíri Gábor — Digitális Névjegykártya">
+    <meta property="og:description" content="Nyíri Gábor — Digitális névjegykártya és elérhetőségek.">
     <meta property="og:image" content="https://nyirigabor.hu/Gemini_Generated_Image_99u44s99u44s99u4.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="675">
@@ -23,19 +23,31 @@
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://nyirigabor.hu/">
-    <meta name="twitter:title" content="nyirigabor.hu — Coming Soon">
-    <meta name="twitter:description" content="nyirigabor.hu — A weboldal hamarosan indul.">
+    <meta name="twitter:title" content="Nyíri Gábor — Digitális Névjegykártya">
+    <meta name="twitter:description" content="Nyíri Gábor — Digitális névjegykártya és elérhetőségek.">
     <meta name="twitter:image" content="https://nyirigabor.hu/Gemini_Generated_Image_99u44s99u44s99u4.jpg">
 
-    <!-- Favicon beállítása -->
+    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="Gemini_Generated_Image_99u44s99u44s99u4.jpg">
     <link rel="shortcut icon" type="image/jpeg" href="Gemini_Generated_Image_99u44s99u44s99u4.jpg">
     <link rel="apple-touch-icon" href="Gemini_Generated_Image_99u44s99u44s99u4.jpg">
 
+    <!-- Typography: Outfit & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --bg-black: #030712;
+            --card-bg: rgba(11, 19, 38, 0.65);
+            --border-glow: rgba(56, 189, 248, 0.2);
+            --primary-blue: #38bdf8;
+            --accent-cyan: #0284c7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -45,296 +57,252 @@
         body, html {
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #02040a;
-            color: #ffffff;
+            overflow-x: hidden;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-main);
         }
 
-        /* Canvas háttér tároló */
-        #sky-canvas {
-            position: absolute;
+        /* Sötétkék - Fekete elegáns, lassan pulzáló háttér */
+        .background-container {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: radial-gradient(circle at 50% 30%, #0a1738 0%, #030712 70%, #000000 100%);
             z-index: 1;
         }
 
-        /* Fő tartalom tároló */
-        .content-container {
+        .glow-orb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 2;
+            animation: orbPulse 10s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes orbPulse {
+            0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.25); opacity: 0.9; }
+        }
+
+        /* Layout Container */
+        .main-wrapper {
             position: relative;
             z-index: 10;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            text-align: center;
-            padding: 20px;
+            min-height: 100vh;
+            padding: 24px;
         }
 
-        /* Üveghatású kártya hordozó */
-        .hero-card {
-            background: rgba(8, 15, 30, 0.45);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+        /* Glassmorphism Névjegykártya */
+        .vcard-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glow);
             border-radius: 28px;
-            padding: 60px 80px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6),
-                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-            max-width: 900px;
-            width: 90%;
-            animation: cardFadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            padding: 52px 48px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            text-align: center;
+            animation: cardAppear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        @keyframes cardFadeIn {
-            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+        @keyframes cardAppear {
+            from { opacity: 0; transform: translateY(20px) scale(0.97); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Főcím */
-        .title {
-            font-size: clamp(2.8rem, 7vw, 5.8rem);
-            font-weight: 900;
+        /* Profil / Fejléc */
+        .profile-avatar {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            background: linear-gradient(135deg, #0284c7 0%, #030712 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary-blue);
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.3);
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
             color: #ffffff;
+        }
+
+        .name {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
             letter-spacing: -0.02em;
-            line-height: 1.2;
-            margin-bottom: 8px;
-            padding: 4px 10px;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-            white-space: nowrap;
+            color: #ffffff;
+            margin-bottom: 6px;
         }
 
-        /* Elválasztó animált csík */
+        .domain-tag {
+            font-size: 0.9rem;
+            color: var(--primary-blue);
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            opacity: 0.9;
+        }
+
         .divider {
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, #38bdf8, #818cf8);
-            margin: 20px auto 28px auto;
-            border-radius: 2px;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.7);
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+            margin-bottom: 32px;
         }
 
-        /* Alcím box */
-        .subtitle-box {
+        /* Elérhetőség Gombok (Links) */
+        .contact-list {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            gap: 16px;
         }
 
-        .subtitle-sub {
-            font-size: clamp(1.1rem, 3vw, 2.2rem);
-            font-weight: 300;
-            color: rgba(224, 242, 254, 0.95);
-            letter-spacing: 0.18em;
+        .contact-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-card:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(56, 189, 248, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            flex-shrink: 0;
+            transition: background 0.3s ease;
+        }
+
+        .contact-card:hover .icon-box {
+            background: var(--primary-blue);
+            color: var(--bg-black);
+        }
+
+        .contact-info {
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .contact-label {
+            font-size: 0.75rem;
             text-transform: uppercase;
-            min-height: 1.3em;
-        }
-
-        /* Villogó kurzor a gépelős effektnek */
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            background-color: #38bdf8;
-            margin-left: 4px;
-            animation: blink 0.8s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* Status jelző badge */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 18px;
-            border-radius: 20px;
-            background: rgba(56, 189, 248, 0.12);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            color: #38bdf8;
-            font-size: 0.85rem;
-            font-weight: 600;
             letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 24px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+            font-weight: 600;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #38bdf8;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #38bdf8;
-            animation: statusPulse 2s infinite;
+        .contact-value {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
 
-        @keyframes statusPulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(56, 189, 248, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+        /* Lábléc */
+        .footer-note {
+            margin-top: 36px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
         }
 
-        @media (max-width: 600px) {
-            .hero-card { padding: 40px 20px; }
-            .title { white-space: normal; word-break: break-word; }
+        @media (max-width: 480px) {
+            .vcard-container {
+                padding: 40px 24px;
+            }
+            .name {
+                font-size: 1.8rem;
+            }
+            .contact-value {
+                font-size: 0.95rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <canvas id="sky-canvas"></canvas>
+    <div class="background-container">
+        <div class="glow-orb"></div>
+    </div>
 
-    <main class="content-container">
-        <div class="hero-card">
-            <div class="badge">
-                <span class="status-dot"></span> Hamarosan érkezik
-            </div>
-            <h1 class="title">nyirigabor.hu</h1>
+    <main class="main-wrapper">
+        <div class="vcard-container">
+            <div class="profile-avatar">NYG</div>
+            <h1 class="name">Nyíri Gábor</h1>
+            <p class="domain-tag">nyirigabor.hu</p>
+
             <div class="divider"></div>
-            <div class="subtitle-box">
-                <div class="subtitle-sub"><span id="typed-text"></span><span class="cursor">&nbsp;</span></div>
+
+            <div class="contact-list">
+                <!-- Telefon hívásbővítmény -->
+                <a href="tel:+36205018184" class="contact-card">
+                    <div class="icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-label">Telefon</div>
+                        <div class="contact-value">06/20-501-8184</div>
+                    </div>
+                </a>
+
+                <!-- E-mail hivatkozás -->
+                <a href="mailto:nyirigebee@gmail.com" class="contact-card">
+                    <div class="icon-box">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <div class="contact-label">E-mail</div>
+                        <div class="contact-value">nyirigebee@gmail.com</div>
+                    </div>
+                </a>
             </div>
+
+            <p class="footer-note">© 2026 nyirigabor.hu</p>
         </div>
     </main>
 
-    <script>
-        // --- 1. Gépelő effektus ---
-        const textToType = "Coming Soon...";
-        const typedTextElement = document.getElementById("typed-text");
-        let charIndex = 0;
-
-        function typeEffect() {
-            if (charIndex < textToType.length) {
-                typedTextElement.textContent += textToType.charAt(charIndex);
-                charIndex++;
-                setTimeout(typeEffect, 120);
-            }
-        }
-        setTimeout(typeEffect, 600);
-
-        // --- 2. Telihold és éjszakai égbolt Canvas animáció ---
-        const canvas = document.getElementById('sky-canvas');
-        const ctx = canvas.getContext('2d');
-
-        let width, height;
-        let stars = [];
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            initStars();
-        }
-
-        function initStars() {
-            stars = [];
-            const count = Math.floor((width * height) / 3000);
-            for (let i = 0; i < count; i++) {
-                stars.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    size: Math.random() * 1.5 + 0.3,
-                    alpha: Math.random(),
-                    speed: Math.random() * 0.02 + 0.005
-                });
-            }
-        }
-
-        window.addEventListener('resize', resize);
-        resize();
-
-        let pulseAngle = 0;
-
-        function drawSky() {
-            // Éjszakai égbolt gradiens
-            const skyGradient = ctx.createRadialGradient(
-                width * 0.5, height * 0.35, 50,
-                width * 0.5, height * 0.35, width * 0.9
-            );
-            skyGradient.addColorStop(0, '#0f172a');
-            skyGradient.addColorStop(0.5, '#070d19');
-            skyGradient.addColorStop(1, '#02040a');
-            ctx.fillStyle = skyGradient;
-            ctx.fillRect(0, 0, width, height);
-
-            // Csillagok rajzolása és pislákolása
-            stars.forEach(s => {
-                s.alpha += s.speed;
-                if (s.alpha > 1 || s.alpha < 0.2) s.speed *= -1;
-                ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(s.alpha)})`;
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // Telihold pozíciója
-            const moonX = width * 0.5;
-            const moonY = height * 0.35;
-            const moonRadius = Math.min(width, height) * 0.12;
-
-            pulseAngle += 0.015;
-            const glowPulse = Math.sin(pulseAngle) * 15;
-
-            // Hold külső ragyogása (Aura)
-            const outerGlow = ctx.createRadialGradient(
-                moonX, moonY, moonRadius * 0.8,
-                moonX, moonY, moonRadius * 3 + glowPulse
-            );
-            outerGlow.addColorStop(0, 'rgba(224, 242, 254, 0.45)');
-            outerGlow.addColorStop(0.3, 'rgba(186, 230, 253, 0.15)');
-            outerGlow.addColorStop(1, 'rgba(14, 165, 233, 0)');
-            ctx.fillStyle = outerGlow;
-            ctx.beginPath();
-            ctx.arc(moonX, moonY, moonRadius * 3 + glowPulse, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Telihold teste
-            const moonBody = ctx.createRadialGradient(
-                moonX - moonRadius * 0.3, moonY - moonRadius * 0.3, moonRadius * 0.1,
-                moonX, moonY, moonRadius
-            );
-            moonBody.addColorStop(0, '#ffffff');
-            moonBody.addColorStop(0.75, '#f0f9ff');
-            moonBody.addColorStop(1, '#e0f2fe');
-
-            ctx.fillStyle = moonBody;
-            ctx.beginPath();
-            ctx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
-            ctx.shadowColor = 'rgba(224, 242, 254, 0.9)';
-            ctx.shadowBlur = 40;
-            ctx.fill();
-            ctx.shadowBlur = 0; // shadow reset
-
-            // Hold kráterek / felszíni textúra
-            ctx.fillStyle = 'rgba(186, 230, 253, 0.18)';
-            const craters = [
-                { x: -0.2, y: -0.1, r: 0.22 },
-                { x: 0.25, y: 0.2, r: 0.18 },
-                { x: -0.1, y: 0.35, r: 0.15 },
-                { x: 0.3, y: -0.25, r: 0.12 },
-                { x: 0.05, y: -0.3, r: 0.09 }
-            ];
-
-            craters.forEach(c => {
-                ctx.beginPath();
-                ctx.arc(
-                    moonX + c.x * moonRadius,
-                    moonY + c.y * moonRadius,
-                    c.r * moonRadius,
-                    0, Math.PI * 2
-                );
-                ctx.fill();
-            });
-
-            requestAnimationFrame(drawSky);
-        }
-
-        drawSky();
-    </script>
 </body>
 </html>
