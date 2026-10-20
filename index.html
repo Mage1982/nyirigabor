@@ -1,119 +1,130 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Superagent – Napi Hírösszefoglaló</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .gradient-text {
-            background: linear-gradient(135deg, #a855f7, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .glow {
-            box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
-        }
         .tab-btn.active {
-            border-bottom: 2px solid #a855f7;
-            color: #a855f7;
-            font-weight: 600;
+            border-bottom: 2px solid currentColor;
+            font-weight: 700;
         }
         .date-btn.active {
-            background-color: rgba(168, 85, 247, 0.2);
-            border-color: rgba(168, 85, 247, 0.5);
-            color: #f3e8ff;
+            font-weight: 700;
+        }
+        .dark .date-btn.active {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .light .date-btn.active, html:not(.dark) .date-btn.active {
+            background-color: #000000;
+            color: #ffffff;
         }
         .redirect-btn {
             display: inline-block;
             margin-top: 10px;
             padding: 8px 16px;
             background-color: transparent;
-            border: 1px solid #a855f7;
-            color: #a855f7;
+            border: 1px solid currentColor;
             border-radius: 8px;
             text-decoration: none;
             font-size: 0.85rem;
             font-weight: 600;
             transition: all 0.2s ease;
         }
-        .redirect-btn:hover {
-            background-color: #a855f7;
-            color: #ffffff;
-        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="bg-white text-black dark:bg-black dark:text-white font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
 
     <!-- Header / Navigáció -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+    <header class="border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xl glow">
+                <div class="w-10 h-10 rounded-xl bg-black text-white dark:bg-white dark:text-black font-black text-xl flex items-center justify-center">
                     ⚡
                 </div>
-                <span class="font-bold text-xl tracking-tight text-white">Superagent<span class="text-purple-400">.ai</span></span>
+                <span class="font-extrabold text-xl tracking-tight uppercase">Superagent<span class="text-neutral-500">.ai</span></span>
             </div>
-            <a href="#subscribe-section" class="text-sm bg-purple-600 hover:bg-purple-500 text-white font-medium px-4 py-2 rounded-lg transition duration-200 shadow-lg shadow-purple-600/30">
-                Feliratkozás
-            </a>
+            
+            <div class="flex items-center space-x-4">
+                <!-- Sötét / Világos Mód Váltó Gomb -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-10 h-10 rounded-xl border border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-sm transition hover:bg-neutral-100 dark:hover:bg-neutral-900" aria-label="Téma váltása">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <a href="#subscribe-section" class="text-sm bg-black text-white dark:bg-white dark:text-black hover:opacity-80 font-bold px-4 py-2 rounded-xl transition">
+                    Feliratkozás
+                </a>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="space-y-20 py-12">
 
-        <!-- Hero Section (Űrlap nélkül, óriási címsorral) -->
-        <section class="text-center space-y-6 max-w-4xl mx-auto px-4 pt-8">
-            <div class="inline-flex items-center space-x-2 bg-purple-950/60 border border-purple-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-purple-300">
-                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+        <!-- Hero Section -->
+        <section class="text-center space-y-6 max-w-5xl mx-auto px-4 pt-8">
+            <div class="inline-flex items-center space-x-2 border border-neutral-300 dark:border-neutral-700 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-neutral-600 dark:text-neutral-400">
+                <span class="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse"></span>
                 <span>Kávé mellé optimalizálva • Minden munkanap reggel</span>
             </div>
             
-            <!-- Óriás címsor -->
-            <h1 class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-none uppercase">
-                A legfontosabb hírek <br>
-                <span class="gradient-text">zaj nélkül.</span>
+            <!-- Óriás Címsor -->
+            <h1 class="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter leading-none uppercase">
+                Hírek.<br>
+                <span class="text-neutral-400 dark:text-neutral-600">Zaj nélkül.</span>
             </h1>
             
-            <p class="text-slate-400 text-lg sm:text-2xl leading-relaxed max-w-2xl mx-auto font-normal pt-2">
-                Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban.
+            <!-- Kisebb Alcím -->
+            <h2 class="text-xl sm:text-3xl font-bold tracking-tight text-neutral-800 dark:text-neutral-200 max-w-3xl mx-auto pt-2">
+                A legfontosabb belföldi, külföldi, gazdasági és tech témák egyetlen letisztult levelezésben.
+            </h2>
+
+            <!-- Szolid Normál Szöveg -->
+            <p class="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto font-normal">
+                Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló. Egyenesen a Gmail fiókodba, felesleges kommentárok és szenzációhajhászás nélkül.
             </p>
         </section>
 
         <!-- Interaktív Minta Levél és Archívum Szekció -->
         <section class="max-w-4xl mx-auto px-4 space-y-6">
-            <div class="text-center space-y-2">
-                <h2 class="text-2xl font-bold text-slate-200">Böngéssz a korábbi hírlevelek között!</h2>
-                <p class="text-slate-400 text-sm">Válassz ki egy dátumot az archívumból, és olvass bele a kiadásba:</p>
+            <div class="text-center space-y-1">
+                <h3 class="text-xl font-bold uppercase tracking-wide">Korábbi Hírlevelek</h3>
+                <p class="text-neutral-500 text-xs">Válassz ki egy dátumot az archívumból a bebetintéshez:</p>
             </div>
 
-            <!-- Dátum Választó Menü (Archívum) -->
-            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="flex items-center space-x-2 text-slate-300 text-sm font-semibold">
-                    <i class="fa-solid fa-calendar-days text-purple-400"></i>
-                    <span>Korábbi kiadások:</span>
+            <!-- Dátum Választó Menü -->
+            <div class="border border-neutral-200 dark:border-neutral-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 bg-neutral-50 dark:bg-neutral-950">
+                <div class="flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-neutral-500">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Archívum:</span>
                 </div>
                 
                 <!-- Gombok asztali nézethez -->
-                <div class="hidden sm:flex items-center space-x-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0" id="date-buttons">
-                    <button onclick="loadEdition('2026-10-16')" id="btn-2026-10-16" class="date-btn active border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                <div class="hidden sm:flex items-center space-x-2 overflow-x-auto w-full sm:w-auto" id="date-buttons">
+                    <button onclick="loadEdition('2026-10-16')" id="btn-2026-10-16" class="date-btn active border border-neutral-300 dark:border-neutral-700 text-xs px-3.5 py-2 rounded-xl transition">
                         2026.10.16.
                     </button>
-                    <button onclick="loadEdition('2026-10-15')" id="btn-2026-10-15" class="date-btn border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                    <button onclick="loadEdition('2026-10-15')" id="btn-2026-10-15" class="date-btn border border-neutral-300 dark:border-neutral-700 text-xs px-3.5 py-2 rounded-xl transition">
                         2026.10.15.
                     </button>
-                    <button onclick="loadEdition('2026-10-14')" id="btn-2026-10-14" class="date-btn border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                    <button onclick="loadEdition('2026-10-14')" id="btn-2026-10-14" class="date-btn border border-neutral-300 dark:border-neutral-700 text-xs px-3.5 py-2 rounded-xl transition">
                         2026.10.14.
                     </button>
-                    <button onclick="loadEdition('2026-10-13')" id="btn-2026-10-13" class="date-btn border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                    <button onclick="loadEdition('2026-10-13')" id="btn-2026-10-13" class="date-btn border border-neutral-300 dark:border-neutral-700 text-xs px-3.5 py-2 rounded-xl transition">
                         2026.10.13.
                     </button>
                 </div>
 
                 <!-- Legördülő mobil nézethez -->
-                <select onchange="loadEdition(this.value)" id="date-select" class="sm:hidden w-full bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-purple-500">
+                <select onchange="loadEdition(this.value)" id="date-select" class="sm:hidden w-full bg-white dark:bg-black border border-neutral-300 dark:border-neutral-700 text-xs rounded-xl p-2.5 font-bold focus:outline-none">
                     <option value="2026-10-16">2026. október 16.</option>
                     <option value="2026-10-15">2026. október 15.</option>
                     <option value="2026-10-14">2026. október 14.</option>
@@ -122,45 +133,44 @@
             </div>
 
             <!-- Interaktív Minta Levél Kártya -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative glow">
+            <div class="border-2 border-black dark:border-white rounded-2xl overflow-hidden bg-white dark:bg-black">
                 
                 <!-- Email Header Mockup -->
-                <div class="bg-slate-950/80 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="px-6 py-4 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-100 dark:bg-neutral-900">
                     <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xs font-bold">
+                        <div class="w-8 h-8 rounded-full bg-black text-white dark:bg-white dark:text-black flex items-center justify-center text-xs font-black">
                             SA
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-slate-200">SUPERAGENT · REGGELI KIADÁS</div>
-                            <div class="text-[11px] text-slate-500">Címzett: nyirigabee@gmail.com</div>
+                            <div class="text-xs font-extrabold uppercase tracking-wider">SUPERAGENT · REGGELI KIADÁS</div>
+                            <div class="text-[11px] text-neutral-500">Címzett: nyirigabee@gmail.com</div>
                         </div>
                     </div>
-                    <div class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800/40 px-3 py-1 rounded-full flex items-center space-x-1.5">
-                        <i class="fa-solid fa-mug-hot"></i>
+                    <div class="text-xs border border-neutral-300 dark:border-neutral-700 px-3 py-1 rounded-full font-bold">
                         <span>3 perc olvasás</span>
                     </div>
                 </div>
 
                 <!-- Interaktív Lapfülek (Kategóriák) -->
-                <div class="flex border-b border-slate-800 bg-slate-900/60 overflow-x-auto text-xs text-slate-400">
-                    <button onclick="switchTab('belpol')" id="tab-belpol" class="tab-btn active px-6 py-3 flex items-center space-x-2 transition">
-                        <span>🇭🇺 Belföld</span>
+                <div class="flex border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-950 text-xs font-bold uppercase">
+                    <button onclick="switchTab('belpol')" id="tab-belpol" class="tab-btn active px-6 py-3 transition">
+                        Belföld
                     </button>
-                    <button onclick="switchTab('kulpol')" id="tab-kulpol" class="tab-btn px-6 py-3 flex items-center space-x-2 transition">
-                        <span>🌍 Külföld</span>
+                    <button onclick="switchTab('kulpol')" id="tab-kulpol" class="tab-btn px-6 py-3 transition text-neutral-500">
+                        Külföld
                     </button>
-                    <button onclick="switchTab('gazdasag')" id="tab-gazdasag" class="tab-btn px-6 py-3 flex items-center space-x-2 transition">
-                        <span>📈 Gazdaság</span>
+                    <button onclick="switchTab('gazdasag')" id="tab-gazdasag" class="tab-btn px-6 py-3 transition text-neutral-500">
+                        Gazdaság
                     </button>
-                    <button onclick="switchTab('tech')" id="tab-tech" class="tab-btn px-6 py-3 flex items-center space-x-2 transition">
-                        <span>🔬 Tech & AI</span>
+                    <button onclick="switchTab('tech')" id="tab-tech" class="tab-btn px-6 py-3 transition text-neutral-500">
+                        Tech & AI
                     </button>
                 </div>
 
                 <!-- Dinamikus Email Tartalom -->
                 <div class="p-6 sm:p-8 space-y-6">
                     
-                    <div id="edition-date-header" class="text-xs text-purple-400 font-semibold tracking-wider uppercase">
+                    <div id="edition-date-header" class="text-xs font-bold tracking-widest uppercase text-neutral-500">
                         2026. OKTÓBER 16. • NAPI HÍRÖSSZEFOGLALÓ
                     </div>
 
@@ -177,11 +187,11 @@
                     <div id="content-tech" class="tab-content hidden space-y-6"></div>
 
                     <!-- Interaktív Értékelő Gombok alul -->
-                    <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
-                        <span class="text-xs text-slate-500">Hasznos volt a mai összefoglaló?</span>
+                    <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+                        <span class="text-xs text-neutral-500">Hasznos volt a mai összefoglaló?</span>
                         <div class="flex space-x-2" id="feedback-buttons">
-                            <button onclick="giveFeedback('up')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-purple-900/40 text-xs text-slate-300 transition">👍 Igen</button>
-                            <button onclick="giveFeedback('down')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">👎 Lehetne jobb</button>
+                            <button onclick="giveFeedback('up')" class="px-3 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 text-xs font-bold transition hover:bg-neutral-100 dark:hover:bg-neutral-900">👍 Igen</button>
+                            <button onclick="giveFeedback('down')" class="px-3 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 text-xs font-bold transition hover:bg-neutral-100 dark:hover:bg-neutral-900">👎 Lehetne jobb</button>
                         </div>
                     </div>
 
@@ -189,62 +199,50 @@
             </div>
         </section>
 
-        <!-- TELJES SZÉLESSÉGŰ VILÁGOS "IRATKOZZ FEL!" CTA SZEKCIÓ -->
-        <section id="subscribe-section" class="w-full bg-slate-100 text-slate-900 py-24 my-20 relative overflow-hidden shadow-2xl">
+        <!-- TELJES SZÉLESSÉGŰ FELIRATKOZÁSI SZEKCIÓ -->
+        <section id="subscribe-section" class="w-full border-y-2 border-black dark:border-white py-20 bg-neutral-100 dark:bg-neutral-900">
             
-            <!-- Dekoratív háttér effektek -->
-            <div class="absolute -top-32 -right-32 w-[30rem] h-[30rem] bg-purple-200/60 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-32 -left-32 w-[30rem] h-[30rem] bg-blue-200/60 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div class="max-w-4xl mx-auto px-4 text-center space-y-8 relative z-10">
+            <div class="max-w-4xl mx-auto px-4 text-center space-y-8">
                 
-                <!-- Social Proof Badge -->
-                <div class="inline-flex items-center space-x-2 bg-white border border-slate-300/80 shadow-sm rounded-full px-4 py-1.5 text-xs font-bold text-slate-700">
-                    <span class="flex -space-x-2">
-                        <span class="w-5 h-5 rounded-full bg-purple-500 border border-white flex items-center justify-center text-[9px] text-white font-bold">☕</span>
-                        <span class="w-5 h-5 rounded-full bg-blue-500 border border-white flex items-center justify-center text-[9px] text-white font-bold">⚡</span>
-                        <span class="w-5 h-5 rounded-full bg-emerald-500 border border-white flex items-center justify-center text-[9px] text-white font-bold">✓</span>
-                    </span>
-                    <span>Csatlakozz a tudatos reggeli olvasókhoz!</span>
+                <!-- Badge -->
+                <div class="inline-flex items-center space-x-2 border border-neutral-400 dark:border-neutral-600 rounded-full px-4 py-1 text-xs font-bold uppercase tracking-wider">
+                    <span>Csatlakozz a tudatos reggeli olvasókhoz</span>
                 </div>
 
-                <!-- Extra nagy sötét felirat -->
-                <h2 class="text-5xl sm:text-7xl font-black tracking-tight leading-none text-slate-950 uppercase">
-                    IRATKOZZ FEL<br>
-                    <span class="text-purple-600">A REGGELI HÍREKRE!</span>
+                <!-- Óriási Sötét/Világos Címsor -->
+                <h2 class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-none uppercase">
+                    Iratkozz fel<br>
+                    <span class="text-neutral-500">a reggeli hírekre!</span>
                 </h2>
 
-                <p class="text-slate-600 text-lg sm:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
-                    Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
+                <!-- Kisebb Alcím -->
+                <h3 class="text-lg sm:text-xl font-bold max-w-xl mx-auto">
+                    Spórolj meg napi 20 perc céltalan böngészést.
+                </h3>
+
+                <!-- Szolid Normál Szöveg -->
+                <p class="text-neutral-600 dark:text-neutral-400 text-sm max-w-md mx-auto">
+                    Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
                 </p>
 
-                <!-- Egyetlen, főlépcsős Űrlap -->
-                <form id="bottomForm" class="max-w-lg mx-auto flex flex-col gap-3 pt-4">
+                <!-- Űrlap -->
+                <form id="bottomForm" class="max-w-lg mx-auto flex flex-col gap-3 pt-2">
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="bottomName" required placeholder="Neved..." class="bg-white border-2 border-slate-300 focus:border-purple-600 text-slate-900 placeholder-slate-400 font-medium rounded-xl px-4 py-3.5 focus:outline-none focus:ring-4 focus:ring-purple-500/10 w-full sm:w-1/3 shadow-md transition text-base">
-                        <input type="email" id="bottomEmail" required placeholder="Személyes e-mail címed..." class="bg-white border-2 border-slate-300 focus:border-purple-600 text-slate-900 placeholder-slate-400 font-medium rounded-xl px-4 py-3.5 focus:outline-none focus:ring-4 focus:ring-purple-500/10 w-full sm:w-2/3 shadow-md transition text-base">
+                        <input type="text" id="bottomName" required placeholder="Neved..." class="bg-white dark:bg-black border border-neutral-400 dark:border-neutral-600 text-black dark:text-white placeholder-neutral-500 font-bold rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white w-full sm:w-1/3 transition text-sm">
+                        <input type="email" id="bottomEmail" required placeholder="Személyes e-mail címed..." class="bg-white dark:bg-black border border-neutral-400 dark:border-neutral-600 text-black dark:text-white placeholder-neutral-500 font-bold rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-black dark:focus:ring-white w-full sm:w-2/3 transition text-sm">
                     </div>
-                    <button type="submit" id="bottomSubmitBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold tracking-wide px-8 py-4 rounded-xl transition duration-200 shadow-xl shadow-purple-600/30 flex items-center justify-center space-x-2 text-base">
+                    <button type="submit" id="bottomSubmitBtn" class="bg-black text-white dark:bg-white dark:text-black font-black uppercase tracking-wider px-8 py-4 rounded-xl transition duration-200 hover:opacity-80 text-sm flex items-center justify-center space-x-2">
                         <span>FELIRATKOZOM</span>
-                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                        <i class="fa-solid fa-arrow-right text-sm"></i>
                     </button>
                 </form>
-                <div id="bottomStatusMessage" class="text-sm pt-2"></div>
+                <div id="bottomStatusMessage" class="text-sm font-bold pt-2"></div>
 
                 <!-- Garancia elemek -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 text-xs sm:text-sm text-slate-700 font-bold border-t border-slate-300/60 max-w-2xl mx-auto">
-                    <div class="flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-shield-halved text-purple-600 text-base"></i>
-                        <span>100% Ingyenes</span>
-                    </div>
-                    <div class="flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-ban-smoking text-purple-600 text-base"></i>
-                        <span>Zaj- és spammentes</span>
-                    </div>
-                    <div class="flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-bolt text-purple-600 text-base"></i>
-                        <span>1 kattintásos leiratkozás</span>
-                    </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs font-bold uppercase border-t border-neutral-300 dark:border-neutral-700 max-w-xl mx-auto">
+                    <div>✓ 100% Ingyenes</div>
+                    <div>✓ Zaj- és spammentes</div>
+                    <div>✓ 1 kattintásos leiratkozás</div>
                 </div>
 
             </div>
@@ -253,12 +251,44 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 py-8 bg-slate-950 text-center text-xs text-slate-500">
+    <footer class="border-t border-neutral-200 dark:border-neutral-800 py-8 text-center text-xs text-neutral-500 uppercase tracking-wider">
         <p>© 2026 Superagent • Nyíri Gábor. Minden jog fenntartva.</p>
     </footer>
 
-    <!-- JS Interakciók, Backend Küldés és Archívum Adatok -->
+    <!-- JS Logic -->
     <script>
+        // Sötét/Világos mód váltó logika
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+        }
+
+        initTheme();
+
+        // Feliratkozás Backend Küldés
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxGe6IZSur8CnE8f0eFVq7JNJbrJAyqXFqRAP7sH4AAJGmsOaAwueMjyJ1USSpkjwNJzw/exec';
         const redirectURL = 'koszonjuk.html';
 
@@ -280,8 +310,8 @@
             })
             .then(() => {
                 statusElement.innerHTML = `
-                    <div class="text-emerald-600 font-semibold">Köszönjük! A feliratkozásod rögzítettük.</div>
-                    <div class="text-xs text-slate-600 mt-1">Pillanaton belül átirányítunk...</div>
+                    <div class="uppercase tracking-wider">Köszönjük! A feliratkozásod rögzítettük.</div>
+                    <div class="text-xs text-neutral-500 mt-1 font-normal">Pillanaton belül átirányítunk...</div>
                     <a href="${redirectURL}" class="redirect-btn">Tovább a köszönőoldalra</a>
                 `;
 
@@ -291,7 +321,7 @@
             })
             .catch(error => {
                 console.error('Hiba:', error);
-                statusElement.innerHTML = '<div class="text-red-500 font-semibold">Hiba történt a küldés során. Kérjük, próbáld újra!</div>';
+                statusElement.innerHTML = '<div>Hiba történt a küldés során. Kérjük, próbáld újra!</div>';
                 btnElement.disabled = false;
                 btnElement.innerText = 'FELIRATKOZOM';
             });
@@ -306,6 +336,7 @@
             sendSubscription(name, email, btn, status);
         });
 
+        // Archívum adatok
         const editions = {
             '2026-10-16': {
                 dateTitle: '2026. OKTÓBER 16., PÉNTEK • NAPI HÍRÖSSZEFOGLALÓ',
@@ -350,13 +381,13 @@
 
         function renderArticles(list) {
             if (!list || list.length === 0) {
-                return '<p class="text-slate-500 text-sm">Ebben a rovatban ezen a napon nem volt kiemelt hír.</p>';
+                return '<p class="text-neutral-500 text-sm">Ebben a rovatban ezen a napon nem volt kiemelt hír.</p>';
             }
             return list.map((item, idx) => `
-                <div class="border-l-2 ${idx === 0 ? 'border-purple-500' : 'border-slate-700'} pl-4 space-y-1">
-                    <h3 class="font-bold text-slate-100 text-base">${item.title}</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">${item.desc}</p>
-                    <div class="text-xs text-slate-500 pt-1">Forrás: <span class="text-purple-400">${item.source}</span></div>
+                <div class="border-l-2 ${idx === 0 ? 'border-black dark:border-white' : 'border-neutral-300 dark:border-neutral-700'} pl-4 space-y-1">
+                    <h4 class="font-bold text-base">${item.title}</h4>
+                    <p class="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">${item.desc}</p>
+                    <div class="text-xs text-neutral-500 pt-1 uppercase font-bold">Forrás: <span>${item.source}</span></div>
                 </div>
             `).join('');
         }
@@ -383,18 +414,23 @@
 
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+                el.classList.add('text-neutral-500');
+            });
             
             document.getElementById('content-' + tabName).classList.remove('hidden');
-            document.getElementById('tab-' + tabName).classList.add('active');
+            const activeTab = document.getElementById('tab-' + tabName);
+            activeTab.classList.add('active');
+            activeTab.classList.remove('text-neutral-500');
         }
 
         function giveFeedback(type) {
             const container = document.getElementById('feedback-buttons');
             if (type === 'up') {
-                container.innerHTML = '<span class="text-xs text-purple-400 font-medium">Köszönjük a visszajelzést! ☕</span>';
+                container.innerHTML = '<span class="text-xs font-bold uppercase">Köszönjük a visszajelzést! ☕</span>';
             } else {
-                container.innerHTML = '<span class="text-xs text-slate-400">Igyekszünk még jobbá tenni!</span>';
+                container.innerHTML = '<span class="text-xs text-neutral-500 uppercase font-bold">Igyekszünk még jobbá tenni!</span>';
             }
         }
 
