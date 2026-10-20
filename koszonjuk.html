@@ -1,80 +1,106 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Köszönjük a feliratkozást! – Superagent</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#2563eb',
+                            cyan: '#38bdf8',
+                            dark: '#030712',
+                            card: '#0b132b',
+                            accent: '#60a5fa'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .gradient-text {
-            background: linear-gradient(135deg, #a855f7, #3b82f6);
+        .gradient-text-blue {
+            background: linear-gradient(135deg, #60a5fa, #2563eb, #38bdf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .glow {
-            box-shadow: 0 0 35px rgba(168, 85, 247, 0.25);
+        .blue-glow {
+            box-shadow: 0 0 35px rgba(37, 99, 235, 0.25);
+        }
+        .blue-glow-hover:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden">
+<body class="bg-brand-dark text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
 
     <!-- Header / Navigáció -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <header class="border-b border-blue-900/60 bg-brand-dark/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
             <a href="index.html" class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xl glow">
+                <div class="w-9 h-9 border border-blue-500/50 bg-blue-950/60 text-blue-400 flex items-center justify-center font-black text-base blue-glow">
                     ⚡
                 </div>
-                <span class="font-bold text-xl tracking-tight text-white">Superagent<span class="text-purple-400">.ai</span></span>
+                <span class="font-black text-2xl tracking-tighter uppercase text-white">Superagent<span class="text-blue-400">.ai</span></span>
             </a>
-            <a href="index.html" class="text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium px-4 py-2 rounded-lg transition duration-200 border border-slate-700">
-                Vissza a főoldalra
+            
+            <a href="index.html" class="text-xs uppercase tracking-widest border border-blue-500/40 bg-blue-950/40 text-blue-300 font-bold px-4 py-2 transition hover:border-blue-400">
+                Főoldal
             </a>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 flex items-center justify-center py-16 px-4">
-        <div class="max-w-lg w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-8 shadow-2xl glow relative overflow-hidden">
+    <main class="flex-1 flex items-center justify-center py-20 px-6 relative">
+        
+        <!-- Háttér neonfény effekt -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-lg w-full border-2 border-blue-800 bg-brand-card p-8 sm:p-12 text-center space-y-8 blue-glow relative z-10">
             
-            <!-- Dekoratív háttérfény -->
-            <div class="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl pointer-events-none"></div>
-
-            <!-- Sikeres ikon badge -->
-            <div class="w-20 h-20 mx-auto rounded-full bg-purple-950/80 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 text-3xl shadow-lg shadow-purple-600/20">
-                <i class="fa-solid fa-check animate-bounce"></i>
+            <!-- Visszajelző Ikon Badge -->
+            <div class="w-16 h-16 mx-auto border-2 border-blue-500/50 bg-blue-950/80 text-blue-400 flex items-center justify-center text-2xl font-black blue-glow">
+                <i class="fa-solid fa-check"></i>
             </div>
 
-            <!-- Szöveges tartalom -->
-            <div class="space-y-3">
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                    Sikeres feliratkozás!
+            <!-- Szöveges Tartalom -->
+            <div class="space-y-4">
+                <div class="inline-block border border-blue-500/40 bg-blue-950/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-300">
+                    Sikeres feliratkozás
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl font-black tracking-tighter leading-none uppercase">
+                    KÖSZÖNJÜK!<br>
+                    <span class="gradient-text-blue">RÖGZÍTETTÜK A CÍMED.</span>
                 </h1>
-                <p class="text-purple-400 text-sm font-semibold tracking-wide uppercase">
-                    A holnap reggeli kávéd mellé már érkezünk ☕
-                </p>
-                <p class="text-slate-400 text-base leading-relaxed pt-2">
-                    Rögzítettük a címed a rendszerünkben. Minden munkanap reggel 7:00-kor küldjük a legfontosabb híreket, zajmentesen.
+
+                <p class="text-slate-300 text-sm leading-relaxed max-w-sm mx-auto font-medium pt-2">
+                    Minden munkanap reggel 7:00-kor küldjük a legfontosabb híreket egyetlen strukturált, zajmentes levelezésben.
                 </p>
             </div>
 
-            <!-- Tájékoztató kártya -->
-            <div class="bg-slate-950/60 border border-slate-800/80 rounded-2xl p-4 text-left space-y-3 text-xs text-slate-400">
+            <!-- Tájékoztató Blokk -->
+            <div class="border border-blue-900/80 bg-blue-950/40 p-4 text-left space-y-2 text-xs text-slate-400">
                 <div class="flex items-start space-x-3">
-                    <i class="fa-solid fa-inbox text-purple-400 text-sm mt-0.5"></i>
+                    <i class="fa-solid fa-circle-info text-blue-400 text-sm mt-0.5"></i>
                     <div>
-                        <strong class="text-slate-200">Nem találod a levelet?</strong><br>
-                        Nézd meg a *Promóciók* vagy a *Spam* mappát, és jelöld meg megbízható feladóként a Superagentet!
+                        <strong class="text-slate-200 uppercase font-bold tracking-wider text-[11px]">Nem találod az e-mailt?</strong><br>
+                        Nézd meg a <span class="text-blue-300">Promóciók</span> vagy a <span class="text-blue-300">Spam</span> mappát, és jelöld meg megbízható feladóként a Superagentet!
                     </div>
                 </div>
             </div>
 
             <!-- Gomb -->
             <div class="pt-2">
-                <a href="index.html" class="inline-flex items-center justify-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white font-bold px-8 py-3.5 rounded-xl transition duration-200 shadow-lg shadow-purple-600/30 w-full sm:w-auto">
-                    <span>Tovább a főoldalra</span>
-                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                <a href="index.html" class="inline-flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest px-8 py-4 border border-blue-400 transition text-xs w-full blue-glow-hover">
+                    <span>VISSZA A FŐOLDALRA</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
             </div>
 
@@ -82,7 +108,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 py-8 bg-slate-950 text-center text-xs text-slate-500">
+    <footer class="border-t border-blue-900/80 py-8 text-center text-[10px] uppercase tracking-widest font-bold text-slate-500">
         <p>© 2026 Superagent • Nyíri Gábor. Minden jog fenntartva.</p>
     </footer>
 
