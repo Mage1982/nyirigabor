@@ -18,103 +18,51 @@
                             card: '#0b132b',
                             accent: '#60a5fa'
                         }
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
                     }
                 }
             }
         }
     </script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .gradient-text-blue {
-            background: linear-gradient(135deg, #2563eb, #38bdf8, #60a5fa);
+            background: linear-gradient(135deg, #60a5fa, #2563eb, #38bdf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .blue-glow {
-            box-shadow: 0 0 35px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 35px rgba(37, 99, 235, 0.25);
         }
-        .redirect-btn {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: transparent;
-            border: 1px solid #dc2626;
-            color: #dc2626;
-            border-radius: 0px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            transition: all 0.2s ease;
+        .blue-glow-hover:hover {
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
         }
-        .dark .redirect-btn {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-        .redirect-btn:hover {
-            background-color: #dc2626;
+        .date-btn.active {
+            font-weight: 800;
+            background-color: #2563eb;
             color: #ffffff;
-        }
-
-        /* Smooth Scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Fluid Tipográfia */
-        .fluid-title {
-            font-size: clamp(2.5rem, 8vw, 6.5rem);
-            line-height: 0.95;
-        }
-
-        /* Cyber grid háttér effektus */
-        .cyber-grid {
-            background-image: linear-gradient(to right, rgba(37, 99, 235, 0.08) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
-        /* Fade-In Observer Stílusok */
-        .fade-in-section {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-            will-change: opacity, transform;
-        }
-        .fade-in-section.is-visible {
-            opacity: 1;
-            transform: translateY(0);
+            border-color: #60a5fa;
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-brand-dark text-slate-900 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
+<body class="bg-brand-dark text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
 
     <!-- Header / Navigáció -->
-    <header class="border-b border-blue-200 dark:border-blue-900/60 bg-white/90 dark:bg-brand-dark/90 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 sm:py-5 flex justify-between items-center">
+    <header class="border-b border-blue-900/60 bg-brand-dark/90 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 border border-blue-500/50 bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-base blue-glow">
+                <div class="w-9 h-9 border border-blue-500/50 bg-blue-950/60 text-blue-400 flex items-center justify-center font-black text-base blue-glow">
                     ⚡
                 </div>
-                <span class="font-black text-xl sm:text-2xl tracking-tighter uppercase text-slate-900 dark:text-white">Superagent<span class="text-blue-600 dark:text-blue-400">.ai</span></span>
+                <span class="font-black text-2xl tracking-tighter uppercase text-white">Superagent<span class="text-blue-400">.ai</span></span>
             </div>
             
-            <div class="flex items-center space-x-3 sm:space-x-6">
+            <div class="flex items-center space-x-6">
                 <!-- Sötét / Világos Mód Váltó Gomb -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-9 h-9 border border-blue-500/40 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300 flex items-center justify-center text-xs uppercase tracking-widest transition hover:border-blue-400 cursor-pointer" aria-label="Téma váltása">
-                    <i id="themeIcon" class="fa-solid fa-sun"></i>
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-9 h-9 border border-blue-500/40 bg-blue-950/40 text-blue-300 flex items-center justify-center text-xs uppercase tracking-widest transition hover:border-blue-400" aria-label="Téma váltása">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
                 </button>
 
-                <!-- Header Feliratkozás Gomb -->
-                <a href="#subscribe-section" class="text-[11px] sm:text-xs uppercase tracking-widest bg-red-600 hover:bg-red-500 text-white font-black px-4 sm:px-5 py-2.5 transition">
+                <a href="#subscribe-section" class="text-xs uppercase tracking-widest bg-blue-600 hover:bg-blue-500 text-white font-black px-5 py-2.5 transition blue-glow-hover">
                     Feliratkozás
                 </a>
             </div>
@@ -122,284 +70,235 @@
     </header>
 
     <!-- Main Content -->
-    <main class="space-y-16 sm:space-y-24 pt-10 sm:pt-16">
+    <main class="space-y-24 py-16">
 
-        <!-- Hero Section + Vizuális Grafika / Mockup -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 relative fade-in-section">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                
-                <!-- Bal oldal: Címsor & Értékajánlat -->
-                <div class="lg:col-span-7 text-center lg:text-left space-y-6 sm:space-y-8 relative">
-                    <!-- Háttér neonfény effekt -->
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 sm:w-[30rem] h-48 sm:h-[18rem] bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <!-- Hero Section -->
+        <section class="text-center space-y-8 max-w-5xl mx-auto px-6 pt-6 relative">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[18rem] bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-                    <div class="relative z-10 inline-block border border-blue-300 dark:border-blue-500/40 bg-blue-100/80 dark:bg-blue-950/50 px-3.5 py-1.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-blue-700 dark:text-blue-300">
-                        <span class="inline-block w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400 animate-pulse mr-2"></span>
-                        Kávé mellé optimalizálva • Minden munkanap 07:00
-                    </div>
-                    
-                    <!-- Mobilbarát Címsor -->
-                    <h1 class="relative z-10 text-4xl sm:text-6xl md:text-7xl xl:text-8xl font-black tracking-tighter leading-none uppercase text-slate-900 dark:text-white">
-                        A LEGFONTOSABB<br>
-                        HÍREK<br>
-                        <span class="gradient-text-blue underline underline-offset-8 decoration-blue-500/50">ZAJ NÉLKÜL.</span>
-                    </h1>
-                    
-                    <p class="relative z-10 text-slate-600 dark:text-slate-300 text-sm sm:text-base md:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0 font-medium">
-                        Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban. Spórolj meg napi 20 perc céltalan görgetést!
-                    </p>
-
-                    <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                        <!-- Hero CTA Gomb -->
-                        <a href="#subscribe-section" class="w-full sm:w-auto bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest px-8 py-4 border border-red-400 transition text-xs text-center">
-                            Kérem a reggeli összefoglalót <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Jobb oldal: Grafika / Vizuális Email Mockup -->
-                <div class="lg:col-span-5 relative flex justify-center">
-                    <div class="w-full max-w-md animate-float">
-                        <!-- Neon Keretes Kártya Grafika -->
-                        <div class="border-2 border-blue-400 dark:border-blue-500/60 bg-white dark:bg-brand-card/90 p-5 sm:p-6 blue-glow relative backdrop-blur-xl transition-colors duration-300">
-                            <!-- Dekorációs Badge -->
-                            <div class="absolute -top-3 -right-3 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 border border-red-300">
-                                Élő Minta ⚡
-                            </div>
-
-                            <!-- Header Életkép -->
-                            <div class="flex items-center space-x-3 pb-4 border-b border-slate-200 dark:border-blue-900/80">
-                                <div class="w-8 h-8 rounded bg-blue-600 flex items-center justify-center font-black text-xs text-white">SA</div>
-                                <div>
-                                    <div class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">Superagent Reggeli Kiadás</div>
-                                    <div class="text-[10px] text-blue-600 dark:text-blue-400 font-mono">07:00 • 3 perc olvasás</div>
-                                </div>
-                            </div>
-
-                            <!-- Minta Tartalom -->
-                            <div class="py-4 space-y-3">
-                                <div class="inline-block bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-400 border border-blue-300 dark:border-blue-800 text-[9px] font-bold uppercase px-2 py-0.5">
-                                    Tech & AI • Kiemelt
-                                </div>
-                                <h4 class="text-sm font-bold text-slate-900 dark:text-white leading-snug">
-                                    Generatív AI modellek a vállalati hatékonyságban
-                                </h4>
-                                <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-3 leading-relaxed">
-                                    Az automatizált munkafolyamatok és a személyre szabott asszisztensek áttörést hoznak a hazai kkv szektorban...
-                                </p>
-                            </div>
-
-                            <!-- Mobil Kéz/Kávé ikon sáv -->
-                            <div class="pt-3 border-t border-slate-200 dark:border-blue-900/60 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-500"></i> Reklámmentes</span>
-                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-blue-500"></i> Lényegretörő</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="relative z-10 inline-block border border-blue-500/40 bg-blue-950/50 px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest text-blue-300">
+                <span class="inline-block w-2 h-2 rounded-full bg-blue-400 animate-pulse mr-2"></span>
+                Kávé mellé optimalizálva • Minden munkanap reggel
             </div>
-        </section>
-
-        <!-- ELŐNYÖK / FUNKCIÓK MÁTRIX -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 fade-in-section">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="border border-blue-200 dark:border-blue-900/80 bg-white dark:bg-blue-950/20 p-5 space-y-2 hover:border-blue-400 dark:hover:border-blue-700/60 transition">
-                    <div class="text-blue-600 dark:text-blue-400 text-xl font-black mb-1"><i class="fa-solid fa-filter"></i></div>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white">Zajmentes szűrés</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Kiszűrjük a kattintásvadász cikkeket, csak a valóban fontos tények maradnak.</p>
-                </div>
-                <div class="border border-blue-200 dark:border-blue-900/80 bg-white dark:bg-blue-950/20 p-5 space-y-2 hover:border-blue-400 dark:hover:border-blue-700/60 transition">
-                    <div class="text-blue-600 dark:text-blue-400 text-xl font-black mb-1"><i class="fa-solid fa-clock"></i></div>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white">3 perces formátum</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Pontosan annyi információ, amennyi a reggeli kávé elfogyasztása alatt átlátható.</p>
-                </div>
-                <div class="border border-blue-200 dark:border-blue-900/80 bg-white dark:bg-blue-950/20 p-5 space-y-2 hover:border-blue-400 dark:hover:border-blue-700/60 transition">
-                    <div class="text-blue-600 dark:text-blue-400 text-xl font-black mb-1"><i class="fa-solid fa-layer-group"></i></div>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white">4 Fő Kategória</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Belföld, Külföld, Gazdaság és Tech hírek áttekinthető struktúrában.</p>
-                </div>
-                <div class="border border-blue-200 dark:border-blue-900/80 bg-white dark:bg-blue-950/20 p-5 space-y-2 hover:border-blue-400 dark:hover:border-blue-700/60 transition">
-                    <div class="text-blue-600 dark:text-blue-400 text-xl font-black mb-1"><i class="fa-solid fa-envelope-open-text"></i></div>
-                    <h3 class="text-xs font-bold uppercase tracking-widest text-slate-900 dark:text-white">Pontos kézbesítés</h3>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Minden munkanap pontosan reggel 07:00-kor érkezik a fiókodba.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- FULLSCREEN CTA SZEKCIÓ -->
-        <section id="subscribe-section" class="w-full min-h-screen border-y-2 border-blue-300 dark:border-blue-800 py-16 sm:py-24 bg-blue-50/50 dark:bg-blue-950/20 relative overflow-hidden flex flex-col justify-center items-center cyber-grid fade-in-section transition-colors duration-300">
             
-            <!-- Többrétegű Háttér Neon Aura -->
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] sm:w-[50rem] h-[20rem] sm:h-[30rem] bg-blue-500/10 dark:bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+            <h1 class="relative z-10 text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter leading-none uppercase">
+                A LEGFONTOSABB<br>
+                HÍREK<br>
+                <span class="gradient-text-blue underline underline-offset-8 decoration-blue-500/50">ZAJ NÉLKÜL.</span>
+            </h1>
+            
+            <p class="relative z-10 text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto font-medium">
+                Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban.
+            </p>
+        </section>
 
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-12 relative z-10 w-full">
-                
-                <!-- Badge -->
-                <div class="inline-flex items-center space-x-2 border border-blue-400 dark:border-blue-500/60 bg-white/80 dark:bg-blue-950/80 px-5 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em] text-blue-700 dark:text-blue-300 backdrop-blur-md">
-                    <span class="w-2 h-2 rounded-full bg-blue-500 dark:bg-cyan-400 animate-ping"></span>
-                    <span>Csatlakozz a tudatos reggeli olvasókhoz</span>
+        <!-- CTA Feliratkozás -->
+        <section id="subscribe-section" class="w-full border-y-2 border-blue-800 py-20 bg-blue-950/30 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-6 text-center space-y-8 relative z-10">
+                <div class="inline-block border border-blue-500/50 bg-blue-950 px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-300">
+                    Csatlakozz a tudatos reggeli olvasókhoz
                 </div>
 
-                <!-- Dinamikus Fluid Tipográfia -->
-                <div class="space-y-2">
-                    <h2 class="fluid-title font-black tracking-tighter uppercase text-slate-900 dark:text-white">
-                        IRATKOZZ FEL<br>
-                        <span class="gradient-text-blue underline underline-offset-[14px] sm:underline-offset-[20px] decoration-blue-500/70">A REGGELI HÍREKRE!</span>
-                    </h2>
-                </div>
+                <h2 class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-none uppercase">
+                    IRATKOZZ FEL<br>
+                    <span class="gradient-text-blue underline underline-offset-8 decoration-blue-500/50">A REGGELI HÍREKRE!</span>
+                </h2>
 
-                <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto font-medium">
                     Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
                 </p>
 
-                <!-- ÚJRAHANGOLT LETSZTULT ŰRLAP KÁRTYA -->
-                <div class="max-w-2xl mx-auto border-2 border-blue-500/80 dark:border-blue-500/60 bg-white/95 dark:bg-brand-card/90 p-6 sm:p-10 backdrop-blur-xl blue-glow transition-all duration-300">
-                    <form id="bottomForm" class="flex flex-col gap-4">
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <input type="text" id="bottomName" required placeholder="NEVED..." class="bg-slate-100 dark:bg-brand-dark border-2 border-slate-200 dark:border-blue-800 focus:border-blue-600 dark:focus:border-blue-400 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 font-bold uppercase tracking-wider px-5 py-4 focus:outline-none w-full sm:w-2/5 text-xs sm:text-sm transition-colors">
-                            <input type="email" id="bottomEmail" required placeholder="E-MAIL CÍMED..." class="bg-slate-100 dark:bg-brand-dark border-2 border-slate-200 dark:border-blue-800 focus:border-blue-600 dark:focus:border-blue-400 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 font-bold uppercase tracking-wider px-5 py-4 focus:outline-none w-full sm:w-3/5 text-xs sm:text-sm transition-colors">
+                <form id="bottomForm" class="max-w-lg mx-auto flex flex-col gap-4 pt-2">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="bottomName" required placeholder="NEVED..." class="bg-brand-dark border border-blue-700/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-4 py-3.5 focus:outline-none w-full sm:w-1/3 text-xs">
+                        <input type="email" id="bottomEmail" required placeholder="E-MAIL CÍMED..." class="bg-brand-dark border border-blue-700/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-4 py-3.5 focus:outline-none w-full sm:w-2/3 text-xs">
+                    </div>
+                    <button type="submit" id="bottomSubmitBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest px-8 py-4 border border-blue-400 transition text-xs flex items-center justify-center space-x-2 blue-glow-hover">
+                        <span>FELIRATKOZOM</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+                <div id="bottomStatusMessage" class="text-xs font-bold uppercase tracking-widest pt-2"></div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-[11px] font-bold uppercase tracking-widest border-t border-blue-900/80 max-w-xl mx-auto text-blue-300">
+                    <div>100% Ingyenes</div>
+                    <div>Zaj- és spammentes</div>
+                    <div>1 kattintásos leiratkozás</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Gmail Archívum & Előnézet -->
+        <section class="max-w-4xl mx-auto px-6 space-y-6">
+            <div class="text-left border-b border-blue-900/80 pb-3 flex items-center justify-between">
+                <h2 class="text-xs font-black uppercase tracking-widest text-blue-400">GMAIL SENT ARCHÍVUM MENÜ</h2>
+                <span class="text-[10px] text-slate-500 uppercase font-mono">Élő adatok a Gmailből</span>
+            </div>
+
+            <!-- Dátum Menü Gombok -->
+            <div class="border border-blue-900/80 bg-brand-card/80 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-slate-300">
+                    <i class="fa-solid fa-envelope-open-text text-blue-400"></i>
+                    <span>Kiadás kiválasztása:</span>
+                </div>
+                
+                <div class="flex items-center space-x-2 overflow-x-auto w-full sm:w-auto" id="date-buttons">
+                    <span class="text-xs text-slate-500">Kiadások betöltése...</span>
+                </div>
+            </div>
+
+            <!-- Minta Levél Kártya -->
+            <div class="border-2 border-blue-800 bg-brand-card blue-glow">
+                <div class="px-6 py-4 border-b border-blue-900/80 bg-blue-950/60 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-600 text-white flex items-center justify-center text-xs font-black">
+                            SA
                         </div>
-                        <!-- Piros Árnyék Nélküli, Tiszta Kontrasztú Feliratkozási Gomb -->
-                        <button type="submit" id="bottomSubmitBtn" class="bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-black uppercase tracking-[0.2em] px-8 py-5 border-2 border-red-500 hover:border-red-400 transition-all duration-200 text-xs sm:text-sm flex items-center justify-center space-x-3 cursor-pointer hover:-translate-y-0.5">
-                            <span>FELIRATKOZOM</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </button>
-                    </form>
-                    <div id="bottomStatusMessage" class="text-xs font-bold uppercase tracking-widest pt-3"></div>
+                        <div>
+                            <div class="text-xs font-bold uppercase tracking-widest text-slate-200">SUPERAGENT · REGGELI KIADÁS</div>
+                            <div class="text-[11px] text-blue-400 font-mono">Elküldve a Gmail Sent mappából</div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Garancia Elemek Mikromátrixban -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 text-[11px] sm:text-xs font-bold uppercase tracking-widest border-t border-slate-200 dark:border-blue-900/60 max-w-2xl mx-auto text-blue-800 dark:text-blue-300">
-                    <div class="flex items-center justify-center gap-2 bg-white/60 dark:bg-blue-950/30 py-2 border border-blue-200 dark:border-blue-900/40"><i class="fa-solid fa-shield-halved text-blue-500 dark:text-blue-400"></i> 100% Ingyenes</div>
-                    <div class="flex items-center justify-center gap-2 bg-white/60 dark:bg-blue-950/30 py-2 border border-blue-200 dark:border-blue-900/40"><i class="fa-solid fa-ban text-blue-500 dark:text-blue-400"></i> Zaj- és spammentes</div>
-                    <div class="flex items-center justify-center gap-2 bg-white/60 dark:bg-blue-950/30 py-2 border border-blue-200 dark:border-blue-900/40"><i class="fa-solid fa-xmark text-blue-500 dark:text-blue-400"></i> 1 kattintásos leiratkozás</div>
+                <!-- Dinamikus Email Tartalom -->
+                <div class="p-6 sm:p-8 space-y-6">
+                    <div id="edition-date-header" class="text-xs font-bold tracking-widest uppercase text-blue-400">
+                        Betöltés...
+                    </div>
+                    <div id="edition-body" class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap font-mono">
+                        Archívum kiadások betöltése folyamatban...
+                    </div>
                 </div>
-
             </div>
         </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 dark:border-blue-900/80 py-8 text-center text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-slate-500 px-4">
+    <footer class="border-t border-blue-900/80 py-8 text-center text-[10px] uppercase tracking-widest font-bold text-slate-500">
         <p>© 2026 Superagent • Nyíri Gábor. Minden jog fenntartva.</p>
     </footer>
 
-    <!-- JS Logic -->
     <script>
-        // Sötét/Világos mód logika (Rendszerbeállítások kezelésével)
-        function updateThemeIcon(isDark) {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbywDhrAGgcAQekbxHHx9xTUfsxYIOhjF3oJFQpcVNR7-LZlVPYAFiXI7Dg1adLXsyeP2Q/exec';
+        let editionsData = {};
+
+        // Sötét/Világos mód váltó
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
             const themeIcon = document.getElementById('themeIcon');
-            if (isDark) {
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
                 themeIcon.className = 'fa-solid fa-sun';
             } else {
+                document.documentElement.classList.add('dark');
                 themeIcon.className = 'fa-solid fa-moon';
             }
         }
 
-        function applyTheme(isDark) {
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-            updateThemeIcon(isDark);
-        }
-
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme) {
-                applyTheme(savedTheme === 'dark');
-            } else {
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                applyTheme(systemPrefersDark);
-            }
-        }
-
         function toggleTheme() {
-            const isCurrentDark = document.documentElement.classList.contains('dark');
-            const newDarkState = !isCurrentDark;
-            
-            applyTheme(newDarkState);
-            localStorage.setItem('theme', newDarkState ? 'dark' : 'light');
-        }
-
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (!localStorage.getItem('theme')) {
-                applyTheme(e.matches);
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-moon';
             }
-        });
+        }
 
         initTheme();
 
-        // IntersectionObserver a Fade-In effekt automatikus aktiválásához gördítéskor
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15
-        };
+        // Gmail Archívum betöltése
+        function loadGmailArchive() {
+            fetch(scriptURL)
+                .then(response => response.json())
+                .then(data => {
+                    editionsData = data;
+                    const dateKeys = Object.keys(data);
+                    
+                    if (dateKeys.length === 0) {
+                        document.getElementById('date-buttons').innerHTML = '<span class="text-xs text-slate-500">Nem található elküldött SUPERAGENT levél.</span>';
+                        return;
+                    }
 
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                }
-            });
-        }, observerOptions);
+                    let buttonsHTML = '';
+                    dateKeys.forEach((key, index) => {
+                        buttonsHTML += `
+                            <button onclick="displayEdition('${key}')" id="btn-${key}" class="date-btn ${index === 0 ? 'active' : ''} border border-blue-900 bg-blue-950/40 text-slate-300 text-xs uppercase tracking-widest px-4 py-2 transition hover:border-blue-500">
+                                ${key}
+                            </button>
+                        `;
+                    });
+                    document.getElementById('date-buttons').innerHTML = buttonsHTML;
 
-        document.querySelectorAll('.fade-in-section').forEach(section => {
-            observer.observe(section);
-        });
-
-        // Feliratkozás Backend Küldés
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxGe6IZSur8CnE8f0eFVq7JNJbrJAyqXFqRAP7sH4AAJGmsOaAwueMjyJ1USSpkjwNJzw/exec';
-        const redirectURL = 'koszonjuk.html';
-
-        function sendSubscription(nameValue, emailValue, btnElement, statusElement) {
-            btnElement.disabled = true;
-            btnElement.innerText = 'KÜLDÉS...';
-            statusElement.innerHTML = '';
-
-            fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: nameValue,
-                    email: emailValue
+                    displayEdition(dateKeys[0]);
                 })
-            })
-            .then(() => {
-                statusElement.innerHTML = `
-                    <div class="uppercase tracking-widest text-emerald-500 font-bold">Köszönjük! A feliratkozásod rögzítettük.</div>
-                    <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-1 uppercase">Pillanaton belül átirányítunk...</div>
-                    <a href="${redirectURL}" class="redirect-btn">Tovább a köszönőoldalra</a>
-                `;
-
-                setTimeout(() => {
-                    window.location.href = redirectURL;
-                }, 2500);
-            })
-            .catch(error => {
-                console.error('Hiba:', error);
-                statusElement.innerHTML = '<div class="uppercase tracking-widest text-red-500 font-bold">Hiba történt a küldés során. Kérjük, próbáld újra!</div>';
-                btnElement.disabled = false;
-                btnElement.innerText = 'FELIRATKOZOM';
-            });
+                .catch(err => {
+                    console.error("Hiba az archívum betöltésekor:", err);
+                    document.getElementById('date-buttons').innerHTML = '<span class="text-xs text-red-400">Hiba történt az archívum betöltésekor.</span>';
+                });
         }
 
+        function displayEdition(dateKey) {
+            const edition = editionsData[dateKey];
+            if (!edition) return;
+
+            const bodyContainer = document.getElementById('edition-body');
+            document.getElementById('edition-date-header').innerText = edition.dateTitle;
+
+            if (edition.bodyHtml && edition.bodyHtml.trim() !== '') {
+                bodyContainer.innerHTML = edition.bodyHtml;
+                bodyContainer.classList.remove('font-mono', 'whitespace-pre-wrap');
+            } else {
+                bodyContainer.innerText = edition.bodyText;
+                bodyContainer.classList.add('font-mono', 'whitespace-pre-wrap');
+            }
+
+            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById('btn-' + dateKey);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+
+        // Feliratkozás elküldése
         document.getElementById('bottomForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('bottomName').value;
             const email = document.getElementById('bottomEmail').value;
             const btn = document.getElementById('bottomSubmitBtn');
             const status = document.getElementById('bottomStatusMessage');
-            sendSubscription(name, email, btn, status);
+
+            btn.disabled = true;
+            btn.innerText = 'KÜLDÉS...';
+
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: name, email: email })
+            })
+            .then(() => {
+                status.innerHTML = `
+                    <div class="uppercase tracking-widest text-emerald-400 font-black pt-2">Köszönjük! A feliratkozásodat sikeresen rögzítettük.</div>
+                `;
+                document.getElementById('bottomForm').reset();
+                btn.disabled = false;
+                btn.innerHTML = `<span>FELIRATKOZOM</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+            })
+            .catch(error => {
+                console.error('Hiba:', error);
+                status.innerHTML = '<div class="uppercase tracking-widest text-red-400 font-black pt-2">Hiba történt a küldés során. Kérjük, próbáld újra!</div>';
+                btn.disabled = false;
+                btn.innerHTML = `<span>FELIRATKOZOM</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+            });
         });
+
+        window.onload = function() {
+            loadGmailArchive();
+        };
     </script>
 </body>
 </html>
