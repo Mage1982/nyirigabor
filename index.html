@@ -36,6 +36,33 @@
                 linear-gradient(to right, rgba(37, 99, 235, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(37, 99, 235, 0.08) 1px, transparent 1px);
         }
+        /* Világos mód finomhangolása */
+        html:not(.dark) body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        html:not(.dark) header {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-color: #e2e8f0;
+        }
+        html:not(.dark) .bg-brand-card {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+        }
+        html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, html:not(.dark) .text-white {
+            color: #0f172a !important;
+        }
+        html:not(.dark) p, html:not(.dark) .text-slate-300, html:not(.dark) .text-slate-400 {
+            color: #334155 !important;
+        }
+        html:not(.dark) input {
+            background-color: #ffffff !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+        html:not(.dark) .bg-blue-950\/40, html:not(.dark) .bg-blue-950\/60 {
+            background-color: #eff6ff !important;
+        }
     </style>
 </head>
 <body class="bg-brand-dark text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
@@ -51,8 +78,9 @@
             </div>
             
             <div class="flex items-center space-x-3 sm:space-x-4">
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-9 h-9 border border-blue-900/80 bg-blue-950/40 text-blue-300 flex items-center justify-center text-xs uppercase transition hover:border-blue-500" aria-label="Beállítások">
-                    <i id="themeIcon" class="fa-solid fa-gear"></i>
+                <!-- Sötét / Világos Téma Váltó Gomb -->
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-9 h-9 border border-blue-900/80 bg-blue-950/40 text-blue-300 flex items-center justify-center text-xs uppercase transition hover:border-blue-500" aria-label="Téma váltása">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
                 </button>
 
                 <a href="#subscribe-section" class="text-[11px] sm:text-xs uppercase tracking-widest bg-red-600 hover:bg-red-500 text-white font-black px-4 sm:px-6 py-2.5 transition">
@@ -71,7 +99,7 @@
                 
                 <!-- Bal oldal: Szöveg & CTA -->
                 <div class="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
-                    <div class="inline-block border border-blue-800/80 bg-blue-950/40 px-3 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-blue-300">
+                    <div class="inline-block border border-blue-800/80 bg-blue-950/40 px-3 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-blue-400">
                         <span class="inline-block w-2 h-2 rounded-full bg-blue-400 mr-1.5 sm:mr-2"></span>
                         KÁVÉ MELLÉ OPTIMALIZÁLVA • MINDEN MUNKANAP 07:00
                     </div>
@@ -141,25 +169,31 @@
             </div>
         </section>
 
-        <!-- CTA Feliratkozás (Rácsos háttérrel & Átló anyagmentes címsorral) -->
+        <!-- CTA Feliratkozás (A felső szekcióhoz igazított betűmérettel és új marketing szöveggel) -->
         <section id="subscribe-section" class="w-full border-y border-blue-900/60 py-16 sm:py-24 bg-grid-pattern relative">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-8 relative z-10">
-                <div class="inline-block border border-blue-800/80 bg-blue-950/60 px-3.5 sm:px-4 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-blue-300">
+                <div class="inline-block border border-blue-800/80 bg-blue-950/60 px-3.5 sm:px-4 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-blue-400">
                     CSATLAKOZZ A TUDATOS REGGELI OLVASÓKHOZ
                 </div>
 
-                <!-- Javított mobilbarát címsor átszabva elcsúszás nélkül -->
-                <h2 class="text-3xl sm:text-6xl md:text-7xl font-black tracking-tighter leading-tight uppercase">
+                <!-- A felső h1-gyel megegyező típusú és méretű h2 címsor -->
+                <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none uppercase">
                     IRATKOZZ FEL<br>
-                    <span class="gradient-text-blue inline-block mt-1">A REGGELI HÍREKRE!</span>
+                    <span class="gradient-text-blue inline-block border-b-2 sm:border-b-4 border-blue-500 pb-0.5 sm:pb-1">A REGGELI HÍREKRE!</span>
                 </h2>
 
-                <p class="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
-                    Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
-                </p>
+                <!-- Új marketing szöveg -->
+                <div class="space-y-2 max-w-2xl mx-auto">
+                    <p class="text-slate-300 text-sm sm:text-base md:text-lg font-bold tracking-wide uppercase text-blue-400">
+                        A JÖVŐ TECHNIKÁJA • EMBERI ELME NÉLKÜL VÁLOGATOTT HÍREK
+                    </p>
+                    <p class="text-slate-300 text-sm sm:text-base md:text-lg font-medium leading-relaxed">
+                        Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanapon, e-mailben egy lényegre törő, átlátható hírösszefoglalót!
+                    </p>
+                </div>
 
                 <!-- Beketezett Form konténer -->
-                <div class="border border-blue-800/80 bg-brand-card/90 p-5 sm:p-8 max-w-xl mx-auto space-y-4">
+                <div class="border border-blue-800/80 bg-brand-card p-5 sm:p-8 max-w-xl mx-auto space-y-4">
                     <form id="bottomForm" class="flex flex-col gap-3.5 sm:gap-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <input type="text" id="bottomName" required placeholder="NEVED..." class="bg-brand-dark border border-blue-800/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-4 py-3 focus:outline-none text-xs w-full">
@@ -184,28 +218,38 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbywDhrAGgcAQekbxHHx9xTUfsxYIOhjF3oJFQpcVNR7-LZlVPYAFiXI7Dg1adLXsyeP2Q/exec';
 
+        // Téma váltó logika (Sötét / Világos)
         function initTheme() {
             const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
             if (savedTheme === 'light') {
                 document.documentElement.classList.remove('dark');
+                if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
             } else {
                 document.documentElement.classList.add('dark');
+                if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
             }
         }
 
         function toggleTheme() {
             const html = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            
             if (html.classList.contains('dark')) {
                 html.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
+                if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
             } else {
                 html.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
+                if (themeIcon) themeIcon.className = 'fa-solid fa-moon';
             }
         }
 
         initTheme();
 
+        // Űrlap beküldése
         document.getElementById('bottomForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('bottomName').value;
