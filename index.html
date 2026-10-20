@@ -62,6 +62,23 @@
             background-color: #2563eb;
             color: #ffffff;
         }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fade-In Observer Stílusok */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, transform;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body class="bg-brand-dark text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
@@ -90,10 +107,10 @@
     </header>
 
     <!-- Main Content -->
-    <main class="space-y-16 sm:space-y-24 py-10 sm:py-16">
+    <main class="space-y-16 sm:space-y-24 pt-10 sm:pt-16">
 
         <!-- Hero Section + Vizuális Grafika / Mockup -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 relative">
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 pt-4 relative fade-in-section">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 
                 <!-- Bal oldal: Címsor & Értékajánlat -->
@@ -124,7 +141,7 @@
                     </div>
                 </div>
 
-                <!-- Jobb oldal: Grafika / Vizuális Email Mockup (Konverziósegítő) -->
+                <!-- Jobb oldal: Grafika / Vizuális Email Mockup -->
                 <div class="lg:col-span-5 relative flex justify-center">
                     <div class="w-full max-w-md animate-float">
                         <!-- Neon Keretes Kártya Grafika -->
@@ -169,7 +186,7 @@
         </section>
 
         <!-- ELŐNYÖK / FUNKCIÓK MÁTRIX -->
-        <section class="max-w-6xl mx-auto px-4 sm:px-6">
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 fade-in-section">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="border border-blue-900/80 bg-blue-950/20 p-5 space-y-2 hover:border-blue-700/60 transition">
                     <div class="text-blue-400 text-xl font-black mb-1"><i class="fa-solid fa-filter"></i></div>
@@ -194,32 +211,35 @@
             </div>
         </section>
 
-        <!-- TELJES SZÉLESSÉGŰ KÉK KONTÚROS "IRATKOZZ FEL!" CTA SZEKCIÓ -->
-        <section id="subscribe-section" class="w-full border-y-2 border-blue-800 py-16 sm:py-20 bg-blue-950/30 relative overflow-hidden">
+        <!-- TELJES KÉPERNYŐS (FULLSCREEN) CTA SZEKCIÓ -->
+        <section id="subscribe-section" class="w-full min-h-screen border-y-2 border-blue-800 py-16 sm:py-24 bg-blue-950/30 relative overflow-hidden flex flex-col justify-center items-center fade-in-section">
             
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-8 relative z-10">
+            <!-- Háttér neonfény effekt a szekció mögött -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[36rem] h-[24rem] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 sm:space-y-10 relative z-10">
                 
-                <div class="inline-block border border-blue-500/50 bg-blue-950 px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-blue-300">
+                <div class="inline-block border border-blue-500/50 bg-blue-950 px-5 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-blue-300">
                     Csatlakozz a tudatos reggeli olvasókhoz
                 </div>
 
-                <!-- Óriási Címsor -->
-                <h2 class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tighter leading-none uppercase">
+                <!-- Óriási, Kiemelt Tipográfia -->
+                <h2 class="text-5xl sm:text-7xl md:text-8xl xl:text-9xl font-black tracking-tighter leading-none uppercase">
                     IRATKOZZ FEL<br>
-                    <span class="gradient-text-blue underline underline-offset-8 decoration-blue-500/50">A REGGELI HÍREKRE!</span>
+                    <span class="gradient-text-blue underline underline-offset-[12px] sm:underline-offset-[16px] decoration-blue-500/60">A REGGELI HÍREKRE!</span>
                 </h2>
 
-                <p class="text-slate-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium">
+                <p class="text-slate-300 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
                     Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
                 </p>
 
                 <!-- Kontúros Űrlap -->
-                <form id="bottomForm" class="max-w-lg mx-auto flex flex-col gap-4 pt-2">
+                <form id="bottomForm" class="max-w-xl mx-auto flex flex-col gap-4 pt-4">
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="bottomName" required placeholder="NEVED..." class="bg-brand-dark border border-blue-700/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-4 py-3.5 focus:outline-none w-full sm:w-1/3 text-xs">
-                        <input type="email" id="bottomEmail" required placeholder="E-MAIL CÍMED..." class="bg-brand-dark border border-blue-700/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-4 py-3.5 focus:outline-none w-full sm:w-2/3 text-xs">
+                        <input type="text" id="bottomName" required placeholder="NEVED..." class="bg-brand-dark border-2 border-blue-700/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-5 py-4 focus:outline-none w-full sm:w-1/3 text-xs sm:text-sm">
+                        <input type="email" id="bottomEmail" required placeholder="E-MAIL CÍMED..." class="bg-brand-dark border-2 border-blue-700/80 focus:border-blue-400 text-white placeholder-slate-500 font-bold uppercase tracking-wider px-5 py-4 focus:outline-none w-full sm:w-2/3 text-xs sm:text-sm">
                     </div>
-                    <button type="submit" id="bottomSubmitBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest px-8 py-4 border border-blue-400 transition text-xs flex items-center justify-center space-x-2 blue-glow-hover cursor-pointer">
+                    <button type="submit" id="bottomSubmitBtn" class="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest px-8 py-5 border-2 border-blue-400 transition text-xs sm:text-sm flex items-center justify-center space-x-2 blue-glow-hover cursor-pointer">
                         <span>FELIRATKOZOM</span>
                         <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
@@ -227,10 +247,10 @@
                 <div id="bottomStatusMessage" class="text-xs font-bold uppercase tracking-widest pt-2"></div>
 
                 <!-- Garancia elemek -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest border-t border-blue-900/80 max-w-xl mx-auto text-blue-300">
-                    <div class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-shield-halved text-blue-400"></i> 100% Ingyenes</div>
-                    <div class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-ban text-blue-400"></i> Zaj- és spammentes</div>
-                    <div class="flex items-center justify-center gap-1.5"><i class="fa-solid fa-xmark text-blue-400"></i> 1 kattintásos leiratkozás</div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 text-[11px] sm:text-xs font-bold uppercase tracking-widest border-t border-blue-900/80 max-w-2xl mx-auto text-blue-300">
+                    <div class="flex items-center justify-center gap-2"><i class="fa-solid fa-shield-halved text-blue-400 text-sm"></i> 100% Ingyenes</div>
+                    <div class="flex items-center justify-center gap-2"><i class="fa-solid fa-ban text-blue-400 text-sm"></i> Zaj- és spammentes</div>
+                    <div class="flex items-center justify-center gap-2"><i class="fa-solid fa-xmark text-blue-400 text-sm"></i> 1 kattintásos leiratkozás</div>
                 </div>
 
             </div>
@@ -249,9 +269,9 @@
         function updateThemeIcon(isDark) {
             const themeIcon = document.getElementById('themeIcon');
             if (isDark) {
-                themeIcon.className = 'fa-solid fa-sun'; // Sötét módban a Nap ikont mutatjuk, amivel világosra válthat
+                themeIcon.className = 'fa-solid fa-sun';
             } else {
-                themeIcon.className = 'fa-solid fa-moon'; // Világos módban a Hold ikont mutatjuk, amivel sötétre válthat
+                themeIcon.className = 'fa-solid fa-moon';
             }
         }
 
@@ -280,6 +300,25 @@
         }
 
         initTheme();
+
+        // IntersectionObserver a Fade-In effekt automatikus aktiválásához gördítéskor
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
 
         // Feliratkozás Backend Küldés
         const scriptURL = 'https://script.google.com/macros/s/AKfycbxGe6IZSur8CnE8f0eFVq7JNJbrJAyqXFqRAP7sH4AAJGmsOaAwueMjyJ1USSpkjwNJzw/exec';
