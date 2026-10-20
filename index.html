@@ -64,33 +64,22 @@
     <!-- Main Content -->
     <main class="space-y-20 py-12">
 
-        <!-- Hero Section -->
-        <section class="text-center space-y-6 max-w-3xl mx-auto px-4 pt-8">
+        <!-- Hero Section (Űrlap nélkül, óriási címsorral) -->
+        <section class="text-center space-y-6 max-w-4xl mx-auto px-4 pt-8">
             <div class="inline-flex items-center space-x-2 bg-purple-950/60 border border-purple-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-purple-300">
                 <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
                 <span>Kávé mellé optimalizálva • Minden munkanap reggel</span>
             </div>
-            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
+            
+            <!-- Óriás címsor -->
+            <h1 class="text-5xl sm:text-7xl md:text-8xl font-black tracking-tight leading-none uppercase">
                 A legfontosabb hírek <br>
-                <span class="gradient-text">zaj nélkül, a kávéd mellé.</span>
+                <span class="gradient-text">zaj nélkül.</span>
             </h1>
-            <p class="text-slate-400 text-lg sm:text-xl leading-relaxed">
-                Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban. Egyenesen a Gmail fiókodba.
+            
+            <p class="text-slate-400 text-lg sm:text-2xl leading-relaxed max-w-2xl mx-auto font-normal pt-2">
+                Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban.
             </p>
-
-            <!-- Top Form -->
-            <form id="heroForm" class="mt-8 max-w-md mx-auto flex flex-col gap-3">
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <input type="text" id="heroName" required placeholder="Neved..." class="bg-slate-900 border border-slate-700 focus:border-purple-500 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-purple-500/20 w-full sm:w-1/3 transition">
-                    <input type="email" id="heroEmail" required placeholder="E-mail címed..." class="bg-slate-900 border border-slate-700 focus:border-purple-500 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-purple-500/20 w-full sm:w-2/3 transition">
-                </div>
-                <button type="submit" id="heroSubmitBtn" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3.5 rounded-xl transition duration-200 shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2">
-                    <span>Kérem a híreket</span>
-                    <i class="fa-solid font-bold fa-arrow-right text-sm"></i>
-                </button>
-            </form>
-            <div id="heroStatusMessage" class="text-sm pt-2"></div>
-            <p class="text-xs text-slate-500">Ingyenes • Bármikor leiratkozhatsz egyetlen kattintással.</p>
         </section>
 
         <!-- Interaktív Minta Levél és Archívum Szekció -->
@@ -229,7 +218,7 @@
                     Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
                 </p>
 
-                <!-- Űrlap -->
+                <!-- Egyetlen, főlépcsős Űrlap -->
                 <form id="bottomForm" class="max-w-lg mx-auto flex flex-col gap-3 pt-4">
                     <div class="flex flex-col sm:flex-row gap-3">
                         <input type="text" id="bottomName" required placeholder="Neved..." class="bg-white border-2 border-slate-300 focus:border-purple-600 text-slate-900 placeholder-slate-400 font-medium rounded-xl px-4 py-3.5 focus:outline-none focus:ring-4 focus:ring-purple-500/10 w-full sm:w-1/3 shadow-md transition text-base">
@@ -291,8 +280,8 @@
             })
             .then(() => {
                 statusElement.innerHTML = `
-                    <div class="text-emerald-400 font-semibold">Köszönjük! A feliratkozásod rögzítettük.</div>
-                    <div class="text-xs text-slate-400 mt-1">Pillanaton belül átirányítunk...</div>
+                    <div class="text-emerald-600 font-semibold">Köszönjük! A feliratkozásod rögzítettük.</div>
+                    <div class="text-xs text-slate-600 mt-1">Pillanaton belül átirányítunk...</div>
                     <a href="${redirectURL}" class="redirect-btn">Tovább a köszönőoldalra</a>
                 `;
 
@@ -302,20 +291,11 @@
             })
             .catch(error => {
                 console.error('Hiba:', error);
-                statusElement.innerHTML = '<div class="text-red-400 font-semibold">Hiba történt a küldés során. Kérjük, próbáld újra!</div>';
+                statusElement.innerHTML = '<div class="text-red-500 font-semibold">Hiba történt a küldés során. Kérjük, próbáld újra!</div>';
                 btnElement.disabled = false;
-                btnElement.innerText = 'Feliratkozás';
+                btnElement.innerText = 'FELIRATKOZOM';
             });
         }
-
-        document.getElementById('heroForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('heroName').value;
-            const email = document.getElementById('heroEmail').value;
-            const btn = document.getElementById('heroSubmitBtn');
-            const status = document.getElementById('heroStatusMessage');
-            sendSubscription(name, email, btn, status);
-        });
 
         document.getElementById('bottomForm').addEventListener('submit', function(e) {
             e.preventDefault();
