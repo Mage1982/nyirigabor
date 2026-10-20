@@ -1,77 +1,325 @@
-// Hírlevél adatbázis frissített októberi dátumokkal
-const editions = {
-    '2026-10-16': {
-        dateTitle: '2026. OKTÓBER 16., PÉNTEK • NAPI HÍRÖSSZEFOGLALÓ',
-        belpol: [
-            { title: 'Friss belföldi összefoglaló', desc: 'A mai nap legfontosabb hazai hírei és eseményei.', source: '24.hu' }
-        ],
-        kulpol: [
-            { title: 'Nemzetközi fejlemények', desc: 'Legfrissebb külpolitikai hírek a nagyvilágból.', source: 'Reuters' }
-        ],
-        gazdasag: [
-            { title: 'Gazdasági mutatók', desc: 'Piacok és pénzügyi folyamatok alakulása.', source: 'Portfolio' }
-        ],
-        tech: [
-            { title: 'Újabb AI és Tech áttörések', desc: 'A technológiai szektor legújabb hírei.', source: 'Nature' }
-        ]
-    },
-    '2026-10-15': {
-        dateTitle: '2026. OKTÓBER 15., CSÜTÖRTÖK • NAPI HÍRÖSSZEFOGLALÓ',
-        belpol: [{ title: 'Belföldi hírek', desc: 'Csütörtöki események összefoglalója.', source: 'Infostart' }],
-        kulpol: [{ title: 'Külpolitika', desc: 'Nemzetközi összefoglaló.', source: 'AP News' }],
-        gazdasag: [{ title: 'Gazdasági hírek', desc: 'Makrogazdasági elemzés.', source: 'Privátbankár' }],
-        tech: [{ title: 'Tech hírek', desc: 'Fejlesztések és innováció.', source: 'TechCrunch' }]
-    },
-    '2026-10-14': {
-        dateTitle: '2026. OKTÓBER 14., SZERDA • NAPI HÍRÖSSZEFOGLALÓ',
-        belpol: [{ title: 'Szerdai belföldi hírek', desc: 'A nap főbb hírei.', source: 'MTI' }],
-        kulpol: [{ title: 'Külpolitikai áttekintés', desc: 'Régiónk és a világ hírei.', source: 'BBC' }],
-        gazdasag: [{ title: 'Pénzügyi összefoglaló', desc: 'Tőzsdei és gazdasági körkép.', source: 'Mfor' }],
-        tech: [{ title: 'Tudományos újdonságok', desc: 'Legújabb kutatási eredmények.', source: 'Wired' }]
-    },
-    '2026-10-13': {
-        dateTitle: '2026. OKTÓBER 13., KEDD • NAPI HÍRÖSSZEFOGLALÓ',
-        belpol: [{ title: 'Kedd belföld', desc: 'Hazai történéssorozat.', source: 'Híradó' }],
-        kulpol: [{ title: 'Kedd külföld', desc: 'Nemzetközi helyzetkép.', source: 'Euronews' }],
-        gazdasag: [{ title: 'Gazdasági körkép', desc: 'Iparágak helyzete.', source: 'Forbes' }],
-        tech: [{ title: 'Tech fejlemények', desc: 'Mesterséges intelligencia hírek.', source: 'HuggingFace' }]
-    }
-};
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superagent – Napi Hírösszefoglaló</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #a855f7, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glow {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.2);
+        }
+        .tab-btn.active {
+            border-bottom: 2px solid #a855f7;
+            color: #a855f7;
+            font-weight: 600;
+        }
+        .date-btn.active {
+            background-color: rgba(168, 85, 247, 0.2);
+            border-color: rgba(168, 85, 247, 0.5);
+            color: #f3e8ff;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between">
 
-let currentEdition = '2026-10-16';
-
-function renderArticles(list) {
-    if (!list || list.length === 0) {
-        return '<p class="text-slate-500 text-sm">Ebben a rovatban ezen a napon nem volt kiemelt hír.</p>';
-    }
-    return list.map((item, idx) => `
-        <div class="border-l-2 ${idx === 0 ? 'border-purple-500' : 'border-slate-700'} pl-4 space-y-1">
-            <h3 class="font-bold text-slate-100 text-base">${item.title}</h3>
-            <p class="text-slate-400 text-sm leading-relaxed">${item.desc}</p>
-            <div class="text-xs text-slate-500 pt-1">Forrás: <span class="text-purple-400">${item.source}</span></div>
+    <!-- Header / Navigáció -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-xl glow">
+                    ⚡
+                </div>
+                <span class="font-bold text-xl tracking-tight text-white">Superagent<span class="text-purple-400">.ai</span></span>
+            </div>
+            <a href="#subscribe" class="text-sm bg-purple-600 hover:bg-purple-500 text-white font-medium px-4 py-2 rounded-lg transition duration-200 shadow-lg shadow-purple-600/30">
+                Feliratkozás
+            </a>
         </div>
-    `).join('');
-}
+    </header>
 
-function loadEdition(dateStr) {
-    currentEdition = dateStr;
-    const data = editions[dateStr];
-    if (!data) return;
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-12 space-y-20">
 
-    document.getElementById('edition-date-header').innerText = data.dateTitle;
-    document.getElementById('content-belpol').innerHTML = renderArticles(data.belpol);
-    document.getElementById('content-kulpol').innerHTML = renderArticles(data.kulpol);
-    document.getElementById('content-gazdasag').innerHTML = renderArticles(data.gazdasag);
-    document.getElementById('content-tech').innerHTML = renderArticles(data.tech);
+        <!-- Hero Section -->
+        <section class="text-center space-y-6 max-w-3xl mx-auto pt-8">
+            <div class="inline-flex items-center space-x-2 bg-purple-950/60 border border-purple-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-purple-300">
+                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                <span>Kávé mellé optimalizálva • Minden munkanap reggel</span>
+            </div>
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
+                A legfontosabb hírek <br>
+                <span class="gradient-text">zaj nélkül, a kávéd mellé.</span>
+            </h1>
+            <p class="text-slate-400 text-lg sm:text-xl leading-relaxed">
+                Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban. Egyenesen a Gmail fiókodba.
+            </p>
 
-    document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
-    const activeBtn = document.getElementById('btn-' + dateStr);
-    if (activeBtn) activeBtn.classList.add('active');
+            <!-- Form -->
+            <form id="subscribe" onsubmit="handleSubscribe(event)" class="mt-8 max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+                <input type="email" required placeholder="Add meg az e-mail címed..." class="bg-slate-900 border border-slate-700 focus:border-purple-500 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-purple-500/20 flex-1 transition">
+                <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3.5 rounded-xl transition duration-200 shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2">
+                    <span>Kérem a híreket</span>
+                    <i class="fa-solid font-bold fa-arrow-right text-sm"></i>
+                </button>
+            </form>
+            <p class="text-xs text-slate-500">Ingyenes • Bármikor leiratkozhatsz egyetlen kattintással.</p>
+        </section>
 
-    const selectEl = document.getElementById('date-select');
-    if (selectEl) selectEl.value = dateStr;
-}
+        <!-- Interaktív Minta Levél és Archívum Szekció -->
+        <section class="max-w-4xl mx-auto space-y-6">
+            <div class="text-center space-y-2">
+                <h2 class="text-2xl font-bold text-slate-200">Böngéssz a korábbi hírlevelek között!</h2>
+                <p class="text-slate-400 text-sm">Válassz ki egy dátumot az archívumból, és olvass bele a kiadásba:</p>
+            </div>
 
-window.onload = function() {
-    loadEdition('2026-10-16');
-};
+            <!-- Dátum Választó Menü (Archívum) -->
+            <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2 text-slate-300 text-sm font-semibold">
+                    <i class="fa-solid fa-calendar-days text-purple-400"></i>
+                    <span>Korábbi kiadások:</span>
+                </div>
+                
+                <!-- Gombok asztali nézethez -->
+                <div class="hidden sm:flex items-center space-x-2 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0" id="date-buttons">
+                    <button onclick="loadEdition('2026-09-13')" id="btn-2026-09-13" class="date-btn active border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                        2026.09.13.
+                    </button>
+                    <button onclick="loadEdition('2026-09-12')" id="btn-2026-09-12" class="date-btn border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                        2026.09.12.
+                    </button>
+                    <button onclick="loadEdition('2026-09-11')" id="btn-2026-09-11" class="date-btn border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                        2026.09.11.
+                    </button>
+                    <button onclick="loadEdition('2026-09-10')" id="btn-2026-09-10" class="date-btn border border-slate-700 bg-slate-800 text-slate-300 text-xs px-3.5 py-2 rounded-xl transition">
+                        2026.09.10.
+                    </button>
+                </div>
+
+                <!-- Legördülő mobil nézethez -->
+                <select onchange="loadEdition(this.value)" id="date-select" class="sm:hidden w-full bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-xl p-2.5 focus:outline-none focus:border-purple-500">
+                    <option value="2026-09-13">2026. szeptember 13.</option>
+                    <option value="2026-09-12">2026. szeptember 12.</option>
+                    <option value="2026-09-11">2026. szeptember 11.</option>
+                    <option value="2026-09-10">2026. szeptember 10.</option>
+                </select>
+            </div>
+
+            <!-- Interaktív Minta Levél Kártya -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl relative glow">
+                
+                <!-- Email Header Mockup -->
+                <div class="bg-slate-950/80 px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xs font-bold">
+                            SA
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-200">SUPERAGENT · REGGELI KIADÁS</div>
+                            <div class="text-[11px] text-slate-500">Címzett: nyirigabee@gmail.com</div>
+                        </div>
+                    </div>
+                    <div class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800/40 px-3 py-1 rounded-full flex items-center space-x-1.5">
+                        <i class="fa-solid fa-mug-hot"></i>
+                        <span>3 perc olvasás</span>
+                    </div>
+                </div>
+
+                <!-- Interaktív Lapfülek (Kategóriák) -->
+                <div class="flex border-b border-slate-800 bg-slate-900/60 overflow-x-auto text-xs text-slate-400">
+                    <button onclick="switchTab('belpol')" id="tab-belpol" class="tab-btn active px-6 py-3 flex items-center space-x-2 transition">
+                        <span>🇭🇺 Belföld</span>
+                    </button>
+                    <button onclick="switchTab('kulpol')" id="tab-kulpol" class="tab-btn px-6 py-3 flex items-center space-x-2 transition">
+                        <span>🌍 Külföld</span>
+                    </button>
+                    <button onclick="switchTab('gazdasag')" id="tab-gazdasag" class="tab-btn px-6 py-3 flex items-center space-x-2 transition">
+                        <span>📈 Gazdaság</span>
+                    </button>
+                    <button onclick="switchTab('tech')" id="tab-tech" class="tab-btn px-6 py-3 flex items-center space-x-2 transition">
+                        <span>🔬 Tech & AI</span>
+                    </button>
+                </div>
+
+                <!-- Dinamikus Email Tartalom -->
+                <div class="p-6 sm:p-8 space-y-6">
+                    
+                    <div id="edition-date-header" class="text-xs text-purple-400 font-semibold tracking-wider uppercase">
+                        2026. SZEPTEMBER 13. • NAPI HÍRÖSSZEFOGLALÓ
+                    </div>
+
+                    <!-- Belföld Tab Tartalom -->
+                    <div id="content-belpol" class="tab-content space-y-6"></div>
+
+                    <!-- Külföld Tab Tartalom -->
+                    <div id="content-kulpol" class="tab-content hidden space-y-6"></div>
+
+                    <!-- Gazdaság Tab Tartalom -->
+                    <div id="content-gazdasag" class="tab-content hidden space-y-6"></div>
+
+                    <!-- Tech Tab Tartalom -->
+                    <div id="content-tech" class="tab-content hidden space-y-6"></div>
+
+                    <!-- Interaktív Értékelő Gombok alul -->
+                    <div class="pt-6 border-t border-slate-800 flex items-center justify-between">
+                        <span class="text-xs text-slate-500">Hasznos volt a mai összefoglaló?</span>
+                        <div class="flex space-x-2" id="feedback-buttons">
+                            <button onclick="giveFeedback('up')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-purple-900/40 text-xs text-slate-300 transition">👍 Igen</button>
+                            <button onclick="giveFeedback('down')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">👎 Lehetne jobb</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-8 bg-slate-950 text-center text-xs text-slate-500">
+        <p>© 2026 Superagent • Nyíri Gábor. Minden jog fenntartva.</p>
+    </footer>
+
+    <!-- JS Interakciók és Archívum Adatok -->
+    <script>
+        // Hírlevél adatbázis dátumok szerint
+        const editions = {
+            '2026-09-13': {
+                dateTitle: '2026. SZEPTEMBER 13., VASÁRNAP • NAPI HÍRÖSSZEFOGLALÓ',
+                belpol: [
+                    { title: 'Orbán Viktor nemzeti ellenállást hirdetett', desc: 'A Fidesz elnöke politikai beszédében nemzeti ellenállást hirdetett, miközben hangsúlyozta a gazdasági függetlenség megőrzésének fontosságát.', source: '24.hu' },
+                    { title: 'Azonnali gyermekvédelmi krízisprogramot jelentettek be', desc: 'Mintegy 10 milliárd forintos gyermekvédelmi krízisprogram indul az ellátórendszer sürgős fejlesztéseire.', source: 'Infostart' }
+                ],
+                kulpol: [
+                    { title: 'Újabb feszültség a Hormuzi-szoros térségében', desc: 'Egy iráni kereskedelmi hajót találat ért a Hormuzi-szorosban, ami ismét a globális energiaellátás védelmére irányította a figyelmet.', source: 'Associated Press' },
+                    { title: 'Az Egyesült Államok a szeptember 11-i támadásokra emlékezett', desc: 'Amerikában kegyelettel emlékeztek a tragédia 25. évfordulóján az áldozatokra.', source: 'Reuters' }
+                ],
+                gazdasag: [
+                    { title: 'Magyar tulajdonoshoz kerülhet a Nestlé diósgyőri gyára', desc: 'A Nestlé Hungária megállapodott a Vimpex cégcsoporttal az üzem értékesítéséről.', source: 'Privátbankár' },
+                    { title: 'Az európai védelmi kiadások a magyar iparnak is lehetőséget jelentenek', desc: 'Az európai fegyverkezés növekedése a hadiipari beszállítók számára komoly piacot teremthet.', source: 'Mfor' }
+                ],
+                tech: [
+                    { title: 'Új AI-modellek és genetikai atlaszok a tudomány fókuszában', desc: 'A Nature friss összefoglalója szerint a genomatlasz segítségével kilencmilliárd lehetséges génmutációt térképeznek fel.', source: 'Nature' },
+                    { title: 'Sejtes terápiával próbálják újraépíteni a károsodott csontot', desc: 'Csontvelőből származó módosított sejtek segíthetik a csontregenerációt klinikai kísérletekben.', source: 'Nature News' }
+                ]
+            },
+            '2026-09-12': {
+                dateTitle: '2026. SZEPTEMBER 12., SZOMBAT • NAPI HÍRÖSSZEFOGLALÓ',
+                belpol: [
+                    { title: 'Őszi parlamenti ülésszak előkészítése', desc: 'A törvényhozás kiemelt figyelmet fordít az új költségvetési javaslatok tárgyalására.', source: 'MTI' }
+                ],
+                kulpol: [
+                    { title: 'Európai Unió klímacsúcs nyitánya', desc: 'A tagállamok képviselői új emissziós célokról egyeztetnek Brüsszelben.', source: 'Euronews' }
+                ],
+                gazdasag: [
+                    { title: 'Stabilizálódó inflációs adatok a régióban', desc: 'A jegybanki jelentések szerint a vártnál kedvezőbben alakulnak az őszi mutatószámok.', source: 'Portfolio' }
+                ],
+                tech: [
+                    { title: 'Kvantumszámítógépes áttörés a gyógyszerkutatásban', desc: 'Új algoritmus gyorsíthatja meg a molekuláris szimulációkat.', source: 'TechCrunch' }
+                ]
+            },
+            '2026-09-11': {
+                dateTitle: '2026. SZEPTEMBER 11., PÉNTEK • NAPI HÍRÖSSZEFOGLALÓ',
+                belpol: [
+                    { title: 'Új infrastruktúra fejlesztések az agglomerációban', desc: 'Több közlekedési csomópont felújítása kezdődik meg a jövő héten.', source: 'Budapestkornyeke' }
+                ],
+                kulpol: [
+                    { title: 'Kereskedelmi egyezmény az ázsiai régióban', desc: 'Új szabadkereskedelmi megállapodást írtak alá a csendes-óceáni partnerek.', source: 'BBC News' }
+                ],
+                gazdasag: [
+                    { title: 'Erősödő technológiai szektor a tőzsdéken', desc: 'A vezető indexek emelkedéssel zárták a hetet az AI szektor teljesítményének köszönhetően.', source: 'Bloomberg' }
+                ],
+                tech: [
+                    { title: 'Nyílt forráskódú nyelvi modell frissítés érkezett', desc: 'Újabb ingyenesen elérhető AI modell szárnyalja túl a korábbi architektúrákat.', source: 'HuggingFace' }
+                ]
+            },
+            '2026-09-10': {
+                dateTitle: '2026. SZEPTEMBER 10., CSÜTÖRTÖK • NAPI HÍRÖSSZEFOGLALÓ',
+                belpol: [
+                    { title: 'Oktatási digitalizációs program bővítése', desc: 'Újabb eszközöket és szoftverlicenceket kapnak az általános iskolák.', source: 'Híradó' }
+                ],
+                kulpol: [
+                    { title: 'Energetikai csúcstalálkozó Bécsben', desc: 'A megújuló energiaforrások hálózati integrációjáról tárgyalnak a szakértők.', source: 'ORF' }
+                ],
+                gazdasag: [
+                    { title: 'Bővül a hazai startup ökoszisztéma', desc: 'Új kockázati tőkealap indult a korai fázisú vállalkozások támogatására.', source: 'Forbes' }
+                ],
+                tech: [
+                    { title: 'Autonóm robotkísérletek a mezőgazdaságban', desc: 'Precíziós betakarító robotokat tesztelnek európai mintagazdaságokban.', source: 'Wired' }
+                ]
+            }
+        };
+
+        let currentEdition = '2026-09-13';
+
+        function renderArticles(list) {
+            if (!list || list.length === 0) {
+                return '<p class="text-slate-500 text-sm">Ebben a rovatban ezen a napon nem volt kiemelt hír.</p>';
+            }
+            return list.map((item, idx) => `
+                <div class="border-l-2 ${idx === 0 ? 'border-purple-500' : 'border-slate-700'} pl-4 space-y-1">
+                    <h3 class="font-bold text-slate-100 text-base">${item.title}</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">${item.desc}</p>
+                    <div class="text-xs text-slate-500 pt-1">Forrás: <span class="text-purple-400">${item.source}</span></div>
+                </div>
+            `).join('');
+        }
+
+        function loadEdition(dateStr) {
+            currentEdition = dateStr;
+            const data = editions[dateStr];
+            if (!data) return;
+
+            // Dátum címsor frissítése
+            document.getElementById('edition-date-header').innerText = data.dateTitle;
+
+            // Tartalmak betöltése
+            document.getElementById('content-belpol').innerHTML = renderArticles(data.belpol);
+            document.getElementById('content-kulpol').innerHTML = renderArticles(data.kulpol);
+            document.getElementById('content-gazdasag').innerHTML = renderArticles(data.gazdasag);
+            document.getElementById('content-tech').innerHTML = renderArticles(data.tech);
+
+            // Gombok aktív állapotának frissítése
+            document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById('btn-' + dateStr);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const selectEl = document.getElementById('date-select');
+            if (selectEl) selectEl.value = dateStr;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        function giveFeedback(type) {
+            const container = document.getElementById('feedback-buttons');
+            if (type === 'up') {
+                container.innerHTML = '<span class="text-xs text-purple-400 font-medium">Köszönjük a visszajelzést! ☕</span>';
+            } else {
+                container.innerHTML = '<span class="text-xs text-slate-400">Igyekszünk még jobbá tenni!</span>';
+            }
+        }
+
+        function handleSubscribe(e) {
+            e.preventDefault();
+            alert('Köszönjük a feliratkozást! A holnap reggeli összefoglaló már a kávéd mellé érkezik.');
+        }
+
+        // Kezdő tartalom betöltése
+        window.onload = function() {
+            loadEdition('2026-09-13');
+        };
+    </script>
+</body>
+</html>
