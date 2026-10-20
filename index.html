@@ -38,7 +38,7 @@
                 </div>
                 <span class="font-bold text-xl tracking-tight text-white">Superagent<span class="text-purple-400">.ai</span></span>
             </div>
-            <a href="#subscribe" class="text-sm bg-purple-600 hover:bg-purple-500 text-white font-medium px-4 py-2 rounded-lg transition duration-200 shadow-lg shadow-purple-600/30">
+            <a href="#subscribe-section" class="text-sm bg-purple-600 hover:bg-purple-500 text-white font-medium px-4 py-2 rounded-lg transition duration-200 shadow-lg shadow-purple-600/30">
                 Feliratkozás
             </a>
         </div>
@@ -62,7 +62,7 @@
             </p>
 
             <!-- Form -->
-            <form id="subscribe" onsubmit="handleSubscribe(event)" class="mt-8 max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+            <form onsubmit="handleSubscribe(event)" class="mt-8 max-w-md mx-auto flex flex-col sm:flex-row gap-3">
                 <input type="email" required placeholder="Add meg az e-mail címed..." class="bg-slate-900 border border-slate-700 focus:border-purple-500 text-white placeholder-slate-500 rounded-xl px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-purple-500/20 flex-1 transition">
                 <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-3.5 rounded-xl transition duration-200 shadow-lg shadow-purple-600/30 flex items-center justify-center space-x-2">
                     <span>Kérem a híreket</span>
@@ -179,6 +179,63 @@
             </div>
         </section>
 
+        <!-- VILÁGOS HÁTTERŰ "IRATKOZZ FEL!" KIEMELT CTA SZEKCIÓ -->
+        <section id="subscribe-section" class="-mx-4 px-4 py-20 bg-slate-100 text-slate-900 rounded-3xl mt-20 shadow-2xl relative overflow-hidden">
+            
+            <!-- Hátteri ornamensek -->
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-purple-200/50 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-blue-200/50 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-3xl mx-auto text-center space-y-8 relative z-10">
+                
+                <!-- Social Proof Badge -->
+                <div class="inline-flex items-center space-x-2 bg-slate-200/80 border border-slate-300 rounded-full px-4 py-1.5 text-xs font-bold text-slate-700">
+                    <span class="flex -space-x-2">
+                        <span class="w-5 h-5 rounded-full bg-purple-500 border border-white flex items-center justify-center text-[9px] text-white font-bold">☕</span>
+                        <span class="w-5 h-5 rounded-full bg-blue-500 border border-white flex items-center justify-center text-[9px] text-white font-bold">⚡</span>
+                        <span class="w-5 h-5 rounded-full bg-emerald-500 border border-white flex items-center justify-center text-[9px] text-white font-bold">✓</span>
+                    </span>
+                    <span>Csatlakozz a tudatos reggeli olvasókhoz!</span>
+                </div>
+
+                <!-- Nagy sötét felirat -->
+                <h2 class="text-4xl sm:text-6xl font-black tracking-tight leading-none text-slate-950 uppercase">
+                    IRATKOZZ FEL<br>
+                    <span class="text-purple-600">A REGGELI HÍREKRE!</span>
+                </h2>
+
+                <p class="text-slate-600 text-base sm:text-lg max-w-xl mx-auto font-medium leading-relaxed">
+                    Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanap reggel 7:00-kor egy lényegre törő, átlátható hírösszefoglalót.
+                </p>
+
+                <!-- Űrlap -->
+                <form onsubmit="handleSubscribe(event)" class="max-w-md mx-auto flex flex-col sm:flex-row gap-3 pt-2">
+                    <input type="email" required placeholder="Személyes e-mail címed..." class="bg-white border-2 border-slate-300 focus:border-purple-600 text-slate-900 placeholder-slate-400 font-medium rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-purple-500/10 flex-1 shadow-sm transition">
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold tracking-wide px-8 py-4 rounded-xl transition duration-200 shadow-xl shadow-purple-600/30 flex items-center justify-center space-x-2 text-base">
+                        <span>FELIRATKOZOM</span>
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+
+                <!-- Garancia elemek -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-xs text-slate-600 font-semibold border-t border-slate-200/80 max-w-xl mx-auto">
+                    <div class="flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-shield-halved text-purple-600 text-sm"></i>
+                        <span>100% Ingyenes</span>
+                    </div>
+                    <div class="flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-ban-smoking text-purple-600 text-sm"></i>
+                        <span>Zaj- és spammentes</span>
+                    </div>
+                    <div class="flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-bolt text-purple-600 text-sm"></i>
+                        <span>1 kattintásos leiratkozás</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer -->
@@ -188,7 +245,6 @@
 
     <!-- JS Interakciók és Archívum Adatok -->
     <script>
-        // Hírlevél adatbázis dátumok szerint
         const editions = {
             '2026-10-16': {
                 dateTitle: '2026. OKTÓBER 16., PÉNTEK • NAPI HÍRÖSSZEFOGLALÓ',
@@ -249,16 +305,13 @@
             const data = editions[dateStr];
             if (!data) return;
 
-            // Dátum címsor frissítése
             document.getElementById('edition-date-header').innerText = data.dateTitle;
 
-            // Tartalmak betöltése
             document.getElementById('content-belpol').innerHTML = renderArticles(data.belpol);
             document.getElementById('content-kulpol').innerHTML = renderArticles(data.kulpol);
             document.getElementById('content-gazdasag').innerHTML = renderArticles(data.gazdasag);
             document.getElementById('content-tech').innerHTML = renderArticles(data.tech);
 
-            // Gombok aktív állapotának frissítése
             document.querySelectorAll('.date-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById('btn-' + dateStr);
             if (activeBtn) activeBtn.classList.add('active');
@@ -289,7 +342,6 @@
             alert('Köszönjük a feliratkozást! A holnap reggeli összefoglaló már a kávéd mellé érkezik.');
         }
 
-        // Kezdő tartalom betöltése
         window.onload = function() {
             loadEdition('2026-10-16');
         };
