@@ -69,26 +69,36 @@
 
     <!-- Header / Navigáció -->
     <header class="border-b border-blue-900/40 bg-brand-dark/95 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2.5 sm:space-x-3">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+            <a href="https://nyirigabor.hu/" class="flex items-center space-x-2.5 sm:space-x-3">
                 <div class="w-8 h-8 bg-blue-600 text-white flex items-center justify-center font-black text-sm">
                     ⚡
                 </div>
                 <span class="font-black text-xl sm:text-2xl tracking-tighter uppercase text-white">Superagent<span class="text-blue-400">.ai</span></span>
-            </div>
+            </a>
             
-            <div class="flex items-center space-x-3 sm:space-x-4">
-                <!-- Sötét / Világos Téma Váltó Gomb -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-9 h-9 border border-blue-900/80 bg-blue-950/40 text-blue-300 flex items-center justify-center text-xs uppercase transition hover:border-blue-500" aria-label="Téma váltása">
-                    <i id="themeIcon" class="fa-solid fa-moon"></i>
-                </button>
+            <!-- Menü Linkek -->
+            <nav class="flex items-center space-x-6 text-xs uppercase tracking-widest font-bold">
+                <a href="https://nyirigabor.hu/index2.html" class="text-blue-400 hover:text-white transition">
+                    Superagent AI
+                </a>
+                <a href="https://nyirigabor.hu/index3.html" class="text-slate-300 hover:text-white transition">
+                    Liber Mixek
+                </a>
+            </nav>
 
+            <div class="flex items-center space-x-3 sm:space-x-4">
                 <a href="#subscribe-section" class="text-[11px] sm:text-xs uppercase tracking-widest bg-red-600 hover:bg-red-500 text-white font-black px-4 sm:px-6 py-2.5 transition">
                     FELIRATKOZÁS
                 </a>
             </div>
         </div>
     </header>
+
+    <!-- Floating Dark Mode Switch Gomb a Jobb Alsó Sarokban -->
+    <button id="themeToggleBtn" onclick="toggleTheme()" class="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full border border-blue-800/80 bg-blue-950/80 text-blue-300 flex items-center justify-center text-base shadow-lg hover:border-blue-500 hover:scale-105 transition duration-200 backdrop-blur-md" aria-label="Téma váltása">
+        <i id="themeIcon" class="fa-solid fa-moon"></i>
+    </button>
 
     <!-- Main Content -->
     <main class="space-y-16 sm:space-y-24 py-8 sm:py-12">
@@ -169,20 +179,18 @@
             </div>
         </section>
 
-        <!-- CTA Feliratkozás (A felső szekcióhoz igazított betűmérettel és új marketing szöveggel) -->
+        <!-- CTA Feliratkozás -->
         <section id="subscribe-section" class="w-full border-y border-blue-900/60 py-16 sm:py-24 bg-grid-pattern relative">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-8 relative z-10">
                 <div class="inline-block border border-blue-800/80 bg-blue-950/60 px-3.5 sm:px-4 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-blue-400">
                     CSATLAKOZZ A TUDATOS REGGELI OLVASÓKHOZ
                 </div>
 
-                <!-- A felső h1-gyel megegyező típusú és méretű h2 címsor -->
                 <h2 class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-none uppercase">
                     IRATKOZZ FEL<br>
                     <span class="gradient-text-blue inline-block border-b-2 sm:border-b-4 border-blue-500 pb-0.5 sm:pb-1">A REGGELI HÍREKRE!</span>
                 </h2>
 
-                <!-- Új marketing szöveg -->
                 <div class="space-y-2 max-w-2xl mx-auto">
                     <p class="text-slate-300 text-sm sm:text-base md:text-lg font-bold tracking-wide uppercase text-blue-400">
                         A JÖVŐ TECHNIKÁJA • EMBERI ELME NÉLKÜL VÁLOGATOTT HÍREK
@@ -192,7 +200,6 @@
                     </p>
                 </div>
 
-                <!-- Beketezett Form konténer -->
                 <div class="border border-blue-800/80 bg-brand-card p-5 sm:p-8 max-w-xl mx-auto space-y-4">
                     <form id="bottomForm" class="flex flex-col gap-3.5 sm:gap-4">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -284,3 +291,7 @@
     </script>
 </body>
 </html>
+```<FollowUp>
+<Suggest>Módosítsuk a mobil nézetben megjelenő menüt lenyíló (hamburger) menüre?</Suggest>
+<Suggest>Szeretnél egy külön kapcsolót a zenei projekthez/mixekhez a fejlécben?</Suggest>
+</FollowUp>
