@@ -63,6 +63,11 @@
         html:not(.dark) .bg-blue-950\/40, html:not(.dark) .bg-blue-950\/60 {
             background-color: #eff6ff !important;
         }
+        
+        /* Dropdown menü stílusok */
+        .group:hover .dropdown-menu {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-brand-dark text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between overflow-x-hidden transition-colors duration-300">
@@ -77,14 +82,30 @@
                 <span class="font-black text-xl sm:text-2xl tracking-tighter uppercase text-white">Superagent<span class="text-blue-400">.ai</span></span>
             </a>
             
-            <!-- Menü Linkek -->
+            <!-- Navigációs Menü "Oldalak" Főmenüvel -->
             <nav class="flex items-center space-x-6 text-xs uppercase tracking-widest font-bold">
-                <a href="https://nyirigabor.hu/index2.html" class="text-blue-400 hover:text-white transition">
-                    Superagent AI
-                </a>
-                <a href="https://nyirigabor.hu/index3.html" class="text-slate-300 hover:text-white transition">
-                    Liber Mixek
-                </a>
+                <div class="relative group py-2">
+                    <button class="flex items-center space-x-2 text-slate-200 hover:text-blue-400 transition focus:outline-none">
+                        <span>OLDALAK</span>
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    </button>
+                    
+                    <!-- Lenyíló Almenü -->
+                    <div class="dropdown-menu hidden absolute left-0 top-full w-64 bg-brand-card border border-blue-800/80 shadow-2xl py-2 z-50 backdrop-blur-md">
+                        <a href="https://nyirigabor.hu/index2.html" class="block px-4 py-3 text-[11px] font-mono text-cyan-400 hover:bg-blue-950/60 hover:text-white transition border-b border-blue-900/40">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                                <span>AETHERIA // LABS</span>
+                            </div>
+                        </a>
+                        <a href="https://nyirigabor.hu/index3.html" class="block px-4 py-3 text-[11px] font-mono text-blue-400 hover:bg-blue-950/60 hover:text-white transition">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                                <span>NEXUS v3.0 // LABS</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
             </nav>
 
             <div class="flex items-center space-x-3 sm:space-x-4">
