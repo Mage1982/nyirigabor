@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEXUS // Quantum Geometry & Audio Wave Engine</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -40,20 +40,22 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap');
 
-        /* Theme Smooth Transitions */
+        /* Dynamic Smooth Transitions */
         body, .glass-panel, .glass-button, header, footer {
-            transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+            transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             overflow: hidden;
             user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
         }
 
         /* Glassmorphism Dark Mode */
         .dark .glass-panel {
-            background: rgba(14, 18, 28, 0.72);
+            background: rgba(14, 18, 28, 0.78);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 240, 255, 0.18);
@@ -64,7 +66,7 @@
             border: 1px solid rgba(255, 255, 255, 0.12);
             color: #e2e8f0;
         }
-        .dark .glass-button:hover {
+        .dark .glass-button:hover, .dark .glass-button:active {
             background: rgba(0, 240, 255, 0.12);
             border-color: rgba(0, 240, 255, 0.5);
             color: #ffffff;
@@ -80,7 +82,7 @@
 
         /* Glassmorphism Light Mode */
         html:not(.dark) .glass-panel {
-            background: rgba(255, 255, 255, 0.78);
+            background: rgba(255, 255, 255, 0.82);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 102, 255, 0.18);
@@ -91,7 +93,7 @@
             border: 1px solid rgba(0, 102, 255, 0.15);
             color: #1e293b;
         }
-        html:not(.dark) .glass-button:hover {
+        html:not(.dark) .glass-button:hover, html:not(.dark) .glass-button:active {
             background: rgba(0, 102, 255, 0.12);
             border-color: rgba(0, 102, 255, 0.5);
             color: #0066ff;
@@ -119,30 +121,25 @@
             -webkit-appearance: none;
             background: rgba(150, 150, 150, 0.2);
             border-radius: 9999px;
-            height: 5px;
+            height: 6px;
         }
         .dark input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 15px;
-            width: 15px;
+            height: 18px;
+            width: 18px;
             border-radius: 50%;
             background: #00f0ff;
             cursor: pointer;
             box-shadow: 0 0 10px #00f0ff;
-            transition: transform 0.1s ease;
         }
         html:not(.dark) input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none;
-            height: 15px;
-            width: 15px;
+            height: 18px;
+            width: 18px;
             border-radius: 50%;
             background: #0066ff;
             cursor: pointer;
             box-shadow: 0 0 10px #0066ff;
-            transition: transform 0.1s ease;
-        }
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
         }
 
         /* Background Grid */
@@ -158,54 +155,75 @@
                 linear-gradient(to right, rgba(0, 102, 255, 0.04) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(0, 102, 255, 0.04) 1px, transparent 1px);
         }
+
+        /* Mobile Controls Collapsed Animation State */
+        .hud-hidden {
+            transform: translateY(120%) scale(0.95);
+            opacity: 0;
+            pointer-events: none !important;
+        }
+        @media (min-width: 768px) {
+            .hud-hidden {
+                transform: translateX(-120%) scale(0.95);
+            }
+            .hud-right-hidden {
+                transform: translateX(120%) scale(0.95);
+            }
+        }
     </style>
 </head>
 <body class="relative h-screen w-screen bg-cyber-darkBg text-slate-100 transition-colors duration-400 bg-grid-dark overflow-hidden select-none">
 
     <!-- Interactive Canvas Layer -->
-    <canvas id="viewport" class="absolute inset-0 z-0 block w-full h-full cursor-crosshair"></canvas>
+    <canvas id="viewport" class="absolute inset-0 z-0 block w-full h-full cursor-crosshair touch-none"></canvas>
 
     <!-- Header Navigation -->
-    <header class="relative z-10 w-full px-6 py-4 flex items-center justify-between glass-panel border-b">
-        <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-lg">
-                <i data-lucide="box" class="w-5 h-5 text-white"></i>
+    <header id="appHeader" class="relative z-20 w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between glass-panel border-b transition-all duration-300">
+        <div class="flex items-center space-x-2.5 sm:space-x-3">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 flex items-center justify-center shadow-lg shrink-0">
+                <i data-lucide="box" class="w-4 h-4 sm:w-5 sm:h-5 text-white"></i>
             </div>
             <div>
-                <h1 class="font-mono font-bold text-base tracking-wider bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
-                    NEXUS <span class="text-xs font-normal text-slate-400 border border-slate-700/50 rounded px-1.5 py-0.5 ml-1">v3.0 // LABS</span>
+                <h1 class="font-mono font-bold text-sm sm:text-base tracking-wider bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent flex items-center">
+                    NEXUS <span class="text-[10px] sm:text-xs font-normal text-slate-400 border border-slate-700/50 rounded px-1.5 py-0.2 sm:py-0.5 ml-1.5">v3.0</span>
                 </h1>
-                <p class="text-[10px] text-slate-400 font-mono tracking-tight hidden sm:block">QUANTUM GEOMETRY & AUDIO WAVE ENGINE</p>
+                <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-tight hidden sm:block">QUANTUM GEOMETRY & AUDIO WAVE ENGINE</p>
             </div>
         </div>
 
         <!-- Right Side Actions -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-1.5 sm:space-x-3">
+            <!-- Mobile HUD Hide/Show Toggle Button -->
+            <button onclick="toggleHudVisibility()" id="hudToggleBtn" class="glass-button px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5 text-cyan-400 border-cyan-500/40" title="Toggle Controls Overlay">
+                <i data-lucide="eye" id="hudToggleIcon" class="w-4 h-4"></i>
+                <span id="hudToggleText" class="hidden xs:inline text-[11px]">HUD</span>
+            </button>
+
             <!-- Audio Toggle Button -->
-            <button id="audioToggleBtn" onclick="toggleAudio()" class="glass-button px-3.5 py-2 rounded-xl text-xs font-mono flex items-center space-x-2">
+            <button id="audioToggleBtn" onclick="toggleAudio()" class="glass-button px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5">
                 <i data-lucide="volume-x" id="audioIcon" class="w-4 h-4"></i>
                 <span id="audioStatusText" class="hidden sm:inline">AUDIO: OFF</span>
             </button>
 
             <!-- Light / Dark Mode Toggle Button -->
-            <button onclick="toggleTheme()" class="glass-button p-2 rounded-xl text-xs font-mono flex items-center justify-center" title="Toggle Light/Dark Theme">
+            <button onclick="toggleTheme()" class="glass-button p-1.5 sm:p-2 rounded-xl text-xs font-mono flex items-center justify-center" title="Toggle Light/Dark Theme">
                 <i data-lucide="sun" id="themeIconSun" class="w-4 h-4 text-amber-400 hidden"></i>
                 <i data-lucide="moon" id="themeIconMoon" class="w-4 h-4 text-cyan-400"></i>
             </button>
 
             <!-- Reset Button -->
-            <button onclick="resetCanvas()" class="glass-button p-2 rounded-xl text-xs font-mono" title="Reset Simulation">
+            <button onclick="resetCanvas()" class="glass-button p-1.5 sm:p-2 rounded-xl text-xs font-mono" title="Reset Simulation">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
         </div>
     </header>
 
     <!-- Main Dynamic Floating HUD / Controls Overlay -->
-    <main class="relative z-10 flex-1 p-4 md:p-6 flex flex-col md:flex-row justify-between items-start md:items-end pointer-events-none space-y-4 md:space-y-0 h-[calc(100vh-120px)]">
+    <main class="relative z-10 flex-1 p-3 sm:p-6 flex flex-col md:flex-row justify-between items-stretch md:items-end pointer-events-none space-y-3 md:space-y-0 h-[calc(100vh-105px)] sm:h-[calc(100vh-120px)] overflow-y-auto md:overflow-visible">
         
         <!-- Left Side: Controls Panel -->
-        <div class="pointer-events-auto max-w-sm w-full glass-panel rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div id="leftHudPanel" class="pointer-events-auto max-w-full md:max-w-sm w-full glass-panel rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xl transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <span class="text-xs font-mono text-cyan-400 dark:text-cyan-400 font-bold tracking-wider flex items-center">
                     <i data-lucide="shapes" class="w-4 h-4 mr-1.5"></i> GEOMETRY MODE
                 </span>
@@ -216,38 +234,38 @@
 
             <!-- Geometry Mode Grid -->
             <div class="grid grid-cols-2 gap-2">
-                <button onclick="setMode('lattice')" class="mode-btn glass-button p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-1 active" data-mode="lattice">
+                <button onclick="setMode('lattice')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1 active" data-mode="lattice">
                     <span class="font-bold">LATTICE</span>
-                    <span class="text-[10px] opacity-70">Polyhedral Net</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Polyhedral Net</span>
                 </button>
-                <button onclick="setMode('waves')" class="mode-btn glass-button p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-1" data-mode="waves">
+                <button onclick="setMode('waves')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1" data-mode="waves">
                     <span class="font-bold">KINETIC WAVES</span>
-                    <span class="text-[10px] opacity-70">Harmonic Grid</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Harmonic Grid</span>
                 </button>
-                <button onclick="setMode('vortex')" class="mode-btn glass-button p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-1" data-mode="vortex">
+                <button onclick="setMode('vortex')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1" data-mode="vortex">
                     <span class="font-bold">VORTEX FIELD</span>
-                    <span class="text-[10px] opacity-70">Spiral Gravity</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Spiral Gravity</span>
                 </button>
-                <button onclick="setMode('mesh')" class="mode-btn glass-button p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-1" data-mode="mesh">
+                <button onclick="setMode('mesh')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1" data-mode="mesh">
                     <span class="font-bold">NEURAL MESH</span>
-                    <span class="text-[10px] opacity-70">Dynamic Synapse</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Dynamic Synapse</span>
                 </button>
             </div>
 
             <!-- Dynamic Sliders -->
-            <div class="space-y-3 pt-2 border-t border-white/10 text-xs font-mono">
+            <div class="space-y-2.5 sm:space-y-3 pt-2 border-t border-white/10 text-xs font-mono">
                 <!-- Node Count Slider -->
                 <div>
-                    <div class="flex justify-between mb-1 text-[11px]">
+                    <div class="flex justify-between mb-1 text-[10px] sm:text-[11px]">
                         <span class="opacity-70">COMPLEXITY / NODES</span>
-                        <span id="countVal" class="text-cyan-400 font-bold">120</span>
+                        <span id="countVal" class="text-cyan-400 font-bold">80</span>
                     </div>
-                    <input type="range" id="nodeSlider" min="30" max="300" value="120" class="w-full cursor-pointer" oninput="updateNodeCount(this.value)">
+                    <input type="range" id="nodeSlider" min="20" max="250" value="80" class="w-full cursor-pointer" oninput="updateNodeCount(this.value)">
                 </div>
 
                 <!-- Simulation Speed -->
                 <div>
-                    <div class="flex justify-between mb-1 text-[11px]">
+                    <div class="flex justify-between mb-1 text-[10px] sm:text-[11px]">
                         <span class="opacity-70">SIMULATION SPEED</span>
                         <span id="speedVal" class="text-cyan-400 font-bold">1.0x</span>
                     </div>
@@ -256,18 +274,18 @@
 
                 <!-- Interaction Force -->
                 <div>
-                    <div class="flex justify-between mb-1 text-[11px]">
+                    <div class="flex justify-between mb-1 text-[10px] sm:text-[11px]">
                         <span class="opacity-70">GRAVITY / WARP FORCE</span>
-                        <span id="forceVal" class="text-cyan-400 font-bold">160px</span>
+                        <span id="forceVal" class="text-cyan-400 font-bold">140px</span>
                     </div>
-                    <input type="range" id="forceSlider" min="50" max="350" value="160" class="w-full cursor-pointer" oninput="updateForce(this.value)">
+                    <input type="range" id="forceSlider" min="40" max="300" value="140" class="w-full cursor-pointer" oninput="updateForce(this.value)">
                 </div>
             </div>
         </div>
 
         <!-- Right Side: Color Theme & Synthesizer Scale HUD -->
-        <div class="pointer-events-auto max-w-xs w-full glass-panel rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <div id="rightHudPanel" class="pointer-events-auto max-w-full md:max-w-xs w-full glass-panel rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xl transition-all duration-300">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <span class="text-xs font-mono text-purple-400 font-bold tracking-wider flex items-center">
                     <i data-lucide="palette" class="w-4 h-4 mr-1.5"></i> COLOR PALETTE
                 </span>
@@ -275,15 +293,15 @@
 
             <!-- Color Palette Selector -->
             <div class="grid grid-cols-4 gap-2">
-                <button onclick="setColorTheme('cyanViolet')" class="palette-btn h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-purple-600 border border-white/20 hover:scale-105 transition-transform" title="Cyan / Violet"></button>
-                <button onclick="setColorTheme('solar')" class="palette-btn h-8 rounded-lg bg-gradient-to-tr from-amber-400 to-red-600 border border-white/20 hover:scale-105 transition-transform" title="Solar Flare"></button>
-                <button onclick="setColorTheme('emerald')" class="palette-btn h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-blue-600 border border-white/20 hover:scale-105 transition-transform" title="Emerald Cyber"></button>
-                <button onclick="setColorTheme('monochrome')" class="palette-btn h-8 rounded-lg bg-gradient-to-tr from-slate-200 to-slate-700 border border-white/20 hover:scale-105 transition-transform" title="Monochrome"></button>
+                <button onclick="setColorTheme('cyanViolet')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-purple-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Cyan / Violet"></button>
+                <button onclick="setColorTheme('solar')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-amber-400 to-red-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Solar Flare"></button>
+                <button onclick="setColorTheme('emerald')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-blue-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Emerald Cyber"></button>
+                <button onclick="setColorTheme('monochrome')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-slate-200 to-slate-700 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Monochrome"></button>
             </div>
 
             <!-- Audio Scale Selector -->
             <div class="pt-2 border-t border-white/10">
-                <span class="text-[11px] font-mono opacity-70 block mb-2">SYNTH CHORD SCALE</span>
+                <span class="text-[10px] sm:text-[11px] font-mono opacity-70 block mb-1.5 sm:mb-2">SYNTH CHORD SCALE</span>
                 <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
                     <button onclick="setSynthScale('pentatonic')" class="scale-btn glass-button py-1.5 rounded-lg active" data-scale="pentatonic">PENTATONIC</button>
                     <button onclick="setSynthScale('minor')" class="scale-btn glass-button py-1.5 rounded-lg" data-scale="minor">NEO MINOR</button>
@@ -293,25 +311,30 @@
             </div>
 
             <!-- Quick Tip Box -->
-            <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-[11px] font-mono flex items-start space-x-2">
+            <div class="p-2.5 sm:p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-[10px] sm:text-[11px] font-mono flex items-start space-x-2">
                 <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"></i>
-                <span class="opacity-80">Click or drag on canvas to warp geometry & synthesize ambient sound waves.</span>
+                <span class="opacity-80">Tap or drag anywhere to warp geometry & trigger synth harmonies.</span>
             </div>
         </div>
     </main>
 
+    <!-- Floating Canvas Quick Action Button on Mobile when HUD is hidden -->
+    <button id="quickShowHudBtn" onclick="toggleHudVisibility()" class="fixed bottom-12 right-4 z-30 pointer-events-auto glass-button p-3 rounded-full shadow-2xl text-cyan-400 border-cyan-400/50 hidden md:hidden" title="Show UI Controls">
+        <i data-lucide="sliders" class="w-5 h-5"></i>
+    </button>
+
     <!-- Footer Stats & Branding -->
-    <footer class="relative z-10 w-full px-6 py-3 glass-panel border-t flex flex-col sm:flex-row items-center justify-between text-xs font-mono opacity-80 space-y-2 sm:space-y-0">
-        <div class="flex items-center space-x-4">
+    <footer id="appFooter" class="relative z-20 w-full px-4 sm:px-6 py-2.5 sm:py-3 glass-panel border-t flex flex-row items-center justify-between text-[10px] sm:text-xs font-mono opacity-85 space-y-0 transition-all duration-300">
+        <div class="flex items-center space-x-3 sm:space-x-4">
             <span class="flex items-center">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-ping"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 sm:mr-2 animate-ping"></span>
                 FPS: <span id="fpsDisplay" class="font-bold ml-1">60</span>
             </span>
-            <span>NODES: <span id="activeNodes" class="font-bold">120</span></span>
-            <span>FREQ: <span id="freqDisplay" class="text-cyan-400 font-bold">READY</span></span>
+            <span>NODES: <span id="activeNodes" class="font-bold">80</span></span>
+            <span class="hidden xs:inline">FREQ: <span id="freqDisplay" class="text-cyan-400 font-bold">READY</span></span>
         </div>
         
-        <div class="flex items-center space-x-4 text-[11px]">
+        <div class="flex items-center space-x-2 sm:space-x-4 text-[10px] sm:text-[11px]">
             <span>DESIGNED IN THE STYLE OF <a href="https://nyirigabor.hu/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">NYIRIGABOR.HU</a></span>
         </div>
     </footer>
@@ -327,16 +350,28 @@
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
+        // Auto Mobile Performance Scaling
+        const isMobile = window.innerWidth < 768;
+        const defaultNodeCount = isMobile ? 70 : 120;
+        const defaultForce = isMobile ? 120 : 160;
+
         // Core State Engine
         let isDarkMode = true;
+        let isHudVisible = true;
         let config = {
             mode: 'lattice',
-            nodeCount: 120,
+            nodeCount: defaultNodeCount,
             speed: 1.0,
-            gravityRadius: 160,
+            gravityRadius: defaultForce,
             theme: 'cyanViolet',
             scale: 'pentatonic'
         };
+
+        // Sync Sliders to Initial Config
+        document.getElementById('nodeSlider').value = config.nodeCount;
+        document.getElementById('countVal').innerText = config.nodeCount;
+        document.getElementById('forceSlider').value = config.gravityRadius;
+        document.getElementById('forceVal').innerText = `${config.gravityRadius}px`;
 
         // Color Palettes (Dark & Light Adapters)
         const palettes = {
@@ -358,7 +393,7 @@
             }
         };
 
-        // Mouse State
+        // Mouse & Touch State
         const mouse = {
             x: width / 2,
             y: height / 2,
@@ -394,19 +429,16 @@
                 const noteIndex = Math.floor((baseFreq / height) * currentScale.length);
                 const freq = currentScale[Math.min(currentScale.length - 1, Math.max(0, noteIndex))];
 
-                // Oscillator 1 (Root)
                 const osc1 = audioCtx.createOscillator();
                 const gain1 = audioCtx.createGain();
                 osc1.type = 'sine';
                 osc1.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-                // Oscillator 2 (Fifth Harmonic)
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.type = 'triangle';
                 osc2.frequency.setValueAtTime(freq * 1.5, audioCtx.currentTime);
 
-                // Envelope
                 gain1.gain.setValueAtTime(0.01, audioCtx.currentTime);
                 gain1.gain.exponentialRampToValueAtTime(0.12, audioCtx.currentTime + 0.04);
                 gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
@@ -425,7 +457,8 @@
                 osc1.stop(audioCtx.currentTime + 0.6);
                 osc2.stop(audioCtx.currentTime + 0.5);
 
-                document.getElementById('freqDisplay').innerText = `${Math.round(freq)} Hz`;
+                const freqEl = document.getElementById('freqDisplay');
+                if (freqEl) freqEl.innerText = `${Math.round(freq)} Hz`;
             } catch (e) {}
         }
 
@@ -439,12 +472,38 @@
                 initAudio();
                 btn.classList.add('active');
                 icon.setAttribute('data-lucide', 'volume-2');
-                statusText.innerText = 'AUDIO: ON';
+                if (statusText) statusText.innerText = 'AUDIO: ON';
             } else {
                 btn.classList.remove('active');
                 icon.setAttribute('data-lucide', 'volume-x');
-                statusText.innerText = 'AUDIO: OFF';
-                document.getElementById('freqDisplay').innerText = 'OFF';
+                if (statusText) statusText.innerText = 'AUDIO: OFF';
+                const freqEl = document.getElementById('freqDisplay');
+                if (freqEl) freqEl.innerText = 'OFF';
+            }
+            lucide.createIcons();
+        }
+
+        // HUD Toggle Visibility Feature for Mobile & Desktop Canvas Immersion
+        function toggleHudVisibility() {
+            isHudVisible = !isHudVisible;
+            const leftPanel = document.getElementById('leftHudPanel');
+            const rightPanel = document.getElementById('rightHudPanel');
+            const toggleIcon = document.getElementById('hudToggleIcon');
+            const toggleText = document.getElementById('hudToggleText');
+            const quickBtn = document.getElementById('quickShowHudBtn');
+
+            if (isHudVisible) {
+                leftPanel.classList.remove('hud-hidden');
+                rightPanel.classList.remove('hud-hidden', 'hud-right-hidden');
+                toggleIcon.setAttribute('data-lucide', 'eye');
+                if (toggleText) toggleText.innerText = 'HUD';
+                quickBtn.classList.add('hidden');
+            } else {
+                leftPanel.classList.add('hud-hidden');
+                rightPanel.classList.add('hud-hidden', 'hud-right-hidden');
+                toggleIcon.setAttribute('data-lucide', 'eye-off');
+                if (toggleText) toggleText.innerText = 'HIDE';
+                quickBtn.classList.remove('hidden');
             }
             lucide.createIcons();
         }
@@ -461,24 +520,21 @@
                 this.y = Math.random() * height;
                 this.vx = (Math.random() - 0.5) * 1.6;
                 this.vy = (Math.random() - 0.5) * 1.6;
-                this.size = Math.random() * 2.5 + 1.2;
+                this.size = Math.random() * 2.2 + 1.2;
                 this.angle = Math.random() * Math.PI * 2;
                 this.orbitRadius = Math.random() * (width > height ? height : width) * 0.35;
                 this.speed = Math.random() * 0.015 + 0.005;
             }
 
             update() {
-                // Mode Specific Physics Dynamics
                 if (config.mode === 'lattice' || config.mode === 'mesh') {
                     this.x += this.vx * config.speed;
                     this.y += this.vy * config.speed;
 
-                    // Screen Edge Rebound
                     if (this.x < 0 || this.x > width) this.vx *= -1;
                     if (this.y < 0 || this.y > height) this.vy *= -1;
                 } 
                 else if (config.mode === 'waves') {
-                    // Kinetic Wave Motion
                     this.angle += this.speed * config.speed;
                     this.y += Math.sin(this.angle) * 1.5 * config.speed;
                     this.x += this.vx * 0.5 * config.speed;
@@ -486,19 +542,14 @@
                     if (this.x > width) this.x = 0;
                 } 
                 else if (config.mode === 'vortex') {
-                    // Spiral Gravitation
                     this.angle += 0.01 * config.speed;
-                    const dx = mouse.x - this.x;
-                    const dy = mouse.y - this.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
                     const targetX = mouse.x + Math.cos(this.angle) * this.orbitRadius;
                     const targetY = mouse.y + Math.sin(this.angle) * this.orbitRadius;
                     this.x += (targetX - this.x) * 0.03 * config.speed;
                     this.y += (targetY - this.y) * 0.03 * config.speed;
                 }
 
-                // Interactive Mouse Gravity Force
+                // Interactive Mouse & Touch Attraction/Repulsion Force
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -506,17 +557,14 @@
                 if (dist < mouse.radius) {
                     const force = (mouse.radius - dist) / mouse.radius;
                     if (mouse.isDown) {
-                        // Strong Repulsion Force
                         this.vx -= (dx / dist) * force * 3;
                         this.vy -= (dy / dist) * force * 3;
                     } else {
-                        // Gentle Attractor Pull
                         this.vx += (dx / dist) * force * 0.4;
                         this.vy += (dy / dist) * force * 0.4;
                     }
                 }
 
-                // Friction
                 this.vx *= 0.96;
                 this.vy *= 0.96;
             }
@@ -525,7 +573,7 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = palette.primary;
-                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 8;
                 ctx.shadowColor = palette.glow;
                 ctx.fill();
                 ctx.shadowBlur = 0;
@@ -541,9 +589,8 @@
             document.getElementById('activeNodes').innerText = config.nodeCount;
         }
 
-        // Geometric Network & Triangle Rendering
         function drawGeometricLattice(palette) {
-            const maxDistance = 130;
+            const maxDistance = isMobile ? 100 : 130;
 
             for (let i = 0; i < nodes.length; i++) {
                 for (let j = i + 1; j < nodes.length; j++) {
@@ -562,14 +609,13 @@
                         ctx.stroke();
                         ctx.globalAlpha = 1.0;
 
-                        // Fill polygons in Lattice Mode
                         if (config.mode === 'lattice') {
                             for (let k = j + 1; k < nodes.length; k++) {
                                 const dx2 = nodes[j].x - nodes[k].x;
                                 const dy2 = nodes[j].y - nodes[k].y;
                                 const dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
 
-                                if (dist2 < maxDistance - 30) {
+                                if (dist2 < maxDistance - 25) {
                                     ctx.beginPath();
                                     ctx.moveTo(nodes[i].x, nodes[i].y);
                                     ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -590,7 +636,7 @@
         // Ripple Effect Array
         let ripples = [];
         function createRipple(x, y) {
-            ripples.push({ x, y, radius: 2, maxRadius: 160, alpha: 1.0 });
+            ripples.push({ x, y, radius: 2, maxRadius: isMobile ? 120 : 160, alpha: 1.0 });
             playPolyphonicChord(y);
         }
 
@@ -620,28 +666,21 @@
         let frameCount = 0;
         let fps = 60;
 
-        // Render Loop
         function animate() {
             const themeMode = isDarkMode ? 'dark' : 'light';
             const palette = palettes[config.theme][themeMode];
 
-            // Trailing Canvas Clear
             ctx.fillStyle = isDarkMode ? 'rgba(8, 9, 13, 0.22)' : 'rgba(244, 247, 251, 0.22)';
             ctx.fillRect(0, 0, width, height);
 
-            // Update & Render Nodes
             nodes.forEach(node => {
                 node.update();
                 node.draw(palette);
             });
 
-            // Draw Geometric Mesh / Lattice
             drawGeometricLattice(palette);
-
-            // Draw Audio Ripples
             updateDrawRipples(palette);
 
-            // FPS Update
             frameCount++;
             const now = performance.now();
             if (now - lastTime >= 1000) {
@@ -654,7 +693,7 @@
             requestAnimationFrame(animate);
         }
 
-        // Dark / Light Theme Switching
+        // Theme Switch
         function toggleTheme() {
             isDarkMode = !isDarkMode;
             const html = document.documentElement;
@@ -722,7 +761,7 @@
             initNodes();
         }
 
-        // Interactive Canvas Event Listeners
+        // Event Listeners with Touch Mobile Optimizations
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
@@ -747,6 +786,7 @@
             mouse.isDown = false;
         });
 
+        // Touch Event Listeners for Smooth Mobile Navigation
         canvas.addEventListener('touchstart', (e) => {
             if (e.touches.length > 0) {
                 mouse.isDown = true;
@@ -754,20 +794,22 @@
                 mouse.y = e.touches[0].clientY;
                 createRipple(mouse.x, mouse.y);
             }
-        });
+        }, { passive: true });
 
         canvas.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
                 mouse.x = e.touches[0].clientX;
                 mouse.y = e.touches[0].clientY;
+                if (isAudioActive && Math.random() < 0.05) {
+                    playPolyphonicChord(mouse.y);
+                }
             }
-        });
+        }, { passive: true });
 
         canvas.addEventListener('touchend', () => {
             mouse.isDown = false;
         });
 
-        // Lifecycle Onload Start
         window.onload = function () {
             initNodes();
             animate();
