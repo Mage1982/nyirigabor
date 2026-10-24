@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal Explorer & Visualizer</title>
+  <style>
+    :root {
+      --bg-color: #0b0c10;
+      --card-bg: rgba(31, 40, 51, 0.75);
+      --accent: #66fcf1;
+      --text: #c5c6c7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #canvas-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+
+    canvas:active {
+      cursor: grabbing;
+    }
+
+    #sidebar {
+      width: 320px;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-left: 1px solid rgba(102, 252, 241, 0.2);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      z-index: 10;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(102, 252, 241, 0.3);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, input[type="range"] {
+      width: 100%;
+      background: #1f2833;
+      color: #fff;
+      border: 1px solid rgba(102, 252, 241, 0.3);
+      padding: 8px 12px;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    select:focus, input[type="range"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 8px rgba(102, 252, 241, 0.4);
+    }
+
+    .btn {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      color: #0b0c10;
+      box-shadow: 0 0 15px rgba(102, 252, 241, 0.5);
+    }
+
+    .info-box {
+      font-size: 0.8rem;
+      line-height: 1.4;
+      opacity: 0.8;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 15px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="canvas-container">
+    <canvas id="fractalCanvas"></canvas>
+  </div>
+
+  <div id="sidebar">
+    <h1>Fractal Explorer</h1>
+
+    <div class="control-group">
+      <label for="fractalType">Típus</label>
+      <select id="fractalType">
+        <option value="mandelbrot">Mandelbrot-halmaz</option>
+        <option value="julia">Julia-halmaz</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="iterations">Részletesség (Iterációk): <span id="iterVal">80</span></label>
+      <input type="range" id="iterations" min="20" max="300" value="80">
+    </div>
+
+    <div class="control-group">
+      <label for="colorPalette">Színséma</label>
+      <select id="colorPalette">
+        <option value="neon">Electric Neon</option>
+        <option value="fire">Inferno Fire</option>
+        <option value="ocean">Deep Ocean</option>
+        <option value="psychedelic">Psychedelic</option>
+      </select>
+    </div>
+
+    <button class="btn" id="resetBtn">Nézet Alaphelyzetbe</button>
+
+    <div class="info-box">
+      <strong>Vezérlés:</strong><br>
+      • Görgetés: Nagyítás / Kicsinyítés<br>
+      • Húzás (Drag): Elmozdítás<br>
+      • Julia beállításnál mozgasd az egeret a mintázat változtatásához!
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('fractalCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width, height;
+    let maxIter = 80;
+    let zoom = 1;
+    let offsetX = 0;
+    let offsetY = 0;
+    let type = 'mandelbrot';
+    let palette = 'neon';
+
+    // Julia konstans
+    let juliaCx = -0.7;
+    let juliaCy = 0.27015;
+
+    function resize() {
+      width = canvas.parentElement.clientWidth;
+      height = canvas.parentElement.clientHeight;
+      canvas.width = width;
+      canvas.height = height;
+      render();
+    }
+
+    function getColor(iter, max) {
+      if (iter === max) return [0, 0, 0];
+      const t = iter / max;
+
+      if (palette === 'neon') {
+        return [
+          Math.sin(t * 10) * 127 + 128,
+          Math.cos(t * 15) * 127 + 128,
+          255 * t
+        ];
+      } else if (palette === 'fire') {
+        return [
+          Math.min(255, iter * 8),
+          Math.min(255, iter * 3),
+          Math.min(255, iter * 0.5)
+        ];
+      } else if (palette === 'ocean') {
+        return [
+          Math.sin(t * 5) * 50,
+          Math.sin(t * 10) * 100 + 100,
+          Math.sin(t * 20) * 127 + 128
+        ];
+      } else { // psychedelic
+        return [
+          (Math.sin(t * 50) + 1) * 127,
+          (Math.cos(t * 30) + 1) * 127,
+          (Math.sin(t * 80) + 1) * 127
+        ];
+      }
+    }
+
+    function render() {
+      const imgData = ctx.createImageData(width, height);
+      const data = imgData.data;
+
+      const scale = 3.0 / (zoom * Math.min(width, height));
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+          let zx = (x - centerX) * scale - offsetX;
+          let zy = (y - centerY) * scale - offsetY;
+
+          let cx = type === 'mandelbrot' ? zx : juliaCx;
+          let cy = type === 'mandelbrot' ? zy : juliaCy;
+
+          if (type === 'julia') {
+            // zx & zy marad a koordináta
+          } else {
+            zx = 0;
+            zy = 0;
+          }
+
+          let i = 0;
+          while (zx * zx + zy * zy < 4 && i < maxIter) {
+            let xtemp = zx * zx - zy * zy + cx;
+            zy = 2 * zx * zy + cy;
+            zx = xtemp;
+            i++;
+          }
+
+          const pixelIdx = (y * width + x) * 4;
+          const [r, g, b] = getColor(i, maxIter);
+          data[pixelIdx] = r;
+          data[pixelIdx + 1] = g;
+          data[pixelIdx + 2] = b;
+          data[pixelIdx + 3] = 255;
+        }
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+    }
+
+    // Eseménykezelők
+    window.addEventListener('resize', resize);
+
+    document.getElementById('iterations').addEventListener('input', (e) => {
+      maxIter = parseInt(e.target.value);
+      document.getElementById('iterVal').innerText = maxIter;
+      render();
+    });
+
+    document.getElementById('fractalType').addEventListener('change', (e) => {
+      type = e.target.value;
+      render();
+    });
+
+    document.getElementById('colorPalette').addEventListener('change', (e) => {
+      palette = e.target.value;
+      render();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      zoom = 1;
+      offsetX = 0;
+      offsetY = 0;
+      render();
+    });
+
+    // Zoom & Pan logika
+    let isDragging = false;
+    let startX, startY;
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.2 : 0.8;
+      zoom *= zoomFactor;
+      render();
+    }, { passive: false });
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const scale = 3.0 / (zoom * Math.min(width, height));
+        offsetX += dx * scale;
+        offsetY += dy * scale;
+        startX = e.clientX;
+        startY = e.clientY;
+        render();
+      } else if (type === 'julia') {
+        juliaCx = (e.clientX / width) * 2 - 1;
+        juliaCy = (e.clientY / height) * 2 - 1;
+        render();
+      }
+    });
+
+    window.addEventListener('mouseup', () => isDragging = false);
+
+    // Kezdő kirajzolás
+    resize();
+  </script>
+</body>
+</html>
