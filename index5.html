@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fractal Explorer & Visualizer</title>
+  <title>WebGL GPU Fractal Explorer</title>
   <style>
     :root {
       --bg-color: #0b0c10;
-      --card-bg: rgba(31, 40, 51, 0.75);
+      --card-bg: rgba(31, 40, 51, 0.85);
       --accent: #66fcf1;
       --text: #c5c6c7;
     }
@@ -50,14 +50,14 @@
     #sidebar {
       width: 320px;
       background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border-left: 1px solid rgba(102, 252, 241, 0.2);
+      backdrop-filter: blur(12px);
+      border-left: 1px solid rgba(102, 252, 241, 0.25);
       padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 20px;
       z-index: 10;
-      box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+      box-shadow: -5px 0 25px rgba(0,0,0,0.6);
     }
 
     h1 {
@@ -65,7 +65,7 @@
       color: var(--accent);
       letter-spacing: 1px;
       text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(102, 252, 241, 0.3);
+      text-shadow: 0 0 10px rgba(102, 252, 241, 0.4);
     }
 
     .control-group {
@@ -117,7 +117,7 @@
     .info-box {
       font-size: 0.8rem;
       line-height: 1.4;
-      opacity: 0.8;
+      opacity: 0.85;
       border-top: 1px solid rgba(255,255,255,0.1);
       padding-top: 15px;
       margin-top: auto;
@@ -127,179 +127,252 @@
 <body>
 
   <div id="canvas-container">
-    <canvas id="fractalCanvas"></canvas>
+    <canvas id="glCanvas"></canvas>
   </div>
 
   <div id="sidebar">
-    <h1>Fractal Explorer</h1>
+    <h1>GPU Fractal Explorer</h1>
 
     <div class="control-group">
       <label for="fractalType">Típus</label>
       <select id="fractalType">
-        <option value="mandelbrot">Mandelbrot-halmaz</option>
-        <option value="julia">Julia-halmaz</option>
+        <option value="0">Mandelbrot-halmaz</option>
+        <option value="1">Julia-halmaz</option>
       </select>
     </div>
 
     <div class="control-group">
-      <label for="iterations">Részletesség (Iterációk): <span id="iterVal">80</span></label>
-      <input type="range" id="iterations" min="20" max="300" value="80">
+      <label for="iterations">Részletesség: <span id="iterVal">300</span></label>
+      <input type="range" id="iterations" min="50" max="1000" value="300">
     </div>
 
     <div class="control-group">
       <label for="colorPalette">Színséma</label>
       <select id="colorPalette">
-        <option value="neon">Electric Neon</option>
-        <option value="fire">Inferno Fire</option>
-        <option value="ocean">Deep Ocean</option>
-        <option value="psychedelic">Psychedelic</option>
+        <option value="0">Electric Neon</option>
+        <option value="1">Inferno Fire</option>
+        <option value="2">Deep Ocean</option>
+        <option value="3">Psychedelic</option>
       </select>
     </div>
 
     <button class="btn" id="resetBtn">Nézet Alaphelyzetbe</button>
 
     <div class="info-box">
-      <strong>Vezérlés:</strong><br>
-      • Görgetés: Nagyítás / Kicsinyítés<br>
+      <strong>Vezérlés (WebGL / GPU):</strong><br>
+      • Görgetés: Akadásmentes Zoom<br>
       • Húzás (Drag): Elmozdítás<br>
-      • Julia beállításnál mozgasd az egeret a mintázat változtatásához!
+      • Julia módnál az egér mozgatásával valós időben alakul a minta!
     </div>
   </div>
 
   <script>
-    const canvas = document.getElementById('fractalCanvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('glCanvas');
+    const gl = canvas.getContext('webgl');
 
-    let width, height;
-    let maxIter = 80;
-    let zoom = 1;
-    let offsetX = 0;
-    let offsetY = 0;
-    let type = 'mandelbrot';
-    let palette = 'neon';
-
-    // Julia konstans
-    let juliaCx = -0.7;
-    let juliaCy = 0.27015;
-
-    function resize() {
-      width = canvas.parentElement.clientWidth;
-      height = canvas.parentElement.clientHeight;
-      canvas.width = width;
-      canvas.height = height;
-      render();
+    if (!gl) {
+      alert('A böngésződ nem támogatja a WebGL-t!');
     }
 
-    function getColor(iter, max) {
-      if (iter === max) return [0, 0, 0];
-      const t = iter / max;
-
-      if (palette === 'neon') {
-        return [
-          Math.sin(t * 10) * 127 + 128,
-          Math.cos(t * 15) * 127 + 128,
-          255 * t
-        ];
-      } else if (palette === 'fire') {
-        return [
-          Math.min(255, iter * 8),
-          Math.min(255, iter * 3),
-          Math.min(255, iter * 0.5)
-        ];
-      } else if (palette === 'ocean') {
-        return [
-          Math.sin(t * 5) * 50,
-          Math.sin(t * 10) * 100 + 100,
-          Math.sin(t * 20) * 127 + 128
-        ];
-      } else { // psychedelic
-        return [
-          (Math.sin(t * 50) + 1) * 127,
-          (Math.cos(t * 30) + 1) * 127,
-          (Math.sin(t * 80) + 1) * 127
-        ];
+    // Vertex Shader (egyszerű 2D quad)
+    const vsSource = `
+      attribute vec2 a_position;
+      void main() {
+        gl_Position = vec4(a_position, 0.0, 1.0);
       }
-    }
+    `;
 
-    function render() {
-      const imgData = ctx.createImageData(width, height);
-      const data = imgData.data;
+    // Fragment Shader (a fraktál kiszámítása GPU-n pixel szinten)
+    const fsSource = `
+      precision highp float;
 
-      const scale = 3.0 / (zoom * Math.min(width, height));
-      const centerX = width / 2;
-      const centerY = height / 2;
+      uniform vec2 u_resolution;
+      uniform vec2 u_offset;
+      uniform float u_zoom;
+      uniform int u_max_iterations;
+      uniform int u_type; // 0: Mandelbrot, 1: Julia
+      uniform int u_palette;
+      uniform vec2 u_julia_c;
 
-      for (let x = 0; x < width; x++) {
-        for (let y = 0; y < height; y++) {
-          let zx = (x - centerX) * scale - offsetX;
-          let zy = (y - centerY) * scale - offsetY;
+      vec3 getColor(float iter, float maxIter) {
+        if (iter >= maxIter) return vec3(0.0);
+        float t = iter / maxIter;
 
-          let cx = type === 'mandelbrot' ? zx : juliaCx;
-          let cy = type === 'mandelbrot' ? zy : juliaCy;
-
-          if (type === 'julia') {
-            // zx & zy marad a koordináta
-          } else {
-            zx = 0;
-            zy = 0;
-          }
-
-          let i = 0;
-          while (zx * zx + zy * zy < 4 && i < maxIter) {
-            let xtemp = zx * zx - zy * zy + cx;
-            zy = 2 * zx * zy + cy;
-            zx = xtemp;
-            i++;
-          }
-
-          const pixelIdx = (y * width + x) * 4;
-          const [r, g, b] = getColor(i, maxIter);
-          data[pixelIdx] = r;
-          data[pixelIdx + 1] = g;
-          data[pixelIdx + 2] = b;
-          data[pixelIdx + 3] = 255;
+        if (u_palette == 0) { // Neon
+          return vec3(
+            sin(t * 10.0) * 0.5 + 0.5,
+            cos(t * 15.0) * 0.5 + 0.5,
+            t
+          );
+        } else if (u_palette == 1) { // Fire
+          return vec3(
+            min(1.0, t * 5.0),
+            min(1.0, t * 2.5),
+            min(1.0, t * 0.5)
+          );
+        } else if (u_palette == 2) { // Ocean
+          return vec3(
+            sin(t * 5.0) * 0.2,
+            sin(t * 10.0) * 0.4 + 0.4,
+            sin(t * 20.0) * 0.5 + 0.5
+          );
+        } else { // Psychedelic
+          return vec3(
+            sin(t * 50.0) * 0.5 + 0.5,
+            cos(t * 30.0) * 0.5 + 0.5,
+            sin(t * 80.0) * 0.5 + 0.5
+          );
         }
       }
 
-      ctx.putImageData(imgData, 0, 0);
+      void main() {
+        vec2 st = (gl_FragCoord.xy - u_resolution * 0.5) / min(u_resolution.x, u_resolution.y);
+        vec2 z = st * 3.0 / u_zoom - u_offset;
+
+        vec2 c = (u_type == 0) ? z : u_julia_c;
+        if (u_type == 0) {
+          // Mandelbrot kezdőérték
+          // z már be van állítva mint c
+        } else {
+          // Julia esetén z a koordináta, c az egér pozíciója
+        }
+
+        float n = 0.0;
+        float maxI = float(u_max_iterations);
+
+        for (int i = 0; i < 1000; i++) {
+          if (float(i) >= maxI) break;
+          if (dot(z, z) > 4.0) break;
+
+          // z = z^2 + c
+          z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+          n += 1.0;
+        }
+
+        // Sima árnyalás (smooth coloring)
+        if (n < maxI) {
+          float log_zn = log(dot(z, z)) / 2.0;
+          float nu = log(log_zn / log(2.0)) / log(2.0);
+          n = n + 1.0 - nu;
+        }
+
+        gl_FragColor = vec4(getColor(n, maxI), 1.0);
+      }
+    `;
+
+    function createShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error('Shader hiba:', gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+      }
+      return shader;
     }
 
-    // Eseménykezelők
-    window.addEventListener('resize', resize);
+    const vertexShader = createShader(gl, gl.VERTEX_SHADER, vsSource);
+    const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
+    const program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    // Quad csúcspontok (2 háromszög teljes képernyőre)
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1, -1,
+       1, -1,
+      -1,  1,
+      -1,  1,
+       1, -1,
+       1,  1,
+    ]), gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, 'a_position');
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    // Uniform helyek
+    const locations = {
+      resolution: gl.getUniformLocation(program, 'u_resolution'),
+      offset: gl.getUniformLocation(program, 'u_offset'),
+      zoom: gl.getUniformLocation(program, 'u_zoom'),
+      maxIterations: gl.getUniformLocation(program, 'u_max_iterations'),
+      type: gl.getUniformLocation(program, 'u_type'),
+      palette: gl.getUniformLocation(program, 'u_palette'),
+      juliaC: gl.getUniformLocation(program, 'u_julia_c')
+    };
+
+    // Állapotváltozók
+    let zoom = 1.0;
+    let targetZoom = 1.0;
+    let offsetX = 0.0;
+    let offsetY = 0.0;
+    let targetOffsetX = 0.0;
+    let targetOffsetY = 0.0;
+    let maxIter = 300;
+    let fractalType = 0;
+    let palette = 0;
+    let juliaCx = -0.7;
+    let juliaCy = 0.27015;
+
+    function render() {
+      // Finom animációs simítás (Lerp)
+      zoom += (targetZoom - zoom) * 0.1;
+      offsetX += (targetOffsetX - offsetX) * 0.1;
+      offsetY += (targetOffsetY - offsetY) * 0.1;
+
+      if (canvas.width !== canvas.parentElement.clientWidth || canvas.height !== canvas.parentElement.clientHeight) {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+
+      gl.uniform2f(locations.resolution, canvas.width, canvas.height);
+      gl.uniform2f(locations.offset, offsetX, offsetY);
+      gl.uniform1f(locations.zoom, zoom);
+      gl.uniform1i(locations.maxIterations, maxIter);
+      gl.uniform1i(locations.type, fractalType);
+      gl.uniform1i(locations.palette, palette);
+      gl.uniform2f(locations.juliaC, juliaCx, juliaCy);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      requestAnimationFrame(render);
+    }
+
+    // Interakciók
     document.getElementById('iterations').addEventListener('input', (e) => {
       maxIter = parseInt(e.target.value);
       document.getElementById('iterVal').innerText = maxIter;
-      render();
     });
 
     document.getElementById('fractalType').addEventListener('change', (e) => {
-      type = e.target.value;
-      render();
+      fractalType = parseInt(e.target.value);
     });
 
     document.getElementById('colorPalette').addEventListener('change', (e) => {
-      palette = e.target.value;
-      render();
+      palette = parseInt(e.target.value);
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
-      zoom = 1;
-      offsetX = 0;
-      offsetY = 0;
-      render();
+      targetZoom = 1.0;
+      targetOffsetX = 0.0;
+      targetOffsetY = 0.0;
     });
-
-    // Zoom & Pan logika
-    let isDragging = false;
-    let startX, startY;
 
     canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const zoomFactor = e.deltaY < 0 ? 1.2 : 0.8;
-      zoom *= zoomFactor;
-      render();
+      const zoomFactor = e.deltaY < 0 ? 1.25 : 0.8;
+      targetZoom *= zoomFactor;
     }, { passive: false });
+
+    let isDragging = false;
+    let startX, startY;
 
     canvas.addEventListener('mousedown', (e) => {
       isDragging = true;
@@ -310,24 +383,21 @@
     canvas.addEventListener('mousemove', (e) => {
       if (isDragging) {
         const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        const scale = 3.0 / (zoom * Math.min(width, height));
-        offsetX += dx * scale;
-        offsetY += dy * scale;
+        const dy = -(e.clientY - startY);
+        const scale = 3.0 / (zoom * Math.min(canvas.width, canvas.height));
+        targetOffsetX += dx * scale;
+        targetOffsetY += dy * scale;
         startX = e.clientX;
         startY = e.clientY;
-        render();
-      } else if (type === 'julia') {
-        juliaCx = (e.clientX / width) * 2 - 1;
-        juliaCy = (e.clientY / height) * 2 - 1;
-        render();
+      } else if (fractalType === 1) {
+        juliaCx = (e.clientX / canvas.width) * 2.0 - 1.0;
+        juliaCy = -((e.clientY / canvas.height) * 2.0 - 1.0);
       }
     });
 
     window.addEventListener('mouseup', () => isDragging = false);
 
-    // Kezdő kirajzolás
-    resize();
+    requestAnimationFrame(render);
   </script>
 </body>
 </html>
