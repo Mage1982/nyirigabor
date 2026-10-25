@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="hu" class="h-full bg-[#090b10]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandelbrot-halmaz Ismertető | SuperAgent.ai</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron, Share Tech Mono & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        magenta: '#FF0C9D',
+                        cyan: '#00FFFF',
+                        purpleGlow: '#8A2BE2',
+                        darkBg: '#090b10',
+                        cardBg: 'rgba(15, 20, 32, 0.65)'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'grid-move': 'gridMove 20s linear infinite',
+                        'float': 'float 4s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { filter: 'drop-shadow(0 0 12px rgba(255, 12, 157, 0.4))' },
+                            '100%': { filter: 'drop-shadow(0 0 25px rgba(0, 255, 255, 0.6))' }
+                        },
+                        gridMove: {
+                            '0%': { transform: 'translateY(0)' },
+                            '100%': { transform: 'translateY(40px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Cyber Grid Overlay Background */
+        .bg-cyber-grid {
+            background-image: 
+                linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 12, 157, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Glassmorphism Card Effect */
+        .glass-card {
+            background: rgba(15, 20, 32, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 10px 30px -5px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(0, 255, 255, 0.08);
+        }
+
+        .glass-card-magenta {
+            border-color: rgba(255, 12, 157, 0.2);
+        }
+
+        .glass-card-magenta:hover {
+            border-color: rgba(255, 12, 157, 0.6);
+            box-shadow: 0 10px 30px -5px rgba(255, 12, 157, 0.3), inset 0 0 15px rgba(255, 12, 157, 0.08);
+        }
+
+        /* Neon Gradient Text */
+        .neon-text-gradient {
+            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #FF0C9D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Interactive Cursor Spotlight */
+        #interactive-glow {
+            pointer-events: none;
+            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(255, 12, 157, 0.05), transparent 70%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090b10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00FFFF;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative">
+
+    <!-- Dynamic Interactive Mouse Glow -->
+    <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
+
+    <!-- HTML5 Particle Canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+
+    <!-- Animated Cyber Grid Background -->
+    <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
+
+    <!-- Ambient Glowing Orbs -->
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed top-1/3 right-10 w-[500px] h-[500px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none"></div>
+
+    <!-- Main Container -->
+    <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto space-y-12">
+
+        <!-- Top Header Navigation -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 py-4 border-b border-white/10">
+            <div class="text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start gap-3">
+                    <a href="https://nyirigabor.hu/index5.html" class="relative w-10 h-10 flex items-center justify-center bg-gradient-to-br from-cyan to-magenta rounded-xl p-[2px] shadow-lg shadow-cyan/20 animate-float hover:scale-105 transition-transform">
+                        <div class="w-full h-full bg-[#090b10] rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-infinity text-cyan text-lg"></i>
+                        </div>
+                    </a>
+                    <div>
+                        <h1 class="font-orbitron font-black text-2xl sm:text-3xl tracking-wider neon-text-gradient uppercase">
+                            SuperAgent<span class="text-cyan text-xs align-super ml-1 font-mono px-2 py-0.5 rounded-full border border-cyan/40 bg-cyan/10">.AI</span>
+                        </h1>
+                    </div>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 font-mono mt-1 tracking-widest flex items-center justify-center md:justify-start gap-2">
+                    <i class="fa-solid fa-microchip text-cyan text-xs"></i>
+                    Nyíri Gábor &bull; AI Kísérleti Laboratórium
+                </p>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="https://nyirigabor.hu/index5.html" class="group flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan/10 border border-cyan/40 hover:border-cyan text-cyan text-xs font-mono transition-all duration-300 shadow-sm shadow-cyan/20">
+                    <i class="fa-solid fa-gamepad text-cyan group-hover:-translate-x-1 transition-transform"></i>
+                    <span>Mandelbrot Engine (index5.html)</span>
+                </a>
+                <a href="https://nyirigabor.hu" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-magenta/50 text-xs font-mono text-slate-300 hover:text-magenta transition-all duration-300">
+                    <i class="fa-solid fa-globe text-magenta group-hover:rotate-180 transition-transform duration-700"></i>
+                    <span>Főoldal</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- HERO SECTION -->
+        <section class="text-center py-8 relative">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-magenta/10 border border-magenta/40 text-magenta font-mono text-xs uppercase tracking-widest mb-4 shadow-lg shadow-magenta/10">
+                <i class="fa-solid fa-atom animate-spin" style="animation-duration: 8s;"></i>
+                Komplex Dinamikai Rendszerek & Káoszelmélet
+            </div>
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-orbitron font-black text-white tracking-wide mb-6 leading-tight">
+                A <span class="neon-text-gradient">Mandelbrot-halmaz</span><br/>
+                És A Káoszelmélet
+            </h1>
+            <p class="max-w-3xl mx-auto text-slate-300 text-sm sm:text-base lg:text-lg leading-relaxed font-light mb-8">
+                A matematika leglenyűgözőbb geometriai alakzata, amely az egyszerű képletből kibontakozó végtelen komplexitást és önhasonlóságot szimbolizálja.
+            </p>
+
+            <!-- Formula Box -->
+            <div class="inline-block glass-card rounded-2xl p-4 sm:p-6 border border-cyan/30 shadow-2xl relative group">
+                <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-cyan/20 border border-cyan/50 text-cyan text-[10px] font-mono tracking-widest uppercase">
+                    Iterációs Alapképlet
+                </div>
+                <div class="font-mono text-2xl sm:text-4xl text-cyan font-bold tracking-wider my-2 group-hover:scale-105 transition-transform duration-300">
+                    z<sub>n+1</sub> = z<sub>n</sub><sup>2</sup> + c
+                </div>
+                <div class="text-xs text-slate-400 font-mono">
+                    ahol z<sub>0</sub> = 0 &bull; z, c &isin; &Copf; (Komplex Számok)
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: MI AZ A MANDELBROT-HALMAZ -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-cyan/10 border border-cyan/40 flex items-center justify-center text-cyan text-lg">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h2 class="font-orbitron text-xl sm:text-2xl font-bold text-white">Mi az a Mandelbrot-halmaz?</h2>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed font-light">
+                    A <strong class="text-cyan font-semibold">Mandelbrot-halmaz</strong> azon komplex <span class="font-mono text-cyan">c</span> számok összessége a komplex számsíkon, amelyekre az $z_0 = 0$ kezdőértékről indított <span class="font-mono text-magenta">z_{n+1} = z_n^2 + c</span> rekurzív sorozat korlátos marad (nem tart a végtelenbe).
+                </p>
+                <p class="text-slate-300 text-sm leading-relaxed font-light">
+                    Nevét <strong class="text-white">Benoît Mandelbrot</strong> lengyel származású francia-amerikai matematikusról kapta, aki 1980-ban az IBM Thomas J. Watson Kutatóközpontjában számítógépes grafika segítségével először jelenítette meg és tanulmányozta a halmaz részletes struktúráját.
+                </p>
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-xs font-mono">
+                        <span class="text-cyan font-bold block mb-1"><i class="fa-solid fa-repeat"></i> Önhasonlóság</span>
+                        Nagyításkor az eredeti alakzathoz hasonló mintázatok ismétlődnek.
+                    </div>
+                    <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-xs font-mono">
+                        <span class="text-magenta font-bold block mb-1"><i class="fa-solid fa-ruler-combined"></i> Fraktáldimenzió</span>
+                        A halmaz határa 2 dimenziós Hausdorff-dimenziójú fraktálvonal.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complex Plane Card -->
+            <div class="glass-card glass-card-magenta rounded-2xl p-6 sm:p-8 space-y-4">
+                <h3 class="font-orbitron text-lg font-bold text-magenta flex items-center gap-2">
+                    <i class="fa-solid fa-compass"></i> A Komplex Sík Geometriája
+                </h3>
+                <p class="text-slate-300 text-sm leading-relaxed font-light">
+                    A komplex síkon minden pontot egy <span class="font-mono text-cyan">c = x + iy</span> szám képvisel, ahol <span class="font-mono text-slate-200">x</span> a valós tengely (vízszintes), <span class="font-mono text-slate-200">y</span> pedig a képzetes tengely (függőleges).
+                </p>
+                <ul class="space-y-3 text-xs font-mono text-slate-300">
+                    <li class="flex items-start gap-2 bg-black/30 p-2.5 rounded-lg border border-white/5">
+                        <i class="fa-solid fa-circle-check text-cyan mt-0.5"></i>
+                        <span><strong class="text-white">Fő Kardioid:</strong> A középső szív alakú régió, ahol a sorozat egy fix ponthoz konvergál.</span>
+                    </li>
+                    <li class="flex items-start gap-2 bg-black/30 p-2.5 rounded-lg border border-white/5">
+                        <i class="fa-solid fa-circle-check text-magenta mt-0.5"></i>
+                        <span><strong class="text-white">Periodikus Korongok:</strong> A kardioidhoz kapcsolódó körök, ahol a sorozat ciklikusan váltakozik.</span>
+                    </li>
+                    <li class="flex items-start gap-2 bg-black/30 p-2.5 rounded-lg border border-white/5">
+                        <i class="fa-solid fa-circle-check text-purple-400 mt-0.5"></i>
+                        <span><strong class="text-white">Végtelen Részletgazdagság:</strong> Bármilyen mértékű nagyítás mellett újabb és újabb miniatűr Mandelbrot-másolatok tűnnek fel.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MATEMATIKAI HÁTTÉR & ALGORITMUS -->
+        <section class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-4">
+                <div>
+                    <h2 class="font-orbitron text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-square-root-variable text-cyan"></i>
+                        Matematikai Háttér & Szökési Idő Algoritmus
+                    </h2>
+                    <p class="text-xs font-mono text-cyan/80 mt-1">ESCAPE TIME ALGORITHM // COLOR MAPPING</p>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-mono text-xs font-bold">
+                    |z| &gt; 2 &rArr; Divergencia
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                    <div class="text-cyan font-mono font-bold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-cyan/20 flex items-center justify-center text-xs">1</span>
+                        Iteráció Indítása
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed font-light">
+                        Minden pixelhez kiválasztunk egy <span class="font-mono text-cyan">c</span> komplex koordinátát. Beállítjuk a kezdőértéket: <span class="font-mono text-slate-200">z = 0</span> és a lépésszámlálót: <span class="font-mono text-slate-200">i = 0</span>.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                    <div class="text-magenta font-mono font-bold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-magenta/20 flex items-center justify-center text-xs">2</span>
+                        Sorozat Számítása
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed font-light">
+                        Ismételten kiszámítjuk a <span class="font-mono text-magenta">z = z² + c</span> értéket. Ha <span class="font-mono text-cyan">|z| > 2</span> (azaz $x^2 + y^2 > 4$), a pont biztosan kiszökik a végtelenbe.
+                    </p>
+                </div>
+
+                <div class="p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                    <div class="text-purple-400 font-mono font-bold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs">3</span>
+                        Színezés & Renderelés
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed font-light">
+                        Ha elértük a maximális iterációs korlátot (pl. 100), a pont a halmaz része (fekete). Egyébként a szökéshez szükséges lépések száma adja meg a pixel színét.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: INTERACTIVE EMBEDDED MANDELBROT MINI-VIEWER -->
+        <section class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="font-orbitron text-xl sm:text-2xl font-bold text-white flex items-center gap-3">
+                        <i class="fa-solid fa-sliders text-magenta"></i>
+                        Interaktív Mini Mandelbrot Explorer
+                    </h2>
+                    <p class="text-xs font-mono text-slate-400 mt-1">
+                        Húzza az egeret a mozgatáshoz &bull; Görgessen a nagyításhoz/kicsinyítéshez
+                    </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 font-mono text-xs">
+                    <button id="btn-reset" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-slate-200 transition-all">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Alaphelyzet
+                    </button>
+                    <button id="btn-palette" class="px-3 py-1.5 rounded-lg bg-magenta/20 border border-magenta/40 text-magenta hover:bg-magenta/30 transition-all">
+                        <i class="fa-solid fa-palette mr-1"></i> Színpaletta Váltás
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="relative w-full h-[380px] sm:h-[480px] rounded-xl overflow-hidden border border-cyan/30 shadow-2xl bg-black">
+                <canvas id="mandelbrot-canvas" class="w-full h-full cursor-grab active:cursor-grabbing block"></canvas>
+
+                <!-- Overlay Controls -->
+                <div class="absolute bottom-4 left-4 right-4 flex flex-col sm:flex-row justify-between items-center gap-3 p-3 rounded-xl bg-black/75 backdrop-blur-md border border-white/10 text-xs font-mono">
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <span class="text-cyan font-bold whitespace-nowrap">Iterációk: <span id="iter-val">100</span></span>
+                        <input id="iter-slider" type="range" min="20" max="300" value="100" class="w-full sm:w-32 accent-cyan">
+                    </div>
+                    <div class="text-slate-400 text-[11px] truncate max-w-full">
+                        Zoom: <span id="zoom-val" class="text-magenta font-bold">1.0x</span> | Center: (<span id="center-x" class="text-slate-200">-0.5</span>, <span id="center-y" class="text-slate-200">0.0</span>)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ÖSSZEFÜGGÉS A JULIA-HALMAZOKKAL -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass-card glass-card-magenta rounded-2xl p-6 sm:p-8 space-y-4">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-magenta/10 border border-magenta/40 flex items-center justify-center text-magenta text-lg">
+                        <i class="fa-solid fa-diagram-project"></i>
+                    </div>
+                    <h2 class="font-orbitron text-xl sm:text-2xl font-bold text-white">Kapcsolat a Julia-halmazokkal</h2>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed font-light">
+                    A Mandelbrot-halmaz szorosan összefügg a <strong class="text-magenta">Julia-halmazokkal</strong> ($J_c$). Míg a Mandelbrot-halmaz számításánál a <span class="font-mono text-cyan">c</span> értéke változik és $z_0 = 0$, addig egy konkrét Julia-halmaznál a <span class="font-mono text-magenta">c</span> konstans, és a kezdeti <span class="font-mono text-slate-200">z_0</span> kezdőértéket változtatjuk a síkon.
+                </p>
+                <div class="p-4 rounded-xl bg-black/40 border border-magenta/30 text-xs font-mono space-y-2">
+                    <div class="text-magenta font-bold"><i class="fa-solid fa-key"></i> A Mandelbrot-halmaz mint katalógus:</div>
+                    <ul class="space-y-1.5 text-slate-300">
+                        <li>&bull; Ha <span class="text-cyan font-bold">c &in; M</span> (a Mandelbrot-halmazban van), akkor a hozzá tartozó $J_c$ Julia-halmaz <strong class="text-white">összefüggő</strong>.</li>
+                        <li>&bull; Ha <span class="text-magenta font-bold">c &notin; M</span> (kívül esik), akkor a $J_c$ Julia-halmaz szétesik, egy <strong class="text-white">Cantor-por</strong> szerkezetű ponthalmazzá.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Applications in Modern Graphics & AI -->
+            <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-cyan/10 border border-cyan/40 flex items-center justify-center text-cyan text-lg">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <h2 class="font-orbitron text-xl sm:text-2xl font-bold text-white">Alkalmazások & Modern AI</h2>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed font-light">
+                    A fraktálgeometria nem csupán elméleti matematika, hanem a modern számítógépes grafika, a fizika és az mesterséges intelligencia kulcsfontosságú eleme.
+                </p>
+                <div class="space-y-3 text-xs font-mono">
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                        <i class="fa-solid fa-bolt text-cyan text-base"></i>
+                        <div>
+                            <span class="text-white font-bold block">GPU Párhuzamosítás</span>
+                            Idealizált tesztprobléma shader kóderként és WebGL számítási teljesítmény mérésére.
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                        <i class="fa-solid fa-tree text-emerald-400 text-base"></i>
+                        <div>
+                            <span class="text-white font-bold block">Természeti Formák Modellezése</span>
+                            Felhők, hegyvonulatok, villámok és érrendszerek szimulációja fraktálalgoritmusokkal.
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                        <i class="fa-solid fa-brain text-magenta text-base"></i>
+                        <div>
+                            <span class="text-white font-bold block">AI Mintázatfelismerés</span>
+                            Mélytanulási modellek és neurális hálók képzése kaotikus és fraktál dimenziójú adathalmazokon.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER BAR -->
+        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan"></span>
+                </span>
+                <span class="tracking-widest uppercase text-slate-300">CORE NODE: ONLINE</span>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div>
+                    <span class="text-slate-500">LATENCY:</span> 
+                    <span class="text-emerald-400 font-bold">10ms</span>
+                </div>
+                <div>
+                    <span class="text-slate-500">CLOCK:</span> 
+                    <span id="live-clock" class="text-cyan font-bold">00:00:00</span>
+                </div>
+            </div>
+
+            <div class="text-slate-500">
+                &copy; 2026 SuperAgent.ai &bull; Nyíri Gábor
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // Real-Time Digital Clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) {
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Mouse Spotlight Follower
+        const glowContainer = document.getElementById('interactive-glow');
+        window.addEventListener('mousemove', (e) => {
+            glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
+            glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
+        });
+
+        // Background Particle Canvas
+        const bgCanvas = document.getElementById('particle-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let bgWidth, bgHeight;
+        let particles = [];
+
+        function resizeBgCanvas() {
+            bgWidth = bgCanvas.width = window.innerWidth;
+            bgHeight = bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBgCanvas);
+        resizeBgCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * bgWidth;
+                this.y = Math.random() * bgHeight;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 1.5 + 0.5;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > bgWidth) this.vx *= -1;
+                if (this.y < 0 || this.y > bgHeight) this.vy *= -1;
+            }
+            draw() {
+                bgCtx.beginPath();
+                bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                bgCtx.fillStyle = this.color + this.alpha + ')';
+                bgCtx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animateBgParticles() {
+            bgCtx.clearRect(0, 0, bgWidth, bgHeight);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 110) {
+                        bgCtx.beginPath();
+                        bgCtx.moveTo(particles[i].x, particles[i].y);
+                        bgCtx.lineTo(particles[j].x, particles[j].y);
+                        bgCtx.strokeStyle = `rgba(0, 255, 255, ${0.1 * (1 - dist / 110)})`;
+                        bgCtx.lineWidth = 0.5;
+                        bgCtx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateBgParticles);
+        }
+
+        // -------------------------------------------------------------
+        // Interactive Canvas Mandelbrot Renderer
+        // -------------------------------------------------------------
+        const mCanvas = document.getElementById('mandelbrot-canvas');
+        const mCtx = mCanvas.getContext('2d');
+
+        let zoom = 1.0;
+        let centerX = -0.5;
+        let centerY = 0.0;
+        let maxIterations = 100;
+        let paletteIndex = 0;
+
+        let isDragging = false;
+        let startX, startY;
+
+        const palettes = [
+            // Cyber Neon (Cyan - Magenta - Purple)
+            (iter, max) => {
+                if (iter === max) return [9, 11, 16];
+                const t = iter / max;
+                const r = Math.floor(9 * (1 - t) + Math.sin(t * Math.PI * 4) * 255);
+                const g = Math.floor(255 * Math.pow(t, 0.5));
+                const b = Math.floor(255 * Math.pow(1 - t, 0.3) + 150 * t);
+                return [Math.min(255, Math.max(0, r)), Math.min(255, Math.max(0, g)), Math.min(255, Math.max(0, b))];
+            },
+            // Electric Blue & Gold
+            (iter, max) => {
+                if (iter === max) return [0, 0, 0];
+                const t = iter / max;
+                const r = Math.floor(255 * Math.pow(t, 2));
+                const g = Math.floor(180 * t);
+                const b = Math.floor(255 * (1 - t));
+                return [r, g, b];
+            },
+            // Fire & Flame
+            (iter, max) => {
+                if (iter === max) return [5, 5, 5];
+                const t = iter / max;
+                const r = Math.floor(255 * Math.min(1, t * 2.5));
+                const g = Math.floor(255 * Math.pow(t, 1.8));
+                const b = Math.floor(80 * Math.pow(t, 3));
+                return [r, g, b];
+            }
+        ];
+
+        function resizeMandelbrotCanvas() {
+            const rect = mCanvas.getBoundingClientRect();
+            mCanvas.width = rect.width;
+            mCanvas.height = rect.height;
+            renderMandelbrot();
+        }
+
+        function renderMandelbrot() {
+            const w = mCanvas.width;
+            const h = mCanvas.height;
+            if (w === 0 || h === 0) return;
+
+            const imgData = mCtx.createImageData(w, h);
+            const data = imgData.data;
+
+            const aspectRatio = w / h;
+            const scale = 3.0 / (zoom * Math.min(w, h));
+
+            const getPalette = palettes[paletteIndex];
+
+            for (let py = 0; py < h; py++) {
+                const cy = centerY + (py - h / 2) * scale;
+                for (let px = 0; px < w; px++) {
+                    const cx = centerX + (px - w / 2) * scale;
+
+                    let zx = 0.0;
+                    let zy = 0.0;
+                    let iter = 0;
+
+                    while (zx * zx + zy * zy <= 4.0 && iter < maxIterations) {
+                        const xtemp = zx * zx - zy * zy + cx;
+                        zy = 2.0 * zx * zy + cy;
+                        zx = xtemp;
+                        iter++;
+                    }
+
+                    const [r, g, b] = getPalette(iter, maxIterations);
+                    const pIdx = (py * w + px) * 4;
+                    data[pIdx] = r;
+                    data[pIdx + 1] = g;
+                    data[pIdx + 2] = b;
+                    data[pIdx + 3] = 255;
+                }
+            }
+
+            mCtx.putImageData(imgData, 0, 0);
+
+            // Update UI info
+            document.getElementById('zoom-val').textContent = zoom.toFixed(1) + 'x';
+            document.getElementById('center-x').textContent = centerX.toFixed(4);
+            document.getElementById('center-y').textContent = centerY.toFixed(4);
+            document.getElementById('iter-val').textContent = maxIterations;
+        }
+
+        // Mouse Drag to Pan
+        mCanvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        mCanvas.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            startX = e.clientX;
+            startY = e.clientY;
+
+            const scale = 3.0 / (zoom * Math.min(mCanvas.width, mCanvas.height));
+            centerX -= dx * scale;
+            centerY -= dy * scale;
+            renderMandelbrot();
+        });
+
+        // Wheel to Zoom
+        mCanvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY < 0 ? 1.25 : 0.8;
+            zoom *= zoomFactor;
+            renderMandelbrot();
+        }, { passive: false });
+
+        // Iteration Slider Controls
+        const iterSlider = document.getElementById('iter-slider');
+        iterSlider.addEventListener('input', (e) => {
+            maxIterations = parseInt(e.target.value, 10);
+            renderMandelbrot();
+        });
+
+        // Reset Button
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            zoom = 1.0;
+            centerX = -0.5;
+            centerY = 0.0;
+            maxIterations = 100;
+            iterSlider.value = 100;
+            renderMandelbrot();
+        });
+
+        // Palette Switcher Button
+        document.getElementById('btn-palette').addEventListener('click', () => {
+            paletteIndex = (paletteIndex + 1) % palettes.length;
+            renderMandelbrot();
+        });
+
+        // Init on Window Load
+        window.onload = function() {
+            animateBgParticles();
+            resizeMandelbrotCanvas();
+            window.addEventListener('resize', resizeMandelbrotCanvas);
+        };
+    </script>
+</body>
+</html>
