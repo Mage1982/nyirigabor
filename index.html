@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hu" class="h-full bg-[#05070f]">
+<html lang="hu" class="h-full bg-[#090b10]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAgent.ai | AI Experimental Hub</title>
+    <title>SuperAgent.ai | Nyíri Gábor - AI Kísérleti Laboratórium</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -11,7 +11,7 @@
     <!-- Google Fonts: Orbitron, Share Tech Mono & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -21,8 +21,8 @@
                         magenta: '#FF0C9D',
                         cyan: '#00FFFF',
                         purpleGlow: '#8A2BE2',
-                        darkBg: '#05070f',
-                        cardBg: 'rgba(12, 16, 28, 0.7)'
+                        darkBg: '#090b10',
+                        cardBg: 'rgba(15, 20, 32, 0.65)'
                     },
                     fontFamily: {
                         orbitron: ['Orbitron', 'sans-serif'],
@@ -31,13 +31,13 @@
                     },
                     animation: {
                         'pulse-glow': 'pulseGlow 3s infinite alternate',
-                        'grid-move': 'gridMove 22s linear infinite',
+                        'grid-move': 'gridMove 20s linear infinite',
                         'float': 'float 4s ease-in-out infinite',
-                        'scanline': 'scanline 8s linear infinite'
+                        'scanline': 'scanline 6s linear infinite'
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%': { filter: 'drop-shadow(0 0 15px rgba(255, 12, 157, 0.4))' },
+                            '0%': { filter: 'drop-shadow(0 0 12px rgba(255, 12, 157, 0.4))' },
                             '100%': { filter: 'drop-shadow(0 0 25px rgba(0, 255, 255, 0.6))' }
                         },
                         gridMove: {
@@ -55,38 +55,38 @@
     </script>
 
     <style>
-        /* Cyber Grid Background */
+        /* Cyber Grid Overlay Background */
         .bg-cyber-grid {
             background-image: 
-                linear-gradient(to right, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 12, 157, 0.05) 1px, transparent 1px);
+                linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 12, 157, 0.04) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
         /* Glassmorphism Card Effect */
         .glass-card {
-            background: rgba(12, 16, 28, 0.65);
+            background: rgba(15, 20, 32, 0.65);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 255, 255, 0.12);
+            border: 1px solid rgba(0, 255, 255, 0.15);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
         }
 
         .glass-card:hover {
-            border-color: rgba(0, 255, 255, 0.6);
-            box-shadow: 0 10px 35px -5px rgba(0, 255, 255, 0.3), inset 0 0 15px rgba(255, 12, 157, 0.15);
+            border-color: rgba(0, 255, 255, 0.7);
+            box-shadow: 0 10px 35px -5px rgba(0, 255, 255, 0.35), inset 0 0 20px rgba(0, 255, 255, 0.1);
             transform: translateY(-8px);
         }
 
         .glass-card-magenta:hover {
-            border-color: rgba(255, 12, 157, 0.7);
-            box-shadow: 0 10px 35px -5px rgba(255, 12, 157, 0.35), inset 0 0 15px rgba(0, 255, 255, 0.15);
+            border-color: rgba(255, 12, 157, 0.8);
+            box-shadow: 0 10px 35px -5px rgba(255, 12, 157, 0.4), inset 0 0 20px rgba(255, 12, 157, 0.1);
         }
 
-        /* Neon Text Gradient */
+        /* Neon Gradient Text */
         .neon-text-gradient {
-            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 45%, #FF0C9D 100%);
+            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #FF0C9D 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -98,33 +98,32 @@
         }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#05070f] relative">
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative">
 
-    <!-- Interactive Mouse Spotlight Glow -->
+    <!-- Dynamic Interactive Mouse Glow -->
     <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
 
-    <!-- Canvas Particle Network -->
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
+    <!-- HTML5 Particle Canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
 
     <!-- Animated Cyber Grid Background -->
     <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
 
     <!-- Ambient Glowing Orbs -->
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[130px] pointer-events-none"></div>
-    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[130px] pointer-events-none"></div>
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none"></div>
 
-    <!-- Main Command Center Shell -->
+    <!-- Main Content Container -->
     <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
 
-        <!-- Header Bar -->
+        <!-- Top Header Bar -->
         <header class="flex flex-col md:flex-row justify-between items-center gap-4 py-4 border-b border-white/10">
             <div class="text-center md:text-left">
                 <div class="flex items-center justify-center md:justify-start gap-3">
-                    <!-- Holographic Logo Icon -->
                     <div class="relative w-10 h-10 flex items-center justify-center bg-gradient-to-br from-cyan to-magenta rounded-xl p-[2px] shadow-lg shadow-cyan/20 animate-float">
-                        <div class="w-full h-full bg-[#05070f] rounded-[10px] flex items-center justify-center">
-                            <i class="fa-solid fa-brain-circuit text-cyan text-lg"></i>
+                        <div class="w-full h-full bg-[#090b10] rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-brain text-cyan text-lg"></i>
                         </div>
                     </div>
                     <h1 class="font-orbitron font-black text-2xl sm:text-3xl tracking-wider neon-text-gradient uppercase">
@@ -132,31 +131,31 @@
                     </h1>
                 </div>
                 <p class="text-xs sm:text-sm text-slate-400 font-mono mt-1 tracking-widest flex items-center justify-center md:justify-start gap-2">
-                    <span class="w-2 h-2 rounded-full bg-cyan animate-ping"></span>
-                    AI LABS TEST ENVIRONMENT
+                    <i class="fa-solid fa-microchip text-cyan text-xs"></i>
+                    Nyíri Gábor &bull; AI Kísérleti Laboratórium
                 </p>
             </div>
 
-            <!-- Domain & Status Indicator -->
+            <!-- Domain Link & Status Indicator -->
             <div class="flex items-center gap-3">
                 <a href="https://nyirigabor.hu" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-cyan/50 transition-all duration-300 text-xs font-mono text-slate-300 hover:text-cyan shadow-sm">
                     <i class="fa-solid fa-globe text-cyan group-hover:rotate-180 transition-transform duration-700"></i>
-                    <span>nyirigabor.hu - AI Experimental Hub</span>
+                    <span>nyirigabor.hu</span>
                     <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
                 </a>
-                <div class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+                <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>HUB ACTIVE</span>
+                    <span class="font-bold tracking-wider">SYSTEM ACTIVE // ONLINE</span>
                 </div>
             </div>
         </header>
 
-        <!-- Command Module Navigation Grid -->
+        <!-- Command Launcher Grid -->
         <main class="my-auto py-8">
             <div class="text-center mb-8 sm:mb-10">
-                <h2 class="text-xs font-mono text-cyan uppercase tracking-[0.3em] mb-2">[ PARANCSNOKI MODULOK ]</h2>
+                <h2 class="text-xs font-mono text-cyan uppercase tracking-[0.3em] mb-2">[ PARANCSNOKI LAUNCHER MODULOK ]</h2>
                 <p class="text-xl sm:text-3xl font-orbitron font-semibold text-white tracking-wide">
-                    Válasszon tesztelésre váró AI projektet
+                    Válasszon AI projektet a teszteléshez
                 </p>
             </div>
 
@@ -168,23 +167,23 @@
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
-                                <i class="fa-solid fa-microchip"></i>
+                                <i class="fa-solid fa-paper-plane"></i>
                             </div>
                             <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
-                                v1.0 CORE
+                                Beta 1 Project
                             </span>
                         </div>
                         <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-2">
-                            SuperAgent Core
+                            Automatikus Levelező Rendszer
                         </h3>
-                        <p class="text-xs sm:text-sm text-cyan/80 font-mono mb-3">Kezdőoldal & Központi Vezérlő</p>
+                        <p class="text-xs sm:text-sm text-cyan/80 font-mono mb-3">index1.html</p>
                         <p class="text-sm text-slate-400 leading-relaxed font-light">
-                            Az ágens rendszer központi felülete. Működési áttekintés, prioritásos feladatok kezelése és állapotvezérlés.
+                            Intelligens, ágens alapú e-mail automatizáció és kommunikációs munkafolyamat-kezelő modul.
                         </p>
                     </div>
                     <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
                         <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-terminal text-[10px] text-cyan"></i> https://nyirigabor.hu/index1.html
+                            <i class="fa-solid fa-link text-[10px] text-cyan"></i> https://nyirigabor.hu/index1.html
                         </span>
                         <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
                     </div>
@@ -196,23 +195,23 @@
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-14 h-14 rounded-2xl bg-magenta/10 border border-magenta/30 flex items-center justify-center text-magenta text-2xl group-hover:scale-110 group-hover:bg-magenta group-hover:text-white transition-all duration-300 shadow-lg shadow-magenta/10">
-                                <i class="fa-solid fa-cubes-stacked"></i>
+                                <i class="fa-solid fa-newspaper"></i>
                             </div>
                             <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-magenta/10 border border-magenta/40 text-magenta font-bold uppercase">
-                                BETA 2
+                                Beta 2 Project
                             </span>
                         </div>
                         <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-magenta transition-colors mb-2">
-                            AI Project Beta 2
+                            Ágens Alapú Hírek
                         </h3>
-                        <p class="text-xs sm:text-sm text-magenta/80 font-mono mb-3">Moduláris Eszköztár & Integrációk</p>
+                        <p class="text-xs sm:text-sm text-magenta/80 font-mono mb-3">index2.html</p>
                         <p class="text-sm text-slate-400 leading-relaxed font-light">
-                            Autonóm funkciómodulok, bővítmények és kísérleti eszközök tesztelési felülete automatizáláshoz.
+                            Valós idejű, autonóm AI ágensek által gyűjtött, elemzett és összegzett hír- és információáramlat.
                         </p>
                     </div>
                     <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-magenta">
                         <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-terminal text-[10px] text-magenta"></i> https://nyirigabor.hu/index2.html
+                            <i class="fa-solid fa-link text-[10px] text-magenta"></i> https://nyirigabor.hu/index2.html
                         </span>
                         <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
                     </div>
@@ -227,20 +226,20 @@
                                 <i class="fa-solid fa-flask-vial"></i>
                             </div>
                             <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/40 text-purple-300 font-bold uppercase">
-                                LAB 3
+                                AI Lab / Experimental
                             </span>
                         </div>
                         <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors mb-2">
-                            AI Project Lab 3
+                            Beta 3 Project
                         </h3>
-                        <p class="text-xs sm:text-sm text-purple-300/80 font-mono mb-3">Analitika & Kísérleti Adatok</p>
+                        <p class="text-xs sm:text-sm text-purple-300/80 font-mono mb-3">index3.html</p>
                         <p class="text-sm text-slate-400 leading-relaxed font-light">
-                            Adatfolyam-elemzés, vizuális intelligencia jelentések és prediktív adatszimulációk laboratóriuma.
+                            Kísérleti AI ágens architektúra és neurális hálózati prototípusok teszt környezete.
                         </p>
                     </div>
                     <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-purple-300">
                         <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-terminal text-[10px] text-purple-400"></i> https://nyirigabor.hu/index3.html
+                            <i class="fa-solid fa-link text-[10px] text-purple-400"></i> https://nyirigabor.hu/index3.html
                         </span>
                         <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
                     </div>
@@ -252,23 +251,23 @@
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-6">
                             <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
-                                <i class="fa-solid fa-network-wired"></i>
+                                <i class="fa-solid fa-infinity"></i>
                             </div>
                             <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
-                                ENGINE 5
+                                Fractal & Math Engine
                             </span>
                         </div>
                         <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-2">
-                            AI Neural Engine 5
+                            Mandelbrot Project
                         </h3>
-                        <p class="text-xs sm:text-sm text-cyan/80 font-mono mb-3">Neurális Hálózat & Rendszervezérlés</p>
+                        <p class="text-xs sm:text-sm text-cyan/80 font-mono mb-3">index5.html</p>
                         <p class="text-sm text-slate-400 leading-relaxed font-light">
-                            Új generációs neurális architektúra, modell paraméterezés és mélytanulási algoritmusok tesztközpontja.
+                            Interaktív fraktál renderelő és komplex matematikai AI vizualizációs modul.
                         </p>
                     </div>
                     <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
                         <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-terminal text-[10px] text-cyan"></i> https://nyirigabor.hu/index5.html
+                            <i class="fa-solid fa-link text-[10px] text-cyan"></i> https://nyirigabor.hu/index5.html
                         </span>
                         <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
                     </div>
@@ -277,45 +276,45 @@
             </div>
         </main>
 
-        <!-- Futuristic Diagnostics Footer -->
+        <!-- Footer Bar -->
         <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
                 <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
                     <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan"></span>
                 </span>
-                <span class="tracking-widest uppercase text-slate-300">SYSTEM DIAGNOSTICS: ALL GREEN</span>
+                <span class="tracking-widest uppercase text-slate-300">CORE NODE: ONLINE</span>
             </div>
 
             <div class="flex items-center gap-6">
                 <div>
                     <span class="text-slate-500">LATENCY:</span> 
-                    <span class="text-emerald-400 font-bold">14ms</span>
+                    <span class="text-emerald-400 font-bold">12ms</span>
                 </div>
                 <div>
-                    <span class="text-slate-500">UTC CLOCK:</span> 
+                    <span class="text-slate-500">CLOCK:</span> 
                     <span id="live-clock" class="text-cyan font-bold">00:00:00</span>
                 </div>
             </div>
 
             <div class="text-slate-500">
-                &copy; 2026 SuperAgent.ai &bull; <a href="https://nyirigabor.hu" target="_blank" class="hover:text-cyan transition-colors">nyirigabor.hu</a>
+                &copy; 2026 SuperAgent.ai &bull; Nyíri Gábor
             </div>
         </footer>
 
     </div>
 
-    <!-- Background Particle Network & Dynamic Glow Scripts -->
+    <!-- Background Canvas Particles & Real-time Scripts -->
     <script>
         // Real-Time Digital Clock
         function updateClock() {
             const now = new Date();
-            const hours = String(now.getUTCHours()).padStart(2, '0');
-            const minutes = String(now.getUTCMinutes()).padStart(2, '0');
-            const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
             const clockEl = document.getElementById('live-clock');
             if (clockEl) {
-                clockEl.textContent = `${hours}:${minutes}:${seconds} UTC`;
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
             }
         }
         setInterval(updateClock, 1000);
@@ -328,7 +327,7 @@
             glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
         });
 
-        // HTML5 Particle Network Canvas
+        // Interactive HTML5 Particle Network Canvas
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -351,8 +350,8 @@
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
                 this.radius = Math.random() * 1.5 + 0.5;
                 this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
                 this.alpha = Math.random() * 0.5 + 0.2;
@@ -374,13 +373,11 @@
             }
         }
 
-        // Initialize particles
-        const particleCount = Math.min(Math.floor(window.innerWidth / 16), 75);
+        const particleCount = Math.min(Math.floor(window.innerWidth / 16), 80);
         for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
         }
 
-        // Animation loop with connecting lines
         function animateParticles() {
             ctx.clearRect(0, 0, width, height);
 
@@ -397,7 +394,7 @@
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.15 * (1 - dist / 120)})`;
+                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.12 * (1 - dist / 120)})`;
                         ctx.lineWidth = 0.5;
                         ctx.stroke();
                     }
