@@ -20,7 +20,7 @@
         /* Világos téma beállítások */
         [data-theme="light"] {
             --bg-color: #f1f5f9;
-            --panel-bg: rgba(255, 255, 255, 0.82);
+            --panel-bg: rgba(255, 255, 255, 0.85);
             --panel-border: rgba(0, 0, 0, 0.12);
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -29,19 +29,19 @@
         /* UV Neon Színpaletta Témák */
         [data-uv="cyan"] {
             --accent-primary: #00ffff;
-            --accent-secondary: #0088ff;
+            --accent-secondary: #ff0c9d;
         }
         [data-uv="ultraviolet"] {
             --accent-primary: #9d00ff;
             --accent-secondary: #ff00ea;
         }
-        [data-uv="pink"] {
-            --accent-primary: #ff0c9d;
-            --accent-secondary: #ff6000;
-        }
         [data-uv="lime"] {
             --accent-primary: #39ff14;
             --accent-secondary: #00ffff;
+        }
+        [data-uv="solar"] {
+            --accent-primary: #ffaa00;
+            --accent-secondary: #ff2200;
         }
 
         body, html {
@@ -106,19 +106,20 @@
     </header>
 
     <!-- Vezérlő Panel (Jobb felső / Középső testreszabás) -->
-    <div class="absolute top-4 right-4 z-10 glass-panel rounded-2xl p-4 w-72 flex flex-col gap-4 text-xs">
+    <div class="absolute top-4 right-4 z-10 glass-panel rounded-2xl p-4 w-80 flex flex-col gap-4 text-xs">
         <div>
             <label class="block font-semibold mb-1 text-[var(--text-muted)]">MOZGÁSI MÓD</label>
-            <div class="grid grid-cols-3 gap-1">
-                <button class="btn-neon py-1.5 rounded-lg active" id="modeDrift" onclick="setMovementMode('drift')">Drift</button>
-                <button class="btn-neon py-1.5 rounded-lg" id="modeWave" onclick="setMovementMode('wave')">Wave</button>
-                <button class="btn-neon py-1.5 rounded-lg" id="modeChaos" onclick="setMovementMode('chaos')">Chaos</button>
+            <div class="grid grid-cols-2 gap-1.5">
+                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium active" id="modeStationary" onclick="setMovementMode('stationary')">📍 Stacionárius</button>
+                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium" id="modeDrift" onclick="setMovementMode('drift')">🌌 Drift</button>
+                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium" id="modeWave" onclick="setMovementMode('wave')">🌊 Wave</button>
+                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium" id="modeChaos" onclick="setMovementMode('chaos')">⚡ Chaos</button>
             </div>
         </div>
 
         <div>
             <div class="flex justify-between items-center mb-1">
-                <label class="font-semibold text-[var(--text-muted)]">SEBESSÉG</label>
+                <label class="font-semibold text-[var(--text-muted)]">SEBESSÉG / RUGALMASSÁG</label>
                 <span id="speedValue" class="font-mono text-[var(--accent-primary)]">1.5x</span>
             </div>
             <input type="range" id="speedSlider" min="0.2" max="4.0" step="0.1" value="1.5" class="w-full custom-slider cursor-pointer">
@@ -127,10 +128,10 @@
         <div>
             <label class="block font-semibold mb-1 text-[var(--text-muted)]">UV / NEON PALETTA</label>
             <div class="grid grid-cols-4 gap-1.5">
-                <button onclick="setUvPalette('cyan')" class="h-6 rounded-md bg-cyan-400 border border-white/20 hover:scale-105 transition-transform" title="Neon Cyan"></button>
-                <button onclick="setUvPalette('ultraviolet')" class="h-6 rounded-md bg-purple-600 border border-white/20 hover:scale-105 transition-transform" title="Ultra Violet"></button>
-                <button onclick="setUvPalette('pink')" class="h-6 rounded-md bg-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Cyber Pink"></button>
-                <button onclick="setUvPalette('lime')" class="h-6 rounded-md bg-lime-400 border border-white/20 hover:scale-105 transition-transform" title="Electric Lime"></button>
+                <button onclick="setUvPalette('cyan')" class="h-6 rounded-md bg-gradient-to-r from-cyan-400 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Cyber Neon"></button>
+                <button onclick="setUvPalette('ultraviolet')" class="h-6 rounded-md bg-gradient-to-r from-purple-600 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Ultra Violet"></button>
+                <button onclick="setUvPalette('lime')" class="h-6 rounded-md bg-gradient-to-r from-lime-400 to-cyan-400 border border-white/20 hover:scale-105 transition-transform" title="Electric Lime"></button>
+                <button onclick="setUvPalette('solar')" class="h-6 rounded-md bg-gradient-to-r from-amber-400 to-red-600 border border-white/20 hover:scale-105 transition-transform" title="Solar Flare"></button>
             </div>
         </div>
     </div>
@@ -212,37 +213,55 @@
         let height = canvas.height = window.innerHeight;
 
         let particles = [];
-        const particleCount = 55;
+        const particleCount = 60;
         let globalSpeedMultiplier = 1.5;
-        let movementMode = 'drift'; // 'drift', 'wave', 'chaos'
+        let movementMode = 'stationary'; // 'stationary', 'drift', 'wave', 'chaos'
         let pointer = { x: width / 2, y: height / 2, active: false };
         let time = 0;
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            // Álló módban a rácspontok újraelosztása
+            if (movementMode === 'stationary') {
+                repositionStationaryGrid();
+            }
         }
 
         window.addEventListener('resize', resizeCanvas);
 
         class QuantumParticle {
-            constructor() {
-                this.reset();
-            }
-
-            reset() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
+            constructor(anchorX, anchorY) {
+                this.anchorX = anchorX !== undefined ? anchorX : Math.random() * width;
+                this.anchorY = anchorY !== undefined ? anchorY : Math.random() * height;
+                this.x = this.anchorX;
+                this.y = this.anchorY;
+                this.vx = 0;
+                this.vy = 0;
                 this.baseVx = (Math.random() - 0.5) * 2;
                 this.baseVy = (Math.random() - 0.5) * 2;
-                this.radius = Math.random() * 2.5 + 1.5;
+                this.radius = Math.random() * 2.5 + 2;
                 this.freq = pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)];
                 this.phase = Math.random() * Math.PI * 2;
             }
 
             update() {
-                // Sebesség alkalmazása az aktív mozgási mód szerint
-                if (movementMode === 'drift') {
+                if (movementMode === 'stationary') {
+                    // Stacionárius rugó-fizika (Visszahúzás az alappontra)
+                    const dxAnchor = this.anchorX - this.x;
+                    const dyAnchor = this.anchorY - this.y;
+                    
+                    const stiffness = 0.05 * globalSpeedMultiplier;
+                    const damping = 0.88;
+
+                    this.vx += dxAnchor * stiffness;
+                    this.vy += dyAnchor * stiffness;
+                    this.vx *= damping;
+                    this.vy *= damping;
+
+                    this.x += this.vx;
+                    this.y += this.vy;
+                } else if (movementMode === 'drift') {
                     this.x += this.baseVx * globalSpeedMultiplier;
                     this.y += this.baseVy * globalSpeedMultiplier;
                 } else if (movementMode === 'wave') {
@@ -253,21 +272,31 @@
                     this.y += (this.baseVy + (Math.random() - 0.5) * 3) * globalSpeedMultiplier;
                 }
 
-                // Keretbe zárás / Visszapattanás
-                if (this.x < 0 || this.x > width) this.baseVx *= -1;
-                if (this.y < 0 || this.y > height) this.baseVy *= -1;
+                // Keretbe zárás dynamic módoknál
+                if (movementMode !== 'stationary') {
+                    if (this.x < 0 || this.x > width) this.baseVx *= -1;
+                    if (this.y < 0 || this.y > height) this.baseVy *= -1;
+                }
 
                 // Egér / Érintés taszítás & Interakció
                 if (pointer.active) {
-                    const dx = pointer.x - this.x;
-                    const dy = pointer.y - this.y;
+                    const dx = this.x - pointer.x;
+                    const dy = this.y - pointer.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const maxDist = 140;
+                    const maxDist = 160;
 
-                    if (dist < maxDist) {
-                        const force = (maxDist - dist) / maxDist;
-                        this.x -= (dx / dist) * force * 5;
-                        this.y -= (dy / dist) * force * 5;
+                    if (dist < maxDist && dist > 0) {
+                        const force = (1 - dist / maxDist) * 12 * globalSpeedMultiplier;
+                        const nx = dx / dist;
+                        const ny = dy / dist;
+
+                        if (movementMode === 'stationary') {
+                            this.vx += nx * force;
+                            this.vy += ny * force;
+                        } else {
+                            this.x += nx * force * 0.5;
+                            this.y += ny * force * 0.5;
+                        }
                     }
                 }
             }
@@ -281,10 +310,29 @@
             }
         }
 
+        function repositionStationaryGrid() {
+            const cols = Math.ceil(Math.sqrt(particleCount * (width / height)));
+            const rows = Math.ceil(particleCount / cols);
+            const spacingX = width / (cols + 1);
+            const spacingY = height / (rows + 1);
+
+            let idx = 0;
+            for (let r = 1; r <= rows; r++) {
+                for (let c = 1; c <= cols; c++) {
+                    if (idx < particles.length) {
+                        particles[idx].anchorX = c * spacingX;
+                        particles[idx].anchorY = r * spacingY;
+                        idx++;
+                    }
+                }
+            }
+        }
+
         // Részecskék inicializálása
         for (let i = 0; i < particleCount; i++) {
             particles.push(new QuantumParticle());
         }
+        repositionStationaryGrid();
 
         function drawConnections() {
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
@@ -295,7 +343,7 @@
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const maxConnectDist = 130;
+                    const maxConnectDist = 140;
 
                     if (dist < maxConnectDist) {
                         const alpha = 1 - (dist / maxConnectDist);
@@ -339,19 +387,43 @@
             pointer.y = y;
             pointer.active = true;
 
-            // Véletlenszerű audio akord indítás egérmozgáskor
-            if (isAudioActive && Math.random() < 0.06) {
+            // Audio synth hang kibocsátás mozgásra
+            if (isAudioActive && Math.random() < 0.07) {
                 const randomParticle = particles[Math.floor(Math.random() * particles.length)];
-                playSynthTone(randomParticle.freq, 0.3);
+                playSynthTone(randomParticle.freq, 0.35);
+            }
+        }
+
+        function triggerImpulse(x, y) {
+            handlePointerMove(x, y);
+            // Kattintásra lökés a közeli pontokon
+            particles.forEach(p => {
+                const dx = p.x - x;
+                const dy = p.y - y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 220 && dist > 0) {
+                    const force = (1 - dist / 220) * 25 * globalSpeedMultiplier;
+                    p.vx += (dx / dist) * force;
+                    p.vy += (dy / dist) * force;
+                }
+            });
+            if (isAudioActive) {
+                playSynthTone(pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)], 0.5);
             }
         }
 
         window.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
+        window.addEventListener('mousedown', (e) => triggerImpulse(e.clientX, e.clientY));
         window.addEventListener('mouseleave', () => pointer.active = false);
 
         window.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
                 handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+        window.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                triggerImpulse(e.touches[0].clientX, e.touches[0].clientY);
             }
         }, { passive: true });
         window.addEventListener('touchend', () => pointer.active = false);
@@ -361,9 +433,14 @@
         // 1. Mozgási mód váltó
         window.setMovementMode = function(mode) {
             movementMode = mode;
+            document.getElementById('modeStationary').classList.toggle('active', mode === 'stationary');
             document.getElementById('modeDrift').classList.toggle('active', mode === 'drift');
             document.getElementById('modeWave').classList.toggle('active', mode === 'wave');
             document.getElementById('modeChaos').classList.toggle('active', mode === 'chaos');
+
+            if (mode === 'stationary') {
+                repositionStationaryGrid();
+            }
         };
 
         // 2. Sebesség Slider
