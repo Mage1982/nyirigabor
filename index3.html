@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="hu" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS // Quantum Geometry & Audio Wave Engine</title>
+    <title>NEXUS // Kvantum Geometria és Audio Hullám Engine</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -178,38 +178,38 @@
                 <h1 class="font-mono font-bold text-sm sm:text-base tracking-wider bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent flex items-center">
                     NEXUS <span class="text-[10px] sm:text-xs font-normal text-slate-400 border border-slate-700/50 rounded px-1.5 py-0.2 sm:py-0.5 ml-1.5">v3.0</span>
                 </h1>
-                <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-tight hidden sm:block">QUANTUM GEOMETRY & AUDIO WAVE ENGINE</p>
+                <p class="text-[9px] sm:text-[10px] text-slate-400 font-mono tracking-tight hidden sm:block">KVANTUM GEOMETRIA ÉS AUDIO HULLÁM ENGINE</p>
             </div>
         </div>
 
         <!-- Right Side Actions -->
         <div class="flex items-center space-x-1.5 sm:space-x-2.5">
             <!-- Support Modal Button -->
-            <button onclick="toggleSupportModal()" class="glass-button px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5 text-pink-400 border-pink-500/30 hover:bg-pink-500/10 active:scale-95 transition-transform" title="Support Project">
+            <button onclick="toggleSupportModal()" class="glass-button px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5 text-pink-400 border-pink-500/30 hover:bg-pink-500/10 active:scale-95 transition-transform" title="Támogatás">
                 <i data-lucide="heart" class="w-4 h-4 fill-pink-500/20 text-pink-500"></i>
-                <span class="hidden xs:inline text-[11px] font-bold">SUPPORT</span>
+                <span class="hidden xs:inline text-[11px] font-bold">TÁMOGATÁS</span>
             </button>
 
             <!-- Mobile HUD Hide/Show Toggle Button -->
-            <button onclick="toggleHudVisibility()" id="hudToggleBtn" class="glass-button px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5 text-cyan-400 border-cyan-500/40" title="Toggle UI Controls">
+            <button onclick="toggleHudVisibility()" id="hudToggleBtn" class="glass-button px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5 text-cyan-400 border-cyan-500/40" title="Kezelőfelület Rejtése/Megjelenítése">
                 <i data-lucide="eye" id="hudToggleIcon" class="w-4 h-4"></i>
-                <span id="hudToggleText" class="hidden xs:inline text-[11px]">HUD</span>
+                <span id="hudToggleText" class="hidden xs:inline text-[11px]">MENÜ</span>
             </button>
 
             <!-- Audio Toggle Button -->
             <button id="audioToggleBtn" onclick="toggleAudio()" class="glass-button px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-mono flex items-center space-x-1.5">
                 <i data-lucide="volume-x" id="audioIcon" class="w-4 h-4"></i>
-                <span id="audioStatusText" class="hidden sm:inline">AUDIO: OFF</span>
+                <span id="audioStatusText" class="hidden sm:inline">HANG: KI</span>
             </button>
 
             <!-- Light / Dark Mode Toggle Button -->
-            <button onclick="toggleTheme()" class="glass-button p-1.5 sm:p-2 rounded-xl text-xs font-mono flex items-center justify-center" title="Toggle Light/Dark Theme">
+            <button onclick="toggleTheme()" class="glass-button p-1.5 sm:p-2 rounded-xl text-xs font-mono flex items-center justify-center" title="Sötét / Világos Téma Switcher">
                 <i data-lucide="sun" id="themeIconSun" class="w-4 h-4 text-amber-400 hidden"></i>
                 <i data-lucide="moon" id="themeIconMoon" class="w-4 h-4 text-cyan-400"></i>
             </button>
 
             <!-- Reset Button -->
-            <button onclick="resetCanvas()" class="glass-button p-1.5 sm:p-2 rounded-xl text-xs font-mono" title="Reset Simulation">
+            <button onclick="resetCanvas()" class="glass-button p-1.5 sm:p-2 rounded-xl text-xs font-mono" title="Szimuláció Alaphelyzetbe">
                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
             </button>
         </div>
@@ -222,30 +222,30 @@
         <div id="leftHudPanel" class="pointer-events-auto max-w-full md:max-w-sm w-full glass-panel rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xl transition-all duration-300">
             <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <span class="text-xs font-mono text-cyan-400 dark:text-cyan-400 font-bold tracking-wider flex items-center">
-                    <i data-lucide="shapes" class="w-4 h-4 mr-1.5"></i> GEOMETRY MODE
+                    <i data-lucide="shapes" class="w-4 h-4 mr-1.5"></i> GEOMETRIA MÓD
                 </span>
                 <span id="nodeBadge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/60 text-cyan-300 border border-cyan-800/40">
-                    LATTICE
+                    RÁCSHÁLÓ
                 </span>
             </div>
 
             <!-- Geometry Mode Grid -->
             <div class="grid grid-cols-2 gap-2">
                 <button onclick="setMode('lattice')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1 active" data-mode="lattice">
-                    <span class="font-bold">LATTICE</span>
-                    <span class="text-[9px] sm:text-[10px] opacity-70">Polyhedral Net</span>
+                    <span class="font-bold">RÁCSHÁLÓ</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Poliéder Háló</span>
                 </button>
                 <button onclick="setMode('waves')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1" data-mode="waves">
-                    <span class="font-bold">KINETIC WAVES</span>
-                    <span class="text-[9px] sm:text-[10px] opacity-70">Harmonic Grid</span>
+                    <span class="font-bold">KINETIKUS HULLÁM</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Harmonikus Rács</span>
                 </button>
                 <button onclick="setMode('vortex')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1" data-mode="vortex">
-                    <span class="font-bold">VORTEX FIELD</span>
-                    <span class="text-[9px] sm:text-[10px] opacity-70">Spiral Gravity</span>
+                    <span class="font-bold">GÖRVÉNY MEZŐ</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Spirál Gravitáció</span>
                 </button>
                 <button onclick="setMode('mesh')" class="mode-btn glass-button p-2 sm:p-2.5 rounded-xl text-left text-xs font-mono flex flex-col space-y-0.5 sm:space-y-1" data-mode="mesh">
-                    <span class="font-bold">NEURAL MESH</span>
-                    <span class="text-[9px] sm:text-[10px] opacity-70">Dynamic Synapse</span>
+                    <span class="font-bold">NEURON HÁLÓ</span>
+                    <span class="text-[9px] sm:text-[10px] opacity-70">Dinamikus Szinapszis</span>
                 </button>
             </div>
 
@@ -253,7 +253,7 @@
             <div class="space-y-2.5 sm:space-y-3 pt-2 border-t border-white/10 text-xs font-mono">
                 <div>
                     <div class="flex justify-between mb-1 text-[10px] sm:text-[11px]">
-                        <span class="opacity-70">COMPLEXITY / NODES</span>
+                        <span class="opacity-70">KOMPLEXITÁS / CSOMÓPONTOK</span>
                         <span id="countVal" class="text-cyan-400 font-bold">80</span>
                     </div>
                     <input type="range" id="nodeSlider" min="20" max="250" value="80" class="w-full cursor-pointer" oninput="updateNodeCount(this.value)">
@@ -261,7 +261,7 @@
 
                 <div>
                     <div class="flex justify-between mb-1 text-[10px] sm:text-[11px]">
-                        <span class="opacity-70">SIMULATION SPEED</span>
+                        <span class="opacity-70">SZIMULÁCIÓ SEBESSÉGE</span>
                         <span id="speedVal" class="text-cyan-400 font-bold">1.0x</span>
                     </div>
                     <input type="range" id="speedSlider" min="0.2" max="3.0" step="0.1" value="1.0" class="w-full cursor-pointer" oninput="updateSpeed(this.value)">
@@ -269,7 +269,7 @@
 
                 <div>
                     <div class="flex justify-between mb-1 text-[10px] sm:text-[11px]">
-                        <span class="opacity-70">GRAVITY / WARP FORCE</span>
+                        <span class="opacity-70">GRAVITÁCIÓ / HAJLÍTÓ ERŐ</span>
                         <span id="forceVal" class="text-cyan-400 font-bold">140px</span>
                     </div>
                     <input type="range" id="forceSlider" min="40" max="300" value="140" class="w-full cursor-pointer" oninput="updateForce(this.value)">
@@ -281,25 +281,27 @@
         <div id="rightHudPanel" class="pointer-events-auto max-w-full md:max-w-xs w-full glass-panel rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xl transition-all duration-300">
             <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
                 <span class="text-xs font-mono text-purple-400 font-bold tracking-wider flex items-center">
-                    <i data-lucide="palette" class="w-4 h-4 mr-1.5"></i> COLOR PALETTE
+                    <i data-lucide="palette" class="w-4 h-4 mr-1.5"></i> SZÍNPALETTA
                 </span>
             </div>
 
             <!-- Color Palette Selector -->
-            <div class="grid grid-cols-4 gap-2">
-                <button onclick="setColorTheme('cyanViolet')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-purple-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Cyan / Violet"></button>
-                <button onclick="setColorTheme('solar')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-amber-400 to-red-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Solar Flare"></button>
-                <button onclick="setColorTheme('emerald')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-blue-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Emerald Cyber"></button>
-                <button onclick="setColorTheme('monochrome')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-slate-200 to-slate-700 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Monochrome"></button>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
+                <button onclick="setColorTheme('cyanViolet')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-cyan-400 to-purple-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Cián / Lila"></button>
+                <button onclick="setColorTheme('solar')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-amber-400 to-red-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Szoláris Láng"></button>
+                <button onclick="setColorTheme('emerald')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-emerald-400 to-blue-600 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Smaragd Kiber"></button>
+                <button onclick="setColorTheme('monochrome')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-slate-200 to-slate-700 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Monokróm Titán"></button>
+                <button onclick="setColorTheme('cyberpunk')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-pink-500 to-cyan-400 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Cyberpunk Pink"></button>
+                <button onclick="setColorTheme('deepspace')" class="palette-btn h-7 sm:h-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-900 border border-white/20 hover:scale-105 active:scale-95 transition-transform" title="Mély Űr"></button>
             </div>
 
             <!-- Audio Scale Selector -->
             <div class="pt-2 border-t border-white/10">
-                <span class="text-[10px] sm:text-[11px] font-mono opacity-70 block mb-1.5 sm:mb-2">SYNTH CHORD SCALE</span>
+                <span class="text-[10px] sm:text-[11px] font-mono opacity-70 block mb-1.5 sm:mb-2">SZINTETIZÁTOR SKÁLA</span>
                 <div class="grid grid-cols-2 gap-1.5 text-[10px] font-mono">
-                    <button onclick="setSynthScale('pentatonic')" class="scale-btn glass-button py-1.5 rounded-lg active" data-scale="pentatonic">PENTATONIC</button>
-                    <button onclick="setSynthScale('minor')" class="scale-btn glass-button py-1.5 rounded-lg" data-scale="minor">NEO MINOR</button>
-                    <button onclick="setSynthScale('major')" class="scale-btn glass-button py-1.5 rounded-lg" data-scale="major">CELESTIAL</button>
+                    <button onclick="setSynthScale('pentatonic')" class="scale-btn glass-button py-1.5 rounded-lg active" data-scale="pentatonic">PENTATON</button>
+                    <button onclick="setSynthScale('minor')" class="scale-btn glass-button py-1.5 rounded-lg" data-scale="minor">NEO MOLL</button>
+                    <button onclick="setSynthScale('major')" class="scale-btn glass-button py-1.5 rounded-lg" data-scale="major">MENNYEI DUR</button>
                     <button onclick="setSynthScale('cyber')" class="scale-btn glass-button py-1.5 rounded-lg" data-scale="cyber">CYBERPUNK</button>
                 </div>
             </div>
@@ -307,13 +309,13 @@
             <!-- Quick Tip Box -->
             <div class="p-2.5 sm:p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-[10px] sm:text-[11px] font-mono flex items-start space-x-2">
                 <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400 shrink-0 mt-0.5"></i>
-                <span class="opacity-80">Tap or drag anywhere to warp geometry & trigger synth harmonies.</span>
+                <span class="opacity-80">Érintsd meg vagy húzd az ujjad a geometria hajlításához és a harmonikus hangok megszólaltatásához!</span>
             </div>
         </div>
     </main>
 
     <!-- Floating Canvas Quick Action Button on Mobile when HUD is hidden -->
-    <button id="quickShowHudBtn" onclick="toggleHudVisibility()" class="fixed bottom-12 right-4 z-30 pointer-events-auto glass-button p-3 rounded-full shadow-2xl text-cyan-400 border-cyan-400/50 hidden md:hidden" title="Show UI Controls">
+    <button id="quickShowHudBtn" onclick="toggleHudVisibility()" class="fixed bottom-12 right-4 z-30 pointer-events-auto glass-button p-3 rounded-full shadow-2xl text-cyan-400 border-cyan-400/50 hidden md:hidden" title="Kezelőfelület Megjelenítése">
         <i data-lucide="sliders" class="w-5 h-5"></i>
     </button>
 
@@ -331,16 +333,16 @@
             <div>
                 <h3 class="font-mono text-base font-bold text-slate-100">Támogasd a NEXUS Projektet</h3>
                 <p class="text-xs text-slate-300 leading-relaxed font-sans mt-1.5">
-                    Ha tetszik az interaktív kvantugeometria és az audio szimuláció, egy kávé árával hozzájárulhatsz a nyirigabor.hu fejlesztéseihez!
+                    Ha tetszik az interaktív kvantumgeometria és az audio szimuláció, egy kávé árával hozzájárulhatsz a nyirigabor.hu fejlesztéseihez!
                 </p>
             </div>
             
             <div class="pt-2 flex flex-col space-y-2 font-mono text-xs">
                 <!-- Direct PayPal Link -->
-             <a href="https://www.paypal.com/transfer/homepage/external/send?recipient=nyirigabee@gmail.com" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 font-bold text-white shadow-lg hover:brightness-110 active:scale-98 transition-all flex items-center justify-center space-x-2">
-    <i data-lucide="credit-card" class="w-4 h-4"></i>
-    <span>PayPal Támogatás (nyirigabee@gmail.com)</span>
-</a>
+                <a href="https://www.paypal.com/transfer/homepage/external/send?recipient=nyirigabee@gmail.com" target="_blank" rel="noopener noreferrer" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-600 font-bold text-white shadow-lg hover:brightness-110 active:scale-98 transition-all flex items-center justify-center space-x-2">
+                    <i data-lucide="credit-card" class="w-4 h-4"></i>
+                    <span>PayPal Támogatás (nyirigabee@gmail.com)</span>
+                </a>
 
                 <!-- Quick Copy Email Button -->
                 <button onclick="copyPaypalEmail()" class="w-full py-2.5 px-4 rounded-xl glass-button font-bold text-slate-200 flex items-center justify-center space-x-2 hover:border-pink-500/50">
@@ -358,12 +360,12 @@
                 <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 sm:mr-2 animate-ping"></span>
                 FPS: <span id="fpsDisplay" class="font-bold ml-1">60</span>
             </span>
-            <span>NODES: <span id="activeNodes" class="font-bold">80</span></span>
-            <span class="hidden xs:inline">FREQ: <span id="freqDisplay" class="text-cyan-400 font-bold">READY</span></span>
+            <span>CSOMÓPONTOK: <span id="activeNodes" class="font-bold">80</span></span>
+            <span class="hidden xs:inline">FREKVENCIÁK: <span id="freqDisplay" class="text-cyan-400 font-bold">KÉSZ</span></span>
         </div>
         
         <div class="flex items-center space-x-2 sm:space-x-4 text-[10px] sm:text-[11px]">
-            <span>DESIGNED IN THE STYLE OF <a href="https://nyirigabor.hu/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">NYIRIGABOR.HU</a></span>
+            <span>DESIGN ÉS MESTERSÉGES INTELLIGENCIA: <a href="https://nyirigabor.hu/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-bold">NYIRIGABOR.HU</a></span>
         </div>
     </footer>
 
@@ -401,7 +403,7 @@
         document.getElementById('forceSlider').value = config.gravityRadius;
         document.getElementById('forceVal').innerText = `${config.gravityRadius}px`;
 
-        // Color Palettes
+        // Extended Color Palettes
         const palettes = {
             cyanViolet: {
                 dark: { primary: '#00f0ff', secondary: '#7000ff', fill: 'rgba(0, 240, 255, 0.15)', glow: 'rgba(0, 240, 255, 0.4)' },
@@ -418,6 +420,14 @@
             monochrome: {
                 dark: { primary: '#e2e8f0', secondary: '#64748b', fill: 'rgba(226, 232, 240, 0.15)', glow: 'rgba(226, 232, 240, 0.3)' },
                 light: { primary: '#1e293b', secondary: '#64748b', fill: 'rgba(30, 41, 59, 0.12)', glow: 'rgba(30, 41, 59, 0.2)' }
+            },
+            cyberpunk: {
+                dark: { primary: '#ff007f', secondary: '#00f0ff', fill: 'rgba(255, 0, 127, 0.18)', glow: 'rgba(255, 0, 127, 0.5)' },
+                light: { primary: '#d90429', secondary: '#0284c7', fill: 'rgba(217, 4, 41, 0.14)', glow: 'rgba(217, 4, 41, 0.3)' }
+            },
+            deepspace: {
+                dark: { primary: '#3a86ff', secondary: '#8338ec', fill: 'rgba(58, 134, 255, 0.16)', glow: 'rgba(58, 134, 255, 0.45)' },
+                light: { primary: '#1d4ed8', secondary: '#6d28d9', fill: 'rgba(29, 78, 216, 0.12)', glow: 'rgba(29, 78, 216, 0.3)' }
             }
         };
 
@@ -500,13 +510,13 @@
                 initAudio();
                 btn.classList.add('active');
                 icon.setAttribute('data-lucide', 'volume-2');
-                if (statusText) statusText.innerText = 'AUDIO: ON';
+                if (statusText) statusText.innerText = 'HANG: BE';
             } else {
                 btn.classList.remove('active');
                 icon.setAttribute('data-lucide', 'volume-x');
-                if (statusText) statusText.innerText = 'AUDIO: OFF';
+                if (statusText) statusText.innerText = 'HANG: KI';
                 const freqEl = document.getElementById('freqDisplay');
-                if (freqEl) freqEl.innerText = 'OFF';
+                if (freqEl) freqEl.innerText = 'KI';
             }
             lucide.createIcons();
         }
@@ -547,13 +557,13 @@
                 leftPanel.classList.remove('hud-hidden');
                 rightPanel.classList.remove('hud-hidden', 'hud-right-hidden');
                 toggleIcon.setAttribute('data-lucide', 'eye');
-                if (toggleText) toggleText.innerText = 'HUD';
+                if (toggleText) toggleText.innerText = 'MENÜ';
                 quickBtn.classList.add('hidden');
             } else {
                 leftPanel.classList.add('hud-hidden');
                 rightPanel.classList.add('hud-hidden', 'hud-right-hidden');
                 toggleIcon.setAttribute('data-lucide', 'eye-off');
-                if (toggleText) toggleText.innerText = 'HIDE';
+                if (toggleText) toggleText.innerText = 'ELREJT';
                 quickBtn.classList.remove('hidden');
             }
             lucide.createIcons();
@@ -765,7 +775,13 @@
 
         function setMode(mode) {
             config.mode = mode;
-            document.getElementById('nodeBadge').innerText = mode.toUpperCase();
+            const modeNames = {
+                lattice: 'RÁCSHÁLÓ',
+                waves: 'KINETIKUS HULLÁM',
+                vortex: 'GÖRVÉNY MEZŐ',
+                mesh: 'NEURON HÁLÓ'
+            };
+            document.getElementById('nodeBadge').innerText = modeNames[mode] || mode.toUpperCase();
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 if (btn.dataset.mode === mode) btn.classList.add('active');
                 else btn.classList.remove('active');
