@@ -7,7 +7,7 @@
   <style>
     :root {
       --bg-color: #090b10;
-      --card-bg: rgba(15, 20, 32, 0.78);
+      --card-bg: rgba(15, 20, 32, 0.75);
       --accent: #00ffff;
       --accent-magenta: #ff0c9d;
       --accent-glow: rgba(0, 255, 255, 0.35);
@@ -56,51 +56,16 @@
       cursor: grabbing;
     }
 
-    /* Top Floating Status Bar */
-    #top-status-bar {
-      position: absolute;
-      top: 16px;
-      left: 20px;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(15, 20, 32, 0.75);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 8px 16px;
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      font-family: monospace;
-      font-size: 0.75rem;
-      pointer-events: none;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #00ff87;
-      box-shadow: 0 0 10px #00ff87;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
-
     /* Floating Open Button (When Sidebar is Hidden) */
     #sidebar-toggle-open {
       position: absolute;
-      top: 16px;
+      top: 20px;
       right: 20px;
       z-index: 20;
       background: rgba(15, 20, 32, 0.85);
       border: 1px solid rgba(0, 255, 255, 0.4);
       color: var(--accent);
-      padding: 10px 18px;
+      padding: 10px 16px;
       border-radius: 30px;
       font-size: 0.85rem;
       font-weight: 700;
@@ -181,7 +146,7 @@
       justify-content: space-between;
       align-items: center;
       padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      border-b: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .title-area {
@@ -191,6 +156,7 @@
     }
 
     .title-badge {
+      width: 8 h-8;
       width: 28px;
       height: 28px;
       border-radius: 8px;
@@ -349,10 +315,6 @@
 
     /* Mobile Responsive Adjustments */
     @media (max-width: 768px) {
-      #top-status-bar {
-        display: none;
-      }
-
       #sidebar-overlay {
         display: block;
       }
@@ -365,12 +327,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Top Floating Status Bar -->
-  <div id="top-status-bar">
-    <div class="status-dot"></div>
-    <span>GPU GLSL ENGINE // ONLINE</span>
-  </div>
 
   <!-- Floating Open Button (Visible when sidebar is collapsed) -->
   <button id="sidebar-toggle-open" title="Menü Megnyitása (H)">
@@ -423,8 +379,6 @@
         <option value="2">Deep Ocean</option>
         <option value="3">Psychedelic</option>
         <option value="4">Cyberpunk Pink</option>
-        <option value="5">Emerald Matrix</option>
-        <option value="6">Deep Space</option>
       </select>
     </div>
 
@@ -480,12 +434,8 @@
           return vec3(sin(t * 5.0) * 0.2, sin(t * 10.0) * 0.4 + 0.4, sin(t * 20.0) * 0.5 + 0.5);
         } else if (u_palette == 3) {
           return vec3(sin(t * 50.0) * 0.5 + 0.5, cos(t * 30.0) * 0.5 + 0.5, sin(t * 80.0) * 0.5 + 0.5);
-        } else if (u_palette == 4) {
-          return vec3(sin(t * 12.0) * 0.5 + 0.5, sin(t * 3.0) * 0.2, cos(t * 10.0) * 0.5 + 0.5);
-        } else if (u_palette == 5) {
-          return vec3(sin(t * 4.0) * 0.1, sin(t * 12.0) * 0.5 + 0.5, sin(t * 8.0) * 0.3 + 0.2);
         } else {
-          return vec3(sin(t * 8.0) * 0.4 + 0.2, sin(t * 10.0) * 0.3 + 0.1, cos(t * 6.0) * 0.5 + 0.5);
+          return vec3(sin(t * 12.0) * 0.5 + 0.5, sin(t * 3.0) * 0.2, cos(t * 10.0) * 0.5 + 0.5);
         }
       }
 
