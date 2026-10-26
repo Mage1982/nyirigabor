@@ -6,11 +6,13 @@
   <title>WebGL GPU Fractal Explorer Pro</title>
   <style>
     :root {
-      --bg-color: #0b0c10;
-      --card-bg: rgba(31, 40, 51, 0.9);
-      --accent: #66fcf1;
-      --accent-glow: rgba(102, 252, 241, 0.4);
-      --text: #c5c6c7;
+      --bg-color: #090b10;
+      --card-bg: rgba(15, 20, 32, 0.75);
+      --accent: #00ffff;
+      --accent-magenta: #ff0c9d;
+      --accent-glow: rgba(0, 255, 255, 0.35);
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
     }
 
     * {
@@ -47,42 +49,55 @@
       height: 100%;
       display: block;
       cursor: grab;
-      touch-action: none; /* Prevents mobile scroll/zoom browser gestures */
+      touch-action: none;
     }
 
     canvas:active {
       cursor: grabbing;
     }
 
-    /* Floating Toggle Button for Mobile Off-Canvas Sidebar */
-    #menu-toggle-btn {
-      display: none;
+    /* Floating Open Button (When Sidebar is Hidden) */
+    #sidebar-toggle-open {
       position: absolute;
-      top: 16px;
-      right: 16px;
+      top: 20px;
+      right: 20px;
       z-index: 20;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid var(--accent);
+      background: rgba(15, 20, 32, 0.85);
+      border: 1px solid rgba(0, 255, 255, 0.4);
       color: var(--accent);
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
+      padding: 10px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 0 15px var(--accent-glow);
-      backdrop-filter: blur(8px);
-      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
     }
 
-    #menu-toggle-btn:active {
-      transform: scale(0.92);
+    #sidebar-toggle-open.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    #sidebar-toggle-open:hover {
       background: var(--accent);
-      color: #0b0c10;
+      color: #090b10;
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
-    /* Off-Canvas Backdrop Overlay */
+    /* Off-Canvas Overlay for Mobile */
     #sidebar-overlay {
       display: none;
       position: fixed;
@@ -92,58 +107,101 @@
       z-index: 25;
       opacity: 0;
       transition: opacity 0.3s ease;
+      pointer-events: none;
     }
 
     #sidebar-overlay.active {
       opacity: 1;
+      pointer-events: auto;
     }
 
-    /* Sidebar Base Styling */
+    /* Modern Glassmorphism Sidebar */
     #sidebar {
-      width: 330px;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 340px;
       background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-left: 1px solid rgba(102, 252, 241, 0.25);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-left: 1px solid rgba(0, 255, 255, 0.2);
       padding: 24px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 20px;
       z-index: 30;
-      box-shadow: -5px 0 25px rgba(0,0,0,0.6);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8), inset 1px 0 0 rgba(255, 255, 255, 0.05);
       overflow-y: auto;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    #sidebar.collapsed {
+      transform: translateX(100%);
+    }
+
+    /* Sidebar Header */
     .sidebar-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-bottom: 14px;
+      border-b: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    #sidebar-close-btn {
-      display: none;
-      background: transparent;
-      border: none;
-      color: var(--text);
-      font-size: 1.5rem;
-      cursor: pointer;
-      padding: 4px;
-      line-height: 1;
+    .title-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    #sidebar-close-btn:hover {
-      color: var(--accent);
+    .title-badge {
+      width: 8 h-8;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-magenta));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #000;
+      font-weight: bold;
     }
 
     h1 {
-      font-size: 1.25rem;
-      color: var(--accent);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
       letter-spacing: 1px;
       text-transform: uppercase;
-      text-shadow: 0 0 10px var(--accent-glow);
+      background: linear-gradient(135deg, #00ffff 0%, #ffffff 50%, #ff0c9d 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
+    .hide-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-dim);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .hide-btn:hover {
+      background: rgba(0, 255, 255, 0.15);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Control Groups */
     .control-group {
       display: flex;
       flex-direction: column;
@@ -151,28 +209,41 @@
     }
 
     label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: var(--text-dim);
       display: flex;
       justify-content: space-between;
+      align-items: center;
+    }
+
+    .val-tag {
+      color: var(--accent);
+      font-family: monospace;
+      font-size: 0.85rem;
+      background: rgba(0, 255, 255, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 255, 255, 0.2);
     }
 
     select, input[type="range"] {
       width: 100%;
-      background: #1f2833;
+      background: rgba(10, 15, 26, 0.8);
       color: #fff;
-      border: 1px solid rgba(102, 252, 241, 0.3);
+      border: 1px solid rgba(0, 255, 255, 0.2);
       padding: 10px 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       outline: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
     }
 
-    select:focus, input[type="range"]:focus {
+    select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 8px var(--accent-glow);
+      box-shadow: 0 0 10px var(--accent-glow);
     }
 
     input[type="range"] {
@@ -182,92 +253,86 @@
       cursor: pointer;
     }
 
+    /* Action Buttons */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
     .btn {
-      background: transparent;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 255, 255, 0.05));
       color: var(--accent);
-      border: 1px solid var(--accent);
+      border: 1px solid rgba(0, 255, 255, 0.4);
       padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
+      border-radius: 10px;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.3s ease;
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-height: 44px; /* Optimal touch target size */
     }
 
-    .btn:hover, .btn:active {
+    .btn:hover {
       background: var(--accent);
-      color: #0b0c10;
-      box-shadow: 0 0 15px var(--accent-glow);
+      color: #090b10;
+      box-shadow: 0 0 20px var(--accent-glow);
     }
 
     .btn-secondary {
-      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.15);
+      color: var(--text-dim);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
       color: #fff;
+      box-shadow: none;
     }
 
-    .btn-secondary:hover, .btn-secondary:active {
-      background: #fff;
-      color: #0b0c10;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
-    }
-
+    /* Info Card */
     .info-box {
-      font-size: 0.8rem;
-      line-height: 1.5;
-      opacity: 0.85;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      padding-top: 15px;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--text-dim);
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px;
       margin-top: auto;
+    }
+
+    .info-box strong {
+      color: var(--accent);
     }
 
     /* Mobile Responsive Adjustments */
     @media (max-width: 768px) {
-      #menu-toggle-btn {
-        display: flex;
-      }
-
       #sidebar-overlay {
-        display: block;
-        pointer-events: none;
-      }
-
-      #sidebar-overlay.active {
-        pointer-events: auto;
-      }
-
-      #sidebar-close-btn {
         display: block;
       }
 
       #sidebar {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
         width: 85vw;
         max-width: 320px;
-        transform: translateX(100%);
-        border-left: 1px solid rgba(102, 252, 241, 0.4);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.8);
-      }
-
-      #sidebar.open {
-        transform: translateX(0);
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating Mobile Menu Toggle Button -->
-  <button id="menu-toggle-btn" aria-label="Menü megnyitása">⚙️</button>
+  <!-- Floating Open Button (Visible when sidebar is collapsed) -->
+  <button id="sidebar-toggle-open" title="Menü Megnyitása (H)">
+    <span>⚙️</span>
+    <span>Vezérlőpult</span>
+  </button>
 
   <!-- Mobile Off-Canvas Backdrop -->
   <div id="sidebar-overlay"></div>
@@ -277,11 +342,14 @@
     <canvas id="glCanvas"></canvas>
   </div>
 
-  <!-- Sidebar Control Panel -->
+  <!-- Modern Glassmorphism Sidebar -->
   <div id="sidebar">
     <div class="sidebar-header">
-      <h1>Fractal Explorer Pro</h1>
-      <button id="sidebar-close-btn" aria-label="Menü bezárása">&times;</button>
+      <div class="title-area">
+        <div class="title-badge">FX</div>
+        <h1>Fractal Explorer</h1>
+      </div>
+      <button class="hide-btn" id="sidebar-hide-btn" title="Elrejtés (H)">➔</button>
     </div>
 
     <div class="control-group">
@@ -298,7 +366,7 @@
     <div class="control-group">
       <label for="iterations">
         <span>Részletesség</span>
-        <span id="iterVal">350</span>
+        <span class="val-tag" id="iterVal">350</span>
       </label>
       <input type="range" id="iterations" min="50" max="1000" value="350">
     </div>
@@ -314,14 +382,17 @@
       </select>
     </div>
 
-    <button class="btn" id="saveBtn">📸 HD Kép Mentése</button>
-    <button class="btn btn-secondary" id="resetBtn">↺ Nézet Alaphelyzetbe</button>
+    <div class="btn-group">
+      <button class="btn" id="saveBtn">📸 HD Kép Mentése</button>
+      <button class="btn btn-secondary" id="resetBtn">↺ Nézet Alaphelyzetbe</button>
+    </div>
 
     <div class="info-box">
-      <strong>Vezérlés (GPU Accelerate):</strong><br>
-      • <strong>Görgetés / 2 Ujj:</strong> Zoomelés<br>
-      • <strong>Húzás (1 Ujj / Egér):</strong> Mozgatás<br>
-      • <strong>Julia mód:</strong> Érintéssel animálható a minta!
+      <strong>GPU Gyorsított Vezérlés:</strong><br>
+      • <strong>Görgetés / 2 Ujj:</strong> Zoomolás<br>
+      • <strong>Húzás (Egér/Érintés):</strong> Mozgatás<br>
+      • <strong>Julia mód:</strong> Mozgasd az egeret a mintához!<br>
+      • <strong>Gomb parancs:</strong> 'H' billentyű a menü elrejtéséhez.
     </div>
   </div>
 
@@ -347,7 +418,7 @@
       uniform vec2 u_offset;
       uniform float u_zoom;
       uniform int u_max_iterations;
-      uniform int u_type; // 0: Mandelbrot, 1: Julia, 2: Burning Ship, 3: Tricorn, 4: Mandelbrot z^3
+      uniform int u_type;
       uniform int u_palette;
       uniform vec2 u_julia_c;
 
@@ -355,15 +426,15 @@
         if (iter >= maxIter) return vec3(0.0);
         float t = iter / maxIter;
 
-        if (u_palette == 0) { // Neon
+        if (u_palette == 0) {
           return vec3(sin(t * 10.0) * 0.5 + 0.5, cos(t * 15.0) * 0.5 + 0.5, t);
-        } else if (u_palette == 1) { // Fire
+        } else if (u_palette == 1) {
           return vec3(min(1.0, t * 5.0), min(1.0, t * 2.5), min(1.0, t * 0.5));
-        } else if (u_palette == 2) { // Ocean
+        } else if (u_palette == 2) {
           return vec3(sin(t * 5.0) * 0.2, sin(t * 10.0) * 0.4 + 0.4, sin(t * 20.0) * 0.5 + 0.5);
-        } else if (u_palette == 3) { // Psychedelic
+        } else if (u_palette == 3) {
           return vec3(sin(t * 50.0) * 0.5 + 0.5, cos(t * 30.0) * 0.5 + 0.5, sin(t * 80.0) * 0.5 + 0.5);
-        } else { // Cyberpunk Pink
+        } else {
           return vec3(sin(t * 12.0) * 0.5 + 0.5, sin(t * 3.0) * 0.2, cos(t * 10.0) * 0.5 + 0.5);
         }
       }
@@ -374,7 +445,7 @@
         vec2 c = (u_type == 1) ? u_julia_c : z;
 
         if (u_type != 1) {
-          if (u_type == 2) z = abs(z); // Burning ship kezdés
+          if (u_type == 2) z = abs(z);
           else if (u_type == 0 || u_type == 3 || u_type == 4) z = vec2(0.0);
         }
 
@@ -386,17 +457,13 @@
           if (dot(z, z) > 4.0) break;
 
           if (u_type == 0 || u_type == 1) {
-            // Mandelbrot / Julia: z = z^2 + c
             z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
           } else if (u_type == 2) {
-            // Burning Ship: z = (|Re(z)| + i|Im(z)|)^2 + c
             z = vec2(abs(z.x), abs(z.y));
             z = vec2(z.x * z.x - z.y * z.y, -2.0 * z.x * z.y) + c;
           } else if (u_type == 3) {
-            // Tricorn: z = (z_bar)^2 + c
             z = vec2(z.x * z.x - z.y * z.y, -2.0 * z.x * z.y) + c;
           } else if (u_type == 4) {
-            // Mandelbrot z^3: z = z^3 + c
             float x2 = z.x * z.x;
             float y2 = z.y * z.y;
             z = vec2(z.x * (x2 - 3.0 * y2), z.y * (3.0 * x2 - y2)) + c;
@@ -512,25 +579,40 @@
       link.click();
     });
 
-    /* Mobile Off-Canvas Menu Logic */
+    /* Sidebar Hide / Show Toggle Logic */
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
-    const toggleBtn = document.getElementById('menu-toggle-btn');
-    const closeBtn = document.getElementById('sidebar-close-btn');
+    const hideBtn = document.getElementById('sidebar-hide-btn');
+    const openBtn = document.getElementById('sidebar-toggle-open');
 
-    function openSidebar() {
-      sidebar.classList.add('open');
-      overlay.classList.add('active');
-    }
-
-    function closeSidebar() {
-      sidebar.classList.remove('open');
+    function hideSidebar() {
+      sidebar.classList.add('collapsed');
       overlay.classList.remove('active');
+      openBtn.classList.add('visible');
     }
 
-    toggleBtn.addEventListener('click', openSidebar);
-    closeBtn.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
+    function showSidebar() {
+      sidebar.classList.remove('collapsed');
+      if (window.innerWidth <= 768) {
+        overlay.classList.add('active');
+      }
+      openBtn.classList.remove('visible');
+    }
+
+    hideBtn.addEventListener('click', hideSidebar);
+    openBtn.addEventListener('click', showSidebar);
+    overlay.addEventListener('click', hideSidebar);
+
+    // Keyboard Shortcut 'H' to Hide/Show Sidebar
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'h' || e.key === 'H') {
+        if (sidebar.classList.contains('collapsed')) {
+          showSidebar();
+        } else {
+          hideSidebar();
+        }
+      }
+    });
 
     /* Mouse Controls */
     canvas.addEventListener('wheel', (e) => {
