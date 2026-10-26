@@ -296,6 +296,7 @@
         let height = canvas.height = window.innerHeight;
 
         let particles = [];
+        let ripples = []; // NEW: Click Shockwave / Ripple effect array
         let particleCount = 75;
         let globalSpeedMultiplier = 1.5;
         let gravityPullForce = 2.5;
@@ -312,6 +313,58 @@
         }
 
         window.addEventListener('resize', resizeCanvas);
+
+        // NEW: Shockwave / Ripple Class for Click/Tap Visual Effect
+        class ClickRipple {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = 5;
+                this.maxRadius = 140;
+                this.speed = 4.5;
+                this.alpha = 1.0;
+                this.lineWidth = 3.5;
+            }
+
+            update() {
+                this.radius += this.speed * globalSpeedMultiplier;
+                this.alpha = 1 - (this.radius / this.maxRadius);
+                this.lineWidth = Math.max(0.5, 3.5 * (1 - this.radius / this.maxRadius));
+            }
+
+            draw() {
+                if (this.alpha <= 0) return;
+
+                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
+                const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-secondary').trim();
+
+                ctx.save();
+                
+                // Outer Primary Glowing Ring
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = primaryColor;
+                ctx.globalAlpha = Math.max(0, this.alpha * 0.85);
+                ctx.lineWidth = this.lineWidth;
+                ctx.shadowColor = primaryColor;
+                ctx.shadowBlur = 15;
+                ctx.stroke();
+
+                // Inner Secondary Echo Ring
+                if (this.radius > 20) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius * 0.65, 0, Math.PI * 2);
+                    ctx.strokeStyle = secondaryColor;
+                    ctx.globalAlpha = Math.max(0, this.alpha * 0.5);
+                    ctx.lineWidth = this.lineWidth * 0.6;
+                    ctx.shadowColor = secondaryColor;
+                    ctx.shadowBlur = 10;
+                    ctx.stroke();
+                }
+
+                ctx.restore();
+            }
+        }
 
         class QuantumParticle {
             constructor(anchorX, anchorY) {
@@ -483,12 +536,24 @@
             ctx.clearRect(0, 0, width, height);
             time += 0.02;
 
+            // Render & Update Quantum Particles
             particles.forEach(p => {
                 p.update();
                 p.draw();
             });
 
+            // Render Inter-particle Connection Geometry
             drawConnections();
+
+            // NEW: Render & Update Click Shockwave Ripples
+            for (let i = ripples.length - 1; i >= 0; i--) {
+                ripples[i].update();
+                ripples[i].draw();
+                if (ripples[i].alpha <= 0 || ripples[i].radius >= ripples[i].maxRadius) {
+                    ripples.splice(i, 1);
+                }
+            }
+
             requestAnimationFrame(renderLoop);
         }
 
@@ -508,6 +573,10 @@
 
         function triggerImpulse(x, y) {
             handlePointerMove(x, y);
+
+            // NEW: Spawn Visual Click Shockwave / Ripple Effect
+            ripples.push(new ClickRipple(x, y));
+
             particles.forEach(p => {
                 const dx = p.x - x;
                 const dy = p.y - y;
