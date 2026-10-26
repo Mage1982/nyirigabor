@@ -3,31 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>NEXUS v3.0 - Quantum Geometry & Sound</title>
+    <title>NEXUS v3.0 - Quantum Audio Visualizer</title>
+    <!-- Tailwind CSS a letisztult elrendezéshez és modern UI elemekhez -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --bg-color: #080911;
-            --accent-pink: #ff0c9d;
-            --accent-cyan: #00ffff;
-            --glass-bg: rgba(15, 18, 32, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.12);
+            --bg-color: #05060f;
+            --panel-bg: rgba(13, 16, 30, 0.75);
+            --panel-border: rgba(255, 255, 255, 0.12);
             --text-main: #f0f4f8;
-            --text-sub: #8a99ad;
+            --text-muted: #94a3b8;
+            --accent-primary: #00ffff;
+            --accent-secondary: #ff0c9d;
         }
 
-        [data-theme="cyberpunk"] {
-            --bg-color: #05020a;
-            --accent-pink: #f706cf;
-            --accent-cyan: #f7d002;
-            --glass-bg: rgba(20, 5, 30, 0.85);
+        /* Világos téma beállítások */
+        [data-theme="light"] {
+            --bg-color: #f1f5f9;
+            --panel-bg: rgba(255, 255, 255, 0.82);
+            --panel-border: rgba(0, 0, 0, 0.12);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
+        /* UV Neon Színpaletta Témák */
+        [data-uv="cyan"] {
+            --accent-primary: #00ffff;
+            --accent-secondary: #0088ff;
+        }
+        [data-uv="ultraviolet"] {
+            --accent-primary: #9d00ff;
+            --accent-secondary: #ff00ea;
+        }
+        [data-uv="pink"] {
+            --accent-primary: #ff0c9d;
+            --accent-secondary: #ff6000;
+        }
+        [data-uv="lime"] {
+            --accent-primary: #39ff14;
+            --accent-secondary: #00ffff;
         }
 
         body, html {
@@ -35,173 +49,130 @@
             height: 100%;
             overflow: hidden;
             background-color: var(--bg-color);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: var(--text-main);
-        }
-
-        #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         canvas {
-            width: 100%;
-            height: 100%;
             display: block;
-        }
-
-        /* HUD Overlay UI */
-        .hud-panel {
-            position: absolute;
-            z-index: 10;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-        }
-
-        .hud-header {
-            top: 20px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .hud-header h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            background: linear-gradient(45deg, var(--accent-cyan), var(--accent-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hud-controls {
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-            width: calc(100% - 40px);
-            max-width: 480px;
-            justify-content: space-around;
-        }
-
-        .btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-main);
-            padding: 10px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn:active, .btn.active {
-            background: var(--accent-pink);
-            color: #fff;
-            border-color: var(--accent-pink);
-            box-shadow: 0 0 12px var(--accent-pink);
-        }
-
-        /* Support Modal */
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(8px);
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
         }
 
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--panel-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
         }
 
-        .modal-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 24px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
+        .custom-slider {
+            accent-color: var(--accent-primary);
         }
 
-        .modal-card h2 {
-            margin-bottom: 12px;
-            color: var(--accent-cyan);
+        .btn-neon {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-border);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .modal-card p {
-            font-size: 0.9rem;
-            color: var(--text-sub);
-            margin-bottom: 20px;
-            line-height: 1.4;
+        .btn-neon:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px var(--accent-primary);
         }
 
-        .close-btn {
-            margin-top: 16px;
-            width: 100%;
-            justify-content: center;
+        .btn-neon.active {
+            background: var(--accent-primary);
+            color: #000;
+            font-weight: 700;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-primary);
         }
     </style>
 </head>
-<body>
+<body class="relative w-full h-full select-none">
 
-    <div id="canvas-container">
-        <canvas id="nexusCanvas"></canvas>
+    <!-- Canvas hátterű interaktív részecske háló -->
+    <canvas id="nexusCanvas" class="absolute inset-0 z-0"></canvas>
+
+    <!-- Fejléc (Bal felső sarok) -->
+    <header class="absolute top-4 left-4 z-10 glass-panel rounded-2xl px-5 py-3 flex items-center gap-3">
+        <div class="w-3 h-3 rounded-full animate-ping" style="background-color: var(--accent-primary);"></div>
+        <h1 class="font-bold text-lg tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">
+            NEXUS <span class="text-xs px-2 py-0.5 rounded border border-[var(--accent-primary)] text-[var(--accent-primary)] font-mono ml-1">v3.0</span>
+        </h1>
+    </header>
+
+    <!-- Vezérlő Panel (Jobb felső / Középső testreszabás) -->
+    <div class="absolute top-4 right-4 z-10 glass-panel rounded-2xl p-4 w-72 flex flex-col gap-4 text-xs">
+        <div>
+            <label class="block font-semibold mb-1 text-[var(--text-muted)]">MOZGÁSI MÓD</label>
+            <div class="grid grid-cols-3 gap-1">
+                <button class="btn-neon py-1.5 rounded-lg active" id="modeDrift" onclick="setMovementMode('drift')">Drift</button>
+                <button class="btn-neon py-1.5 rounded-lg" id="modeWave" onclick="setMovementMode('wave')">Wave</button>
+                <button class="btn-neon py-1.5 rounded-lg" id="modeChaos" onclick="setMovementMode('chaos')">Chaos</button>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex justify-between items-center mb-1">
+                <label class="font-semibold text-[var(--text-muted)]">SEBESSÉG</label>
+                <span id="speedValue" class="font-mono text-[var(--accent-primary)]">1.5x</span>
+            </div>
+            <input type="range" id="speedSlider" min="0.2" max="4.0" step="0.1" value="1.5" class="w-full custom-slider cursor-pointer">
+        </div>
+
+        <div>
+            <label class="block font-semibold mb-1 text-[var(--text-muted)]">UV / NEON PALETTA</label>
+            <div class="grid grid-cols-4 gap-1.5">
+                <button onclick="setUvPalette('cyan')" class="h-6 rounded-md bg-cyan-400 border border-white/20 hover:scale-105 transition-transform" title="Neon Cyan"></button>
+                <button onclick="setUvPalette('ultraviolet')" class="h-6 rounded-md bg-purple-600 border border-white/20 hover:scale-105 transition-transform" title="Ultra Violet"></button>
+                <button onclick="setUvPalette('pink')" class="h-6 rounded-md bg-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Cyber Pink"></button>
+                <button onclick="setUvPalette('lime')" class="h-6 rounded-md bg-lime-400 border border-white/20 hover:scale-105 transition-transform" title="Electric Lime"></button>
+            </div>
+        </div>
     </div>
 
-    <!-- HUD Interface -->
-    <div class="hud-panel hud-header">
-        <h1>NEXUS v3.0</h1>
-        <span style="font-size:0.7rem; color: var(--accent-cyan); border:1px solid var(--accent-cyan); padding:2px 6px; border-radius:4px;">QUANTUM AUDIO</span>
+    <!-- Alsó Vezérlősáv (Középen alul) -->
+    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 glass-panel rounded-2xl p-2 flex items-center gap-2">
+        <button id="audioToggleBtn" class="btn-neon px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2">
+            <span id="audioIcon">🔇</span>
+            <span id="audioText">Audio Synth: Ki</span>
+        </button>
+        <button id="supportBtn" class="btn-neon px-4 py-2 rounded-xl text-sm font-semibold">
+            ☕ Támogatás
+        </button>
     </div>
 
-    <div class="hud-panel hud-controls">
-        <button class="btn" id="audioToggleBtn">🔊 Audio: Ki</button>
-        <button class="btn" id="themeBtn">🎨 Téma</button>
-        <button class="btn" id="supportBtn">☕ Támogatás</button>
-    </div>
+    <!-- Jobb Alsó Sarok: Téma Váltó (Sötét / Világos) -->
+    <button id="themeToggleBtn" class="absolute bottom-5 right-5 z-20 glass-panel p-3.5 rounded-full btn-neon flex items-center justify-center text-xl shadow-lg" title="Téma Váltása (Sötét/Világos)">
+        <span id="themeIcon">🌙</span>
+    </button>
 
     <!-- Support Modal -->
-    <div class="modal-overlay" id="supportModal">
-        <div class="modal-card">
-            <h2>NEXUS Támogatás</h2>
-            <p>Ha tetszik a projekt és szeretnéd támogatni a további kísérleti audio-vizuális fejlesztéseket, kövesd az alábbi lehetőségeket.</p>
-            <button class="btn" style="width:100%; margin-bottom:8px; justify-content:center;" onclick="window.open('https://paypal.me', '_blank')">PayPal Támogatás</button>
-            <button class="btn close-btn" id="closeModalBtn">Bezárás</button>
+    <div id="supportModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel p-6 rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col items-center gap-4">
+            <h2 class="text-xl font-bold text-[var(--accent-primary)]">Nexus v3.0 Support</h2>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                Köszönöm, hogy használod a Nexus interaktív audio-vizuális szintetizátort! Ha elnyerte tetszésedet a kísérleti projekt, támogathatod a fejlesztést.
+            </p>
+            <button onclick="window.open('https://paypal.me', '_blank')" class="btn-neon w-full py-2.5 rounded-xl font-bold active">
+                PayPal Támogatás
+            </button>
+            <button id="closeModalBtn" class="w-full py-2 rounded-xl text-xs text-[var(--text-muted)] hover:text-white transition-colors">
+                Bezárás
+            </button>
         </div>
     </div>
 
     <script>
-        // --- Web Audio API Szintetizátor ---
+        /* --- Web Audio API Szintetizátor --- */
         let audioCtx = null;
         let isAudioActive = false;
-        const scales = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // Pentaton C-dúr frekvenciák
+        // Pentaton akord frekvenciák Hz-ben
+        const pentatonicScale = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
 
         function initAudio() {
             if (!audioCtx) {
@@ -209,104 +180,147 @@
             }
         }
 
-        function playNodeTone(freq, duration = 0.3) {
+        function playSynthTone(freq, duration = 0.4) {
             if (!isAudioActive || !audioCtx) return;
 
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
 
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                // Finom lecsengési borítógörbe (Envelope)
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
 
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.warn("Audio Context Hiba:", e);
+            }
         }
 
-        // --- Canvas & Kvantum Geometria Szimuláció ---
+        /* --- Visualizer Canvas & Kvantum Geometria --- */
         const canvas = document.getElementById('nexusCanvas');
         const ctx = canvas.getContext('2d');
 
-        let width, height;
-        let particles = [];
-        const particleCount = 45;
-        let pointer = { x: null, y: null, active: false };
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
 
-        function resize() {
+        let particles = [];
+        const particleCount = 55;
+        let globalSpeedMultiplier = 1.5;
+        let movementMode = 'drift'; // 'drift', 'wave', 'chaos'
+        let pointer = { x: width / 2, y: height / 2, active: false };
+        let time = 0;
+
+        function resizeCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
 
-        window.addEventListener('resize', resize);
-        resize();
+        window.addEventListener('resize', resizeCanvas);
 
-        class Particle {
+        class QuantumParticle {
             constructor() {
+                this.reset();
+            }
+
+            reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = (Math.random() - 0.5) * 1.5;
-                this.radius = Math.random() * 3 + 2;
-                this.freq = scales[Math.floor(Math.random() * scales.length)];
+                this.baseVx = (Math.random() - 0.5) * 2;
+                this.baseVy = (Math.random() - 0.5) * 2;
+                this.radius = Math.random() * 2.5 + 1.5;
+                this.freq = pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)];
+                this.phase = Math.random() * Math.PI * 2;
             }
 
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
+                // Sebesség alkalmazása az aktív mozgási mód szerint
+                if (movementMode === 'drift') {
+                    this.x += this.baseVx * globalSpeedMultiplier;
+                    this.y += this.baseVy * globalSpeedMultiplier;
+                } else if (movementMode === 'wave') {
+                    this.x += (this.baseVx + Math.sin(time + this.phase)) * globalSpeedMultiplier;
+                    this.y += (this.baseVy + Math.cos(time + this.phase)) * globalSpeedMultiplier;
+                } else if (movementMode === 'chaos') {
+                    this.x += (this.baseVx + (Math.random() - 0.5) * 3) * globalSpeedMultiplier;
+                    this.y += (this.baseVy + (Math.random() - 0.5) * 3) * globalSpeedMultiplier;
+                }
 
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
+                // Keretbe zárás / Visszapattanás
+                if (this.x < 0 || this.x > width) this.baseVx *= -1;
+                if (this.y < 0 || this.y > height) this.baseVy *= -1;
 
-                // Egér / Érintés interakció
+                // Egér / Érintés taszítás & Interakció
                 if (pointer.active) {
                     const dx = pointer.x - this.x;
                     const dy = pointer.y - this.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 120) {
-                        this.x -= (dx / dist) * 2;
-                        this.y -= (dy / dist) * 2;
+                    const maxDist = 140;
+
+                    if (dist < maxDist) {
+                        const force = (maxDist - dist) / maxDist;
+                        this.x -= (dx / dist) * force * 5;
+                        this.y -= (dy / dist) * force * 5;
                     }
                 }
             }
 
             draw() {
+                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent-cyan').trim();
+                ctx.fillStyle = primaryColor;
                 ctx.fill();
             }
         }
 
+        // Részecskék inicializálása
         for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
+            particles.push(new QuantumParticle());
         }
 
         function drawConnections() {
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
+            const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-secondary').trim();
+
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
+                    const maxConnectDist = 130;
 
-                    if (dist < 130) {
+                    if (dist < maxConnectDist) {
+                        const alpha = 1 - (dist / maxConnectDist);
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(255, 12, 157, ${1 - dist / 130})`;
-                        ctx.lineWidth = 0.8;
+                        
+                        // Átmenetes hálózati vonal rajzolása
+                        const gradient = ctx.createLinearGradient(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
+                        gradient.addColorStop(0, primaryColor);
+                        gradient.addColorStop(1, secondaryColor);
+
+                        ctx.globalAlpha = alpha * 0.7;
+                        ctx.strokeStyle = gradient;
+                        ctx.lineWidth = 1;
                         ctx.stroke();
+                        ctx.globalAlpha = 1.0;
                     }
                 }
             }
         }
 
-        function animate() {
+        function renderLoop() {
             ctx.clearRect(0, 0, width, height);
+            time += 0.02;
 
             particles.forEach(p => {
                 p.update();
@@ -314,37 +328,73 @@
             });
 
             drawConnections();
-            requestAnimationFrame(animate);
+            requestAnimationFrame(renderLoop);
         }
 
-        animate();
+        renderLoop();
 
-        // --- Interakciós eseménykezelők (Touch & Mouse) ---
-        const handleInputMove = (x, y) => {
+        /* --- Interakciós Eseménykezelők --- */
+        function handlePointerMove(x, y) {
             pointer.x = x;
             pointer.y = y;
             pointer.active = true;
 
-            // Hang triggerelés bizonyos távolságonként
-            if (Math.random() < 0.05) {
-                const randomFreq = scales[Math.floor(Math.random() * scales.length)];
-                playNodeTone(randomFreq, 0.2);
+            // Véletlenszerű audio akord indítás egérmozgáskor
+            if (isAudioActive && Math.random() < 0.06) {
+                const randomParticle = particles[Math.floor(Math.random() * particles.length)];
+                playSynthTone(randomParticle.freq, 0.3);
             }
-        };
+        }
 
-        window.addEventListener('mousemove', (e) => handleInputMove(e.clientX, e.clientY));
+        window.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
         window.addEventListener('mouseleave', () => pointer.active = false);
 
         window.addEventListener('touchmove', (e) => {
             if (e.touches.length > 0) {
-                handleInputMove(e.touches[0].clientX, e.touches[0].clientY);
+                handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
             }
         }, { passive: true });
-
         window.addEventListener('touchend', () => pointer.active = false);
 
-        // --- Gomb események ---
+        /* --- Vezérlő Funkciók --- */
+
+        // 1. Mozgási mód váltó
+        window.setMovementMode = function(mode) {
+            movementMode = mode;
+            document.getElementById('modeDrift').classList.toggle('active', mode === 'drift');
+            document.getElementById('modeWave').classList.toggle('active', mode === 'wave');
+            document.getElementById('modeChaos').classList.toggle('active', mode === 'chaos');
+        };
+
+        // 2. Sebesség Slider
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValueDisplay = document.getElementById('speedValue');
+        speedSlider.addEventListener('input', (e) => {
+            globalSpeedMultiplier = parseFloat(e.target.value);
+            speedValueDisplay.textContent = globalSpeedMultiplier.toFixed(1) + 'x';
+        });
+
+        // 3. UV / Neon Paletta váltó
+        window.setUvPalette = function(palette) {
+            document.documentElement.setAttribute('data-uv', palette);
+        };
+
+        // 4. Jobb alsó sötét/világos téma váltó
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        let currentTheme = 'dark';
+
+        themeToggleBtn.addEventListener('click', () => {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            themeIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
+        });
+
+        // 5. Audio Synth Be/Ki Váltó
         const audioBtn = document.getElementById('audioToggleBtn');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioText = document.getElementById('audioText');
+
         audioBtn.addEventListener('click', () => {
             initAudio();
             if (audioCtx.state === 'suspended') {
@@ -352,19 +402,18 @@
             }
             isAudioActive = !isAudioActive;
             audioBtn.classList.toggle('active', isAudioActive);
-            audioBtn.textContent = isAudioActive ? '🔊 Audio: Be' : '🔇 Audio: Ki';
+            audioIcon.textContent = isAudioActive ? '🔊' : '🔇';
+            audioText.textContent = isAudioActive ? 'Audio Synth: Be' : 'Audio Synth: Ki';
         });
 
-        const themeBtn = document.getElementById('themeBtn');
-        themeBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', currentTheme === 'cyberpunk' ? 'default' : 'cyberpunk');
-        });
-
-        // Modál kezelés
+        // 6. Support Modál
         const supportModal = document.getElementById('supportModal');
-        document.getElementById('supportBtn').addEventListener('click', () => supportModal.classList.add('active'));
-        document.getElementById('closeModalBtn').addEventListener('click', () => supportModal.classList.remove('active'));
+        document.getElementById('supportBtn').addEventListener('click', () => {
+            supportModal.classList.remove('opacity-0', 'pointer-events-none');
+        });
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            supportModal.classList.add('opacity-0', 'pointer-events-none');
+        });
     </script>
 </body>
 </html>
