@@ -4,44 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>NEXUS v3.0 - Quantum Audio Visualizer</title>
-    <!-- Tailwind CSS a letisztult elrendezéshez és modern UI elemekhez -->
+    <!-- Tailwind CSS for sleek UI layouts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --bg-color: #05060f;
-            --panel-bg: rgba(13, 16, 30, 0.75);
-            --panel-border: rgba(255, 255, 255, 0.12);
+            --bg-color: #04050a;
+            --panel-bg: rgba(8, 11, 22, 0.78);
+            --panel-border: rgba(0, 255, 255, 0.18);
             --text-main: #f0f4f8;
-            --text-muted: #94a3b8;
+            --text-muted: #8899ac;
             --accent-primary: #00ffff;
             --accent-secondary: #ff0c9d;
+            --glow-color: rgba(0, 255, 255, 0.35);
         }
 
-        /* Világos téma beállítások */
+        /* Light Mode Overrides */
         [data-theme="light"] {
-            --bg-color: #f1f5f9;
-            --panel-bg: rgba(255, 255, 255, 0.85);
+            --bg-color: #f0f4f8;
+            --panel-bg: rgba(255, 255, 255, 0.88);
             --panel-border: rgba(0, 0, 0, 0.12);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
+            --text-main: #0b1120;
+            --text-muted: #52657a;
+            --glow-color: rgba(0, 150, 255, 0.2);
         }
 
-        /* UV Neon Színpaletta Témák */
+        /* UV Neon Palette Presets */
         [data-uv="cyan"] {
             --accent-primary: #00ffff;
             --accent-secondary: #ff0c9d;
+            --glow-color: rgba(0, 255, 255, 0.35);
         }
         [data-uv="ultraviolet"] {
-            --accent-primary: #9d00ff;
-            --accent-secondary: #ff00ea;
+            --accent-primary: #a855f7;
+            --accent-secondary: #ec4899;
+            --glow-color: rgba(168, 85, 247, 0.35);
         }
         [data-uv="lime"] {
-            --accent-primary: #39ff14;
-            --accent-secondary: #00ffff;
+            --accent-primary: #22c55e;
+            --accent-secondary: #06b6d4;
+            --glow-color: rgba(34, 197, 94, 0.35);
         }
         [data-uv="solar"] {
-            --accent-primary: #ffaa00;
-            --accent-secondary: #ff2200;
+            --accent-primary: #f59e0b;
+            --accent-secondary: #ef4444;
+            --glow-color: rgba(245, 158, 11, 0.35);
         }
 
         body, html {
@@ -51,7 +57,7 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
         canvas {
@@ -60,27 +66,26 @@
             height: 100%;
         }
 
-        .glass-panel {
+        /* High-Tech Futuristic Glassmorphism HUD */
+        .glass-hud {
             background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--panel-border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        }
-
-        .custom-slider {
-            accent-color: var(--accent-primary);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
 
         .btn-neon {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--panel-border);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            color: var(--text-main);
         }
 
         .btn-neon:hover {
             border-color: var(--accent-primary);
-            box-shadow: 0 0 10px var(--accent-primary);
+            box-shadow: 0 0 12px var(--glow-color);
+            transform: translateY(-1px);
         }
 
         .btn-neon.active {
@@ -88,91 +93,169 @@
             color: #000;
             font-weight: 700;
             border-color: var(--accent-primary);
-            box-shadow: 0 0 15px var(--accent-primary);
+            box-shadow: 0 0 18px var(--accent-primary);
+        }
+
+        /* Custom Tech Sliders */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            height: 5px;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--accent-primary);
+            transition: transform 0.15s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+        }
+
+        /* Scanline Overlay for Sci-Fi visual depth */
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.12) 50%,
+                rgba(0, 0, 0, 0.12)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
         }
     </style>
 </head>
-<body class="relative w-full h-full select-none">
+<body class="relative w-full h-full select-none overflow-hidden">
 
-    <!-- Canvas hátterű interaktív részecske háló -->
+    <!-- Subtle Tech Overlay Lines -->
+    <div class="scanlines absolute inset-0 z-0 opacity-40"></div>
+
+    <!-- WebGL / 2D Canvas Layer -->
     <canvas id="nexusCanvas" class="absolute inset-0 z-0"></canvas>
 
-    <!-- Fejléc (Bal felső sarok) -->
-    <header class="absolute top-4 left-4 z-10 glass-panel rounded-2xl px-5 py-3 flex items-center gap-3">
-        <div class="w-3 h-3 rounded-full animate-ping" style="background-color: var(--accent-primary);"></div>
-        <h1 class="font-bold text-lg tracking-wider uppercase bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">
-            NEXUS <span class="text-xs px-2 py-0.5 rounded border border-[var(--accent-primary)] text-[var(--accent-primary)] font-mono ml-1">v3.0</span>
-        </h1>
+    <!-- Top Left Header Title -->
+    <header class="absolute top-4 left-4 z-20 glass-hud rounded-2xl px-5 py-3.5 flex items-center gap-3">
+        <div class="relative flex items-center justify-center w-3.5 h-3.5">
+            <div class="absolute w-full h-full rounded-full animate-ping opacity-75" style="background-color: var(--accent-primary);"></div>
+            <div class="w-2.5 h-2.5 rounded-full" style="background-color: var(--accent-primary);"></div>
+        </div>
+        <div>
+            <h1 class="font-black text-lg tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">
+                NEXUS <span class="text-xs font-mono font-normal px-2 py-0.5 rounded border border-[var(--accent-primary)] text-[var(--accent-primary)] ml-1">v3.0</span>
+            </h1>
+            <p class="text-[9px] tracking-wider uppercase text-[var(--text-muted)] font-mono">Quantum Sound & Geometry Engine</p>
+        </div>
     </header>
 
-    <!-- Vezérlő Panel (Jobb felső / Középső testreszabás) -->
-    <div class="absolute top-4 right-4 z-10 glass-panel rounded-2xl p-4 w-80 flex flex-col gap-4 text-xs">
+    <!-- Right Side HUD Control Panel -->
+    <div class="absolute top-4 right-4 z-20 glass-hud rounded-2xl p-4 w-80 flex flex-col gap-4 text-xs">
+        
+        <!-- Movement Mode Selector -->
         <div>
-            <label class="block font-semibold mb-1 text-[var(--text-muted)]">MOZGÁSI MÓD</label>
+            <div class="flex items-center justify-between mb-1.5">
+                <span class="font-semibold tracking-wider text-[var(--text-muted)] uppercase text-[10px]">MOZGÁSI MÓD</span>
+                <span id="currentModeLabel" class="font-mono text-[var(--accent-primary)] font-bold text-[10px]">GRAVITÁCIÓ</span>
+            </div>
             <div class="grid grid-cols-2 gap-1.5">
-                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium active" id="modeStationary" onclick="setMovementMode('stationary')">📍 Stacionárius</button>
-                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium" id="modeDrift" onclick="setMovementMode('drift')">🌌 Drift</button>
-                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium" id="modeWave" onclick="setMovementMode('wave')">🌊 Wave</button>
-                <button class="btn-neon py-1.5 px-2 rounded-lg text-left font-medium" id="modeChaos" onclick="setMovementMode('chaos')">⚡ Chaos</button>
+                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium active" id="modeGravity" onclick="setMovementMode('gravity')">🌀 Gravitáció</button>
+                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium" id="modeStationary" onclick="setMovementMode('stationary')">📍 Stacionárius</button>
+                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium" id="modeDrift" onclick="setMovementMode('drift')">🌌 Drift</button>
+                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium" id="modeWave" onclick="setMovementMode('wave')">🌊 Wave</button>
             </div>
         </div>
 
-        <div>
-            <div class="flex justify-between items-center mb-1">
-                <label class="font-semibold text-[var(--text-muted)]">SEBESSÉG / RUGALMASSÁG</label>
-                <span id="speedValue" class="font-mono text-[var(--accent-primary)]">1.5x</span>
+        <hr class="border-t border-[var(--panel-border)] my-0.5">
+
+        <!-- Dynamic Controls -->
+        <div class="flex flex-col gap-3">
+            <!-- Gravity Force Control -->
+            <div id="gravityControlContainer">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="font-semibold text-[var(--text-muted)] text-[10px] uppercase tracking-wider">Gravitációs Erő</label>
+                    <span id="gravityValue" class="font-mono text-[var(--accent-primary)] font-bold">2.5x</span>
+                </div>
+                <input type="range" id="gravitySlider" min="0.5" max="8.0" step="0.1" value="2.5" class="w-full cursor-pointer">
             </div>
-            <input type="range" id="speedSlider" min="0.2" max="4.0" step="0.1" value="1.5" class="w-full custom-slider cursor-pointer">
+
+            <!-- Speed Control -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="font-semibold text-[var(--text-muted)] text-[10px] uppercase tracking-wider">Sebesség</label>
+                    <span id="speedValue" class="font-mono text-[var(--accent-primary)] font-bold">1.5x</span>
+                </div>
+                <input type="range" id="speedSlider" min="0.2" max="4.0" step="0.1" value="1.5" class="w-full cursor-pointer">
+            </div>
+
+            <!-- Density / Particle Count Control -->
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="font-semibold text-[var(--text-muted)] text-[10px] uppercase tracking-wider">Részecskesűrűség</label>
+                    <span id="densityValue" class="font-mono text-[var(--accent-primary)] font-bold">75 db</span>
+                </div>
+                <input type="range" id="densitySlider" min="30" max="150" step="5" value="75" class="w-full cursor-pointer">
+            </div>
         </div>
 
+        <hr class="border-t border-[var(--panel-border)] my-0.5">
+
+        <!-- UV Color Palettes -->
         <div>
-            <label class="block font-semibold mb-1 text-[var(--text-muted)]">UV / NEON PALETTA</label>
-            <div class="grid grid-cols-4 gap-1.5">
-                <button onclick="setUvPalette('cyan')" class="h-6 rounded-md bg-gradient-to-r from-cyan-400 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Cyber Neon"></button>
-                <button onclick="setUvPalette('ultraviolet')" class="h-6 rounded-md bg-gradient-to-r from-purple-600 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Ultra Violet"></button>
-                <button onclick="setUvPalette('lime')" class="h-6 rounded-md bg-gradient-to-r from-lime-400 to-cyan-400 border border-white/20 hover:scale-105 transition-transform" title="Electric Lime"></button>
-                <button onclick="setUvPalette('solar')" class="h-6 rounded-md bg-gradient-to-r from-amber-400 to-red-600 border border-white/20 hover:scale-105 transition-transform" title="Solar Flare"></button>
+            <label class="block font-semibold mb-1.5 text-[var(--text-muted)] text-[10px] uppercase tracking-wider">UV Színpaletta</label>
+            <div class="grid grid-cols-4 gap-2">
+                <button onclick="setUvPalette('cyan')" class="h-6 rounded-lg bg-gradient-to-r from-cyan-400 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Cyber Neon"></button>
+                <button onclick="setUvPalette('ultraviolet')" class="h-6 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Ultra Violet"></button>
+                <button onclick="setUvPalette('lime')" class="h-6 rounded-lg bg-gradient-to-r from-green-400 to-cyan-400 border border-white/20 hover:scale-105 transition-transform" title="Electric Lime"></button>
+                <button onclick="setUvPalette('solar')" class="h-6 rounded-lg bg-gradient-to-r from-amber-400 to-red-500 border border-white/20 hover:scale-105 transition-transform" title="Solar Flare"></button>
             </div>
         </div>
     </div>
 
-    <!-- Alsó Vezérlősáv (Középen alul) -->
-    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 glass-panel rounded-2xl p-2 flex items-center gap-2">
-        <button id="audioToggleBtn" class="btn-neon px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2">
+    <!-- Bottom Center Audio & Support Controls -->
+    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 glass-hud rounded-2xl p-2 flex items-center gap-2">
+        <button id="audioToggleBtn" class="btn-neon px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 tracking-wide">
             <span id="audioIcon">🔇</span>
             <span id="audioText">Audio Synth: Ki</span>
         </button>
-        <button id="supportBtn" class="btn-neon px-4 py-2 rounded-xl text-sm font-semibold">
+        <button id="supportBtn" class="btn-neon px-4 py-2 rounded-xl text-xs font-bold tracking-wide">
             ☕ Támogatás
         </button>
     </div>
 
-    <!-- Jobb Alsó Sarok: Téma Váltó (Sötét / Világos) -->
-    <button id="themeToggleBtn" class="absolute bottom-5 right-5 z-20 glass-panel p-3.5 rounded-full btn-neon flex items-center justify-center text-xl shadow-lg" title="Téma Váltása (Sötét/Világos)">
+    <!-- Bottom Right Theme Toggle Floating Button -->
+    <button id="themeToggleBtn" class="absolute bottom-5 right-5 z-20 glass-hud p-3.5 rounded-2xl btn-neon flex items-center justify-center text-lg shadow-xl" title="Téma Váltása (Sötét / Világos)">
         <span id="themeIcon">🌙</span>
     </button>
 
     <!-- Support Modal -->
-    <div id="supportModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-panel p-6 rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col items-center gap-4">
-            <h2 class="text-xl font-bold text-[var(--accent-primary)]">Nexus v3.0 Support</h2>
+    <div id="supportModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-hud p-6 rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col items-center gap-4">
+            <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">Nexus v3.0 Support</h2>
             <p class="text-xs text-[var(--text-muted)] leading-relaxed">
-                Köszönöm, hogy használod a Nexus interaktív audio-vizuális szintetizátort! Ha elnyerte tetszésedet a kísérleti projekt, támogathatod a fejlesztést.
+                Köszönöm, hogy felfedezed a Nexus interaktív audio-vizuális kvantum rendszert! Ha elnyerte tetszésedet a kísérleti projekt, az alábbi gombra kattintva támogathatod a jövőbeli fejlesztéseket.
             </p>
-            <button onclick="window.open('https://paypal.me', '_blank')" class="btn-neon w-full py-2.5 rounded-xl font-bold active">
+            <button onclick="window.open('https://paypal.me', '_blank')" class="btn-neon w-full py-2.5 rounded-xl font-bold active text-xs tracking-wider">
                 PayPal Támogatás
             </button>
-            <button id="closeModalBtn" class="w-full py-2 rounded-xl text-xs text-[var(--text-muted)] hover:text-white transition-colors">
+            <button id="closeModalBtn" class="w-full py-2 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
                 Bezárás
             </button>
         </div>
     </div>
 
     <script>
-        /* --- Web Audio API Szintetizátor --- */
+        /* --- Web Audio API Pentatonic Synthesizer --- */
         let audioCtx = null;
         let isAudioActive = false;
-        // Pentaton akord frekvenciák Hz-ben
         const pentatonicScale = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
 
         function initAudio() {
@@ -181,7 +264,7 @@
             }
         }
 
-        function playSynthTone(freq, duration = 0.4) {
+        function playSynthTone(freq, duration = 0.35) {
             if (!isAudioActive || !audioCtx) return;
 
             try {
@@ -191,8 +274,8 @@
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-                // Finom lecsengési borítógörbe (Envelope)
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                // Smooth attack and exponential decay
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
 
                 osc.connect(gain);
@@ -201,11 +284,11 @@
                 osc.start();
                 osc.stop(audioCtx.currentTime + duration);
             } catch (e) {
-                console.warn("Audio Context Hiba:", e);
+                console.warn("Audio Context Error:", e);
             }
         }
 
-        /* --- Visualizer Canvas & Kvantum Geometria --- */
+        /* --- High Performance Canvas Visualizer Engine --- */
         const canvas = document.getElementById('nexusCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -213,16 +296,16 @@
         let height = canvas.height = window.innerHeight;
 
         let particles = [];
-        const particleCount = 60;
+        let particleCount = 75;
         let globalSpeedMultiplier = 1.5;
-        let movementMode = 'stationary'; // 'stationary', 'drift', 'wave', 'chaos'
+        let gravityPullForce = 2.5;
+        let movementMode = 'gravity'; // 'gravity', 'stationary', 'drift', 'wave'
         let pointer = { x: width / 2, y: height / 2, active: false };
         let time = 0;
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
-            // Álló módban a rácspontok újraelosztása
             if (movementMode === 'stationary') {
                 repositionStationaryGrid();
             }
@@ -236,18 +319,44 @@
                 this.anchorY = anchorY !== undefined ? anchorY : Math.random() * height;
                 this.x = this.anchorX;
                 this.y = this.anchorY;
-                this.vx = 0;
-                this.vy = 0;
-                this.baseVx = (Math.random() - 0.5) * 2;
-                this.baseVy = (Math.random() - 0.5) * 2;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.baseVx = this.vx;
+                this.baseVy = this.vy;
                 this.radius = Math.random() * 2.5 + 2;
                 this.freq = pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)];
                 this.phase = Math.random() * Math.PI * 2;
             }
 
             update() {
-                if (movementMode === 'stationary') {
-                    // Stacionárius rugó-fizika (Visszahúzás az alappontra)
+                if (movementMode === 'gravity') {
+                    // NEW: Gravitációs vonzás a kurzor felé
+                    if (pointer.active) {
+                        const dx = pointer.x - this.x;
+                        const dy = pointer.y - this.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (dist > 5) {
+                            const force = (gravityPullForce * 0.15) / Math.max(dist * 0.05, 1);
+                            this.vx += (dx / dist) * force * globalSpeedMultiplier;
+                            this.vy += (dy / dist) * force * globalSpeedMultiplier;
+                        }
+                    }
+
+                    // Csillapítás & Pozíció frissítés
+                    this.vx *= 0.94;
+                    this.vy *= 0.94;
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Kerethatárok kezelése
+                    if (this.x < 0) { this.x = 0; this.vx *= -1; }
+                    if (this.x > width) { this.x = width; this.vx *= -1; }
+                    if (this.y < 0) { this.y = 0; this.vy *= -1; }
+                    if (this.y > height) { this.y = height; this.vy *= -1; }
+
+                } else if (movementMode === 'stationary') {
+                    // Stacionárius rugó-fizika
                     const dxAnchor = this.anchorX - this.x;
                     const dyAnchor = this.anchorY - this.y;
                     
@@ -261,43 +370,32 @@
 
                     this.x += this.vx;
                     this.y += this.vy;
+
+                    // Kurzor taszító impulzus Stacionárius módban
+                    if (pointer.active) {
+                        const dx = this.x - pointer.x;
+                        const dy = this.y - pointer.y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 150 && dist > 0) {
+                            const force = (1 - dist / 150) * 10 * globalSpeedMultiplier;
+                            this.vx += (dx / dist) * force;
+                            this.vy += (dy / dist) * force;
+                        }
+                    }
+
                 } else if (movementMode === 'drift') {
                     this.x += this.baseVx * globalSpeedMultiplier;
                     this.y += this.baseVy * globalSpeedMultiplier;
-                } else if (movementMode === 'wave') {
-                    this.x += (this.baseVx + Math.sin(time + this.phase)) * globalSpeedMultiplier;
-                    this.y += (this.baseVy + Math.cos(time + this.phase)) * globalSpeedMultiplier;
-                } else if (movementMode === 'chaos') {
-                    this.x += (this.baseVx + (Math.random() - 0.5) * 3) * globalSpeedMultiplier;
-                    this.y += (this.baseVy + (Math.random() - 0.5) * 3) * globalSpeedMultiplier;
-                }
 
-                // Keretbe zárás dynamic módoknál
-                if (movementMode !== 'stationary') {
                     if (this.x < 0 || this.x > width) this.baseVx *= -1;
                     if (this.y < 0 || this.y > height) this.baseVy *= -1;
-                }
 
-                // Egér / Érintés taszítás & Interakció
-                if (pointer.active) {
-                    const dx = this.x - pointer.x;
-                    const dy = this.y - pointer.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const maxDist = 160;
+                } else if (movementMode === 'wave') {
+                    this.x += (this.baseVx + Math.sin(time + this.phase) * 1.5) * globalSpeedMultiplier;
+                    this.y += (this.baseVy + Math.cos(time + this.phase) * 1.5) * globalSpeedMultiplier;
 
-                    if (dist < maxDist && dist > 0) {
-                        const force = (1 - dist / maxDist) * 12 * globalSpeedMultiplier;
-                        const nx = dx / dist;
-                        const ny = dy / dist;
-
-                        if (movementMode === 'stationary') {
-                            this.vx += nx * force;
-                            this.vy += ny * force;
-                        } else {
-                            this.x += nx * force * 0.5;
-                            this.y += ny * force * 0.5;
-                        }
-                    }
+                    if (this.x < 0 || this.x > width) this.baseVx *= -1;
+                    if (this.y < 0 || this.y > height) this.baseVy *= -1;
                 }
             }
 
@@ -310,9 +408,23 @@
             }
         }
 
+        function adjustParticleDensity(newCount) {
+            particleCount = newCount;
+            if (particles.length < particleCount) {
+                while (particles.length < particleCount) {
+                    particles.push(new QuantumParticle());
+                }
+            } else if (particles.length > particleCount) {
+                particles.splice(particleCount);
+            }
+            if (movementMode === 'stationary') {
+                repositionStationaryGrid();
+            }
+        }
+
         function repositionStationaryGrid() {
-            const cols = Math.ceil(Math.sqrt(particleCount * (width / height)));
-            const rows = Math.ceil(particleCount / cols);
+            const cols = Math.ceil(Math.sqrt(particles.length * (width / height)));
+            const rows = Math.ceil(particles.length / cols);
             const spacingX = width / (cols + 1);
             const spacingY = height / (rows + 1);
 
@@ -328,22 +440,24 @@
             }
         }
 
-        // Részecskék inicializálása
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new QuantumParticle());
-        }
-        repositionStationaryGrid();
+        // Initialize particles
+        adjustParticleDensity(particleCount);
 
         function drawConnections() {
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
             const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-secondary').trim();
 
+            const maxConnectDist = 140;
+
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
+                    
+                    // Quick Bounding Check optimization for performance
+                    if (Math.abs(dx) > maxConnectDist || Math.abs(dy) > maxConnectDist) continue;
+
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    const maxConnectDist = 140;
 
                     if (dist < maxConnectDist) {
                         const alpha = 1 - (dist / maxConnectDist);
@@ -351,14 +465,13 @@
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         
-                        // Átmenetes hálózati vonal rajzolása
                         const gradient = ctx.createLinearGradient(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
                         gradient.addColorStop(0, primaryColor);
                         gradient.addColorStop(1, secondaryColor);
 
-                        ctx.globalAlpha = alpha * 0.7;
+                        ctx.globalAlpha = alpha * 0.65;
                         ctx.strokeStyle = gradient;
-                        ctx.lineWidth = 1;
+                        ctx.lineWidth = 0.9;
                         ctx.stroke();
                         ctx.globalAlpha = 1.0;
                     }
@@ -381,34 +494,32 @@
 
         renderLoop();
 
-        /* --- Interakciós Eseménykezelők --- */
+        /* --- Event Handlers & User Interaction --- */
         function handlePointerMove(x, y) {
             pointer.x = x;
             pointer.y = y;
             pointer.active = true;
 
-            // Audio synth hang kibocsátás mozgásra
-            if (isAudioActive && Math.random() < 0.07) {
+            if (isAudioActive && Math.random() < 0.08) {
                 const randomParticle = particles[Math.floor(Math.random() * particles.length)];
-                playSynthTone(randomParticle.freq, 0.35);
+                playSynthTone(randomParticle.freq, 0.3);
             }
         }
 
         function triggerImpulse(x, y) {
             handlePointerMove(x, y);
-            // Kattintásra lökés a közeli pontokon
             particles.forEach(p => {
                 const dx = p.x - x;
                 const dy = p.y - y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 220 && dist > 0) {
-                    const force = (1 - dist / 220) * 25 * globalSpeedMultiplier;
+                if (dist < 200 && dist > 0) {
+                    const force = (1 - dist / 200) * 20 * globalSpeedMultiplier;
                     p.vx += (dx / dist) * force;
                     p.vy += (dy / dist) * force;
                 }
             });
             if (isAudioActive) {
-                playSynthTone(pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)], 0.5);
+                playSynthTone(pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)], 0.45);
             }
         }
 
@@ -428,35 +539,61 @@
         }, { passive: true });
         window.addEventListener('touchend', () => pointer.active = false);
 
-        /* --- Vezérlő Funkciók --- */
-
-        // 1. Mozgási mód váltó
+        /* --- HUD Control Binding --- */
         window.setMovementMode = function(mode) {
             movementMode = mode;
+            document.getElementById('modeGravity').classList.toggle('active', mode === 'gravity');
             document.getElementById('modeStationary').classList.toggle('active', mode === 'stationary');
             document.getElementById('modeDrift').classList.toggle('active', mode === 'drift');
             document.getElementById('modeWave').classList.toggle('active', mode === 'wave');
-            document.getElementById('modeChaos').classList.toggle('active', mode === 'chaos');
+
+            const modeLabels = {
+                'gravity': 'GRAVITÁCIÓ',
+                'stationary': 'STACIONÁRIUS',
+                'drift': 'DRIFT',
+                'wave': 'WAVE'
+            };
+            document.getElementById('currentModeLabel').textContent = modeLabels[mode];
+
+            // Toggle Gravity slider visibility
+            const gravityContainer = document.getElementById('gravityControlContainer');
+            if (mode === 'gravity') {
+                gravityContainer.style.display = 'block';
+            } else {
+                gravityContainer.style.display = 'none';
+            }
 
             if (mode === 'stationary') {
                 repositionStationaryGrid();
             }
         };
 
-        // 2. Sebesség Slider
-        const speedSlider = document.getElementById('speedSlider');
-        const speedValueDisplay = document.getElementById('speedValue');
-        speedSlider.addEventListener('input', (e) => {
-            globalSpeedMultiplier = parseFloat(e.target.value);
-            speedValueDisplay.textContent = globalSpeedMultiplier.toFixed(1) + 'x';
+        // Sliders
+        const gravitySlider = document.getElementById('gravitySlider');
+        gravitySlider.addEventListener('input', (e) => {
+            gravityPullForce = parseFloat(e.target.value);
+            document.getElementById('gravityValue').textContent = gravityPullForce.toFixed(1) + 'x';
         });
 
-        // 3. UV / Neon Paletta váltó
+        const speedSlider = document.getElementById('speedSlider');
+        speedSlider.addEventListener('input', (e) => {
+            globalSpeedMultiplier = parseFloat(e.target.value);
+            document.getElementById('speedValue').textContent = globalSpeedMultiplier.toFixed(1) + 'x';
+        });
+
+        const densitySlider = document.getElementById('densitySlider');
+        densitySlider.addEventListener('input', (e) => {
+            const count = parseInt(e.target.value);
+            document.getElementById('densityValue').textContent = count + ' db';
+            adjustParticleDensity(count);
+        });
+
+        // UV Palette Switcher
         window.setUvPalette = function(palette) {
             document.documentElement.setAttribute('data-uv', palette);
         };
 
-        // 4. Jobb alsó sötét/világos téma váltó
+        // Bottom Right Theme Toggle
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
         let currentTheme = 'dark';
@@ -467,7 +604,7 @@
             themeIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
         });
 
-        // 5. Audio Synth Be/Ki Váltó
+        // Audio Toggle
         const audioBtn = document.getElementById('audioToggleBtn');
         const audioIcon = document.getElementById('audioIcon');
         const audioText = document.getElementById('audioText');
@@ -483,7 +620,7 @@
             audioText.textContent = isAudioActive ? 'Audio Synth: Be' : 'Audio Synth: Ki';
         });
 
-        // 6. Support Modál
+        // Support Modal Toggle
         const supportModal = document.getElementById('supportModal');
         document.getElementById('supportBtn').addEventListener('click', () => {
             supportModal.classList.remove('opacity-0', 'pointer-events-none');
