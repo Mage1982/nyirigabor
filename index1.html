@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hu" class="h-full bg-[#090b10] transition-colors duration-500">
+<html lang="hu" class="h-full bg-[#0b0f19] transition-colors duration-500">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,42 +11,22 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        magenta: '#FF0C9D',
-                        cyan: '#00FFFF',
-                        purpleGlow: '#8A2BE2',
-                        darkBg: '#090b10',
-                        cardBg: 'rgba(15, 20, 32, 0.65)'
+                        techBlue: '#0ea5e9',
+                        accentIndigó: '#6366f1',
+                        darkBg: '#0b0f19',
+                        cardBg: 'rgba(17, 24, 39, 0.75)'
                     },
                     fontFamily: {
                         orbitron: ['Orbitron', 'sans-serif'],
-                        mono: ['Share Tech Mono', 'monospace'],
+                        mono: ['JetBrains Mono', 'monospace'],
                         sans: ['Inter', 'sans-serif']
-                    },
-                    animation: {
-                        'pulse-glow': 'pulseGlow 3s infinite alternate',
-                        'grid-move': 'gridMove 20s linear infinite',
-                        'float': 'float 4s ease-in-out infinite'
-                    },
-                    keyframes: {
-                        pulseGlow: {
-                            '0%': { filter: 'drop-shadow(0 0 12px rgba(255, 12, 157, 0.4))' },
-                            '100%': { filter: 'drop-shadow(0 0 25px rgba(0, 255, 255, 0.6))' }
-                        },
-                        gridMove: {
-                            '0%': { transform: 'translateY(0)' },
-                            '100%': { transform: 'translateY(40px)' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-6px)' }
-                        }
                     }
                 }
             }
@@ -54,52 +34,46 @@
     </script>
 
     <style>
-        .bg-cyber-grid {
+        .bg-subtle-grid {
             background-image: 
-                linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 12, 157, 0.04) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
         }
 
         .glass-card {
-            background: rgba(15, 20, 32, 0.65);
+            background: rgba(17, 24, 39, 0.75);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 255, 255, 0.15);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .glass-card:hover {
-            border-color: rgba(0, 255, 255, 0.4);
-            box-shadow: 0 10px 30px -5px rgba(0, 255, 255, 0.2);
-        }
-
-        .neon-text-gradient {
-            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #FF0C9D 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.15);
         }
 
         #interactive-glow {
             pointer-events: none;
-            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(255, 12, 157, 0.05), transparent 70%);
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(14, 165, 233, 0.05), transparent 70%);
         }
 
         /* Light Mode Stílusok */
         body.light-mode {
-            background-color: #f1f5f9 !important;
+            background-color: #f8fafc !important;
             color: #0f172a !important;
         }
 
         body.light-mode .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(14, 165, 233, 0.3);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
         }
 
         body.light-mode .glass-card:hover {
-            border-color: rgba(14, 165, 233, 0.8);
-            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.25);
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.12);
         }
 
         body.light-mode h1, body.light-mode h2, body.light-mode h3 {
@@ -111,20 +85,20 @@
         }
 
         body.light-mode footer {
-            border-color: rgba(0, 0, 0, 0.1) !important;
+            border-color: rgba(226, 232, 240, 0.8) !important;
             color: #64748b !important;
         }
 
-        body.light-mode .bg-cyber-grid {
+        body.light-mode .bg-subtle-grid {
             background-image: 
-                linear-gradient(to right, rgba(14, 165, 233, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(217, 70, 239, 0.08) 1px, transparent 1px);
+                linear-gradient(to right, rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
         }
 
         body.light-mode input {
-            background-color: rgba(255, 255, 255, 0.9) !important;
+            background-color: #ffffff !important;
             color: #0f172a !important;
-            border-color: rgba(14, 165, 233, 0.4) !important;
+            border-color: #cbd5e1 !important;
         }
 
         body.light-mode input::placeholder {
@@ -132,50 +106,47 @@
         }
 
         body.light-mode .floating-back-btn {
-            background-color: rgba(255, 255, 255, 0.8) !important;
+            background-color: rgba(255, 255, 255, 0.9) !important;
             color: #0f172a !important;
-            border-color: rgba(14, 165, 233, 0.4) !important;
+            border-color: #cbd5e1 !important;
         }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative transition-colors duration-500">
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-techBlue selection:text-white bg-[#0b0f19] relative transition-colors duration-500">
 
-    <!-- Floating Back Button (Bal felső sarok) -->
-    <a href="index.html" class="floating-back-btn fixed top-6 left-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900/80 text-cyan border border-cyan/40 backdrop-blur-md shadow-lg shadow-cyan/10 hover:scale-105 hover:border-cyan transition-all duration-300 flex items-center gap-2.5 font-mono text-xs font-bold tracking-wider uppercase">
+    <!-- Floating Back Button -->
+    <a href="index.html" class="floating-back-btn fixed top-6 left-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900/80 text-techBlue border border-slate-700/60 backdrop-blur-md shadow-lg hover:border-techBlue transition-all duration-300 flex items-center gap-2.5 font-mono text-xs font-semibold tracking-wider uppercase">
         <i class="fa-solid fa-arrow-left text-sm"></i>
         <span>Főoldal</span>
     </a>
 
     <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
-    <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
-
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-25"></canvas>
+    <div class="fixed inset-0 bg-subtle-grid z-0 opacity-50 pointer-events-none"></div>
 
     <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
 
         <!-- Main Content Area -->
         <main class="my-auto py-12 pt-16 lg:pt-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center max-w-6xl mx-auto">
                 
                 <!-- Left Hero Text -->
                 <div class="lg:col-span-7 text-center lg:text-left space-y-6">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/30 text-cyan text-xs font-mono tracking-widest uppercase">
-                        <span class="w-2 h-2 rounded-full bg-cyan animate-ping"></span>
-                        Kávé mellé optimalizálva - Minden munkanap 07:00
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-techBlue/10 border border-techBlue/20 text-techBlue text-xs font-mono tracking-wider font-medium">
+                        <span class="w-2 h-2 rounded-full bg-techBlue animate-pulse"></span>
+                        Minden munkanap 07:00 • E-mail összefoglaló
                     </div>
 
-                    <h1 class="text-4xl sm:text-6xl font-orbitron font-black text-white leading-tight uppercase tracking-tight transition-colors">
-                        A legfontosabb hírek <span class="neon-text-gradient">zaj nélkül.</span>
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-orbitron font-extrabold text-white leading-tight uppercase tracking-tight transition-colors">
+                        A legfontosabb hírek <span class="text-transparent bg-clip-text bg-gradient-to-r from-techBlue to-indigo-400">zaj nélkül.</span>
                     </h1>
 
-                    <p class="text-slate-300 text-base sm:text-lg font-light leading-relaxed max-w-xl mx-auto lg:mx-0 transition-colors">
-                        Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban. Spórolj meg napi 20 perc céltalan görgetést!
+                    <p class="text-slate-400 text-base sm:text-lg font-normal leading-relaxed max-w-xl mx-auto lg:mx-0 transition-colors">
+                        Mesterséges intelligencia által strukturált, szakmai napi hírösszefoglaló belföldi, külföldi, gazdasági és technológiai területekről. Hatékony tájékozódás felesleges sallangok nélkül.
                     </p>
 
                     <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <button onclick="scrollToSubscribe()" class="px-8 py-4 rounded-xl bg-cyan text-black font-orbitron font-bold tracking-wider hover:bg-cyan/90 transition-all duration-300 shadow-xl shadow-cyan/20 flex items-center justify-center gap-3 group">
+                        <button onclick="scrollToSubscribe()" class="px-7 py-4 rounded-xl bg-techBlue text-slate-950 font-sans font-bold tracking-wide hover:bg-sky-400 transition-all duration-300 shadow-lg shadow-techBlue/15 flex items-center justify-center gap-3 group">
                             <span>KÉREM A REGGELI ÖSSZEFOGLALÓT</span>
                             <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </button>
@@ -184,35 +155,35 @@
 
                 <!-- Right Card Preview -->
                 <div class="lg:col-span-5">
-                    <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-cyan/30">
+                    <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
                         <div class="flex justify-between items-center mb-6">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan font-bold font-orbitron text-sm">
+                                <div class="w-10 h-10 rounded-xl bg-techBlue/10 border border-techBlue/30 flex items-center justify-center text-techBlue font-bold font-orbitron text-sm">
                                     SA
                                 </div>
                                 <div>
-                                    <h2 class="font-orbitron font-bold text-white text-sm transition-colors" id="preview-title">SUPERAGENT REGGELI KIADÁS</h2>
-                                    <p class="text-[10px] font-mono text-slate-400" id="preview-time">07:00 &bull; 3 perc olvasás</p>
+                                    <h2 class="font-orbitron font-bold text-white text-xs sm:text-sm transition-colors" id="preview-title">SUPERAGENT REGGELI KIADÁS</h2>
+                                    <p class="text-[11px] font-mono text-slate-400" id="preview-time">07:00 &bull; 3 perc olvasás</p>
                                 </div>
                             </div>
-                            <span class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-magenta/20 border border-magenta/40 text-magenta font-bold uppercase">
-                                Élő Minta
+                            <span class="text-[10px] font-mono px-2.5 py-1 rounded-md bg-slate-800 border border-slate-700 text-slate-300 font-medium uppercase">
+                                Minta
                             </span>
                         </div>
 
                         <div class="space-y-4">
-                            <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
-                                <span class="text-[10px] font-mono text-cyan uppercase tracking-wider font-bold">Tech & AI &bull; Kiemelt</span>
-                                <h3 class="font-orbitron text-sm font-bold text-white transition-colors" id="newsletter-sample-title">Generatív AI modellek a vállalati hatékonyságban</h3>
-                                <p class="text-xs text-slate-300 font-light line-clamp-3 transition-colors" id="newsletter-sample-body">
+                            <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800 space-y-2">
+                                <span class="text-[10px] font-mono text-techBlue uppercase tracking-wider font-semibold">Tech & AI &bull; Kiemelt</span>
+                                <h3 class="font-sans text-sm font-semibold text-white transition-colors" id="newsletter-sample-title">Generatív AI modellek a vállalati hatékonyságban</h3>
+                                <p class="text-xs text-slate-400 font-normal line-clamp-3 transition-colors" id="newsletter-sample-body">
                                     Az automatizált munkafolyamatok és a személyre szabott asszisztensek áttörést hoznak a hazai kkv szektorban...
                                 </p>
                             </div>
                         </div>
 
-                        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-cyan"></i> Reklámmentes</span>
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-magenta"></i> Lényegre törő</span>
+                        <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-techBlue"></i> Reklámmentes</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-indigo-400"></i> Szűrt tartalom</span>
                         </div>
                     </div>
                 </div>
@@ -220,36 +191,31 @@
             </div>
 
             <!-- Subscription Form Section -->
-            <div id="subscribe-section" class="mt-20 max-w-3xl mx-auto">
-                <div class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden border border-magenta/30 text-center space-y-6">
-                    <div class="absolute top-0 right-0 w-48 h-48 bg-magenta/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div id="subscribe-section" class="mt-20 max-w-2xl mx-auto">
+                <div class="glass-card rounded-2xl p-8 sm:p-12 relative overflow-hidden text-center space-y-6">
 
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta/10 border border-magenta/30 text-magenta text-xs font-mono tracking-widest uppercase">
-                        Csatlakozz a tudatos reggeli olvasókhoz
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-xs font-mono tracking-wider uppercase">
+                        Ingyenes feliratkozás
                     </div>
 
-                    <h2 class="text-3xl sm:text-5xl font-orbitron font-black text-white uppercase tracking-tight transition-colors">
-                        Iratkozz fel a <span class="neon-text-gradient">reggeli hírekre!</span>
+                    <h2 class="text-2xl sm:text-4xl font-orbitron font-bold text-white uppercase tracking-tight transition-colors">
+                        Iratkozz fel a <span class="text-transparent bg-clip-text bg-gradient-to-r from-techBlue to-indigo-400">reggeli hírekre!</span>
                     </h2>
 
-                    <p class="text-slate-300 text-sm sm:text-base font-light max-w-xl mx-auto transition-colors">
-                        Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanapon, e-mailben egy lényegre törő, átlátható hírösszefoglalót!
+                    <p class="text-slate-400 text-sm sm:text-base font-normal max-w-lg mx-auto transition-colors">
+                        Kapj kézhez minden munkanapon egy átlátható, strukturált hírösszefoglalót a legfontosabb eseményekről.
                     </p>
 
-                    <!-- Google Apps Script Newsletter Subscription Form -->
-                    <form id="subscribeForm" onsubmit="handleSubscribe(event)" class="pt-4 space-y-4 max-w-xl mx-auto">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <input type="text" id="subscriberName" required placeholder="Neved..." class="w-full px-5 py-3.5 rounded-xl bg-black/50 border border-white/15 focus:border-cyan focus:outline-none text-white text-sm font-mono placeholder:text-slate-500 transition-colors">
-                            </div>
-                            <div>
-                                <input type="email" id="subscriberEmail" required placeholder="E-mail címed..." class="w-full px-5 py-3.5 rounded-xl bg-black/50 border border-white/15 focus:border-cyan focus:outline-none text-white text-sm font-mono placeholder:text-slate-500 transition-colors">
-                            </div>
+                    <!-- Google Apps Script Form -->
+                    <form id="subscribeForm" onsubmit="handleSubscribe(event)" class="pt-2 space-y-4 max-w-md mx-auto">
+                        <div class="space-y-3">
+                            <input type="text" id="subscriberName" required placeholder="Teljes neved..." class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-techBlue focus:outline-none text-white text-sm font-sans placeholder:text-slate-500 transition-colors">
+                            <input type="email" id="subscriberEmail" required placeholder="E-mail címed..." class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-techBlue focus:outline-none text-white text-sm font-sans placeholder:text-slate-500 transition-colors">
                         </div>
 
-                        <button type="submit" id="submitBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-magenta via-purpleGlow to-cyan text-white font-orbitron font-bold tracking-wider hover:opacity-95 transition-all shadow-xl shadow-magenta/20 flex items-center justify-center gap-3 uppercase">
+                        <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-xl bg-techBlue text-slate-950 font-sans font-bold tracking-wide hover:bg-sky-400 transition-all shadow-lg shadow-techBlue/10 flex items-center justify-center gap-2 uppercase text-sm">
                             <span>Feliratkozom</span>
-                            <i class="fa-solid fa-paper-plane"></i>
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
                         </button>
                     </form>
 
@@ -259,45 +225,39 @@
         </main>
 
         <!-- Footer -->
-        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors">
-            <div class="flex items-center gap-3">
-                <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan"></span>
+        <footer class="pt-6 border-t border-slate-800/80 text-xs font-mono text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors">
+            <div class="flex items-center gap-2.5">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-techBlue opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-techBlue"></span>
                 </span>
-                <span class="tracking-widest uppercase text-slate-300">CORE NODE: ONLINE</span>
+                <span class="tracking-wider uppercase text-slate-400">SYSTEM: ONLINE</span>
             </div>
 
             <div class="flex items-center gap-6">
-                <div>
-                    LATENCY: <span class="text-cyan font-bold">12ms</span>
-                </div>
-                <div>
-                    CLOCK: <span id="live-clock" class="text-cyan font-bold">00:00:00</span>
-                </div>
+                <div>LATENCY: <span class="text-techBlue font-semibold">12ms</span></div>
+                <div>CLOCK: <span id="live-clock" class="text-techBlue font-semibold">00:00:00</span></div>
             </div>
 
-            <div class="text-slate-500">
+            <div>
                 &copy; 2026 SuperAgent.ai &bull; Nyíri Gábor
             </div>
         </footer>
 
     </div>
 
-    <!-- Floating Theme Toggle Button (Jobb alsó sarok) -->
-    <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-slate-900/80 text-cyan border border-cyan/40 backdrop-blur-md shadow-lg shadow-cyan/20 hover:scale-110 hover:border-cyan transition-all duration-300 flex items-center justify-center">
-        <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
+    <!-- Floating Theme Toggle Button -->
+    <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-slate-900/90 text-techBlue border border-slate-700/80 backdrop-blur-md shadow-lg hover:scale-105 hover:border-techBlue transition-all duration-300 flex items-center justify-center">
+        <i id="theme-icon" class="fa-solid fa-sun text-base"></i>
     </button>
 
     <script>
-        // GOOGLE APPS SCRIPT WEB APP URL (Cseréld ki a sajátodra)
         const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
 
         function scrollToSubscribe() {
             document.getElementById('subscribe-section').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Téma váltás & LocalStorage elmentés
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeIcon = document.getElementById('theme-icon');
 
@@ -306,21 +266,19 @@
                 document.body.classList.add('light-mode');
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
-                themeToggleBtn.classList.remove('text-cyan', 'border-cyan/40', 'bg-slate-900/80', 'shadow-cyan/20');
-                themeToggleBtn.classList.add('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
+                themeToggleBtn.classList.remove('text-techBlue');
+                themeToggleBtn.classList.add('text-amber-500');
             } else {
                 document.body.classList.remove('light-mode');
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
-                themeToggleBtn.classList.remove('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
-                themeToggleBtn.classList.add('text-cyan', 'border-cyan/40', 'bg-slate-900/80', 'shadow-cyan/20');
+                themeToggleBtn.classList.remove('text-amber-500');
+                themeToggleBtn.classList.add('text-techBlue');
             }
         }
 
         const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            applyTheme(true);
-        }
+        if (savedTheme === 'light') applyTheme(true);
 
         themeToggleBtn.addEventListener('click', () => {
             const isLight = !document.body.classList.contains('light-mode');
@@ -328,7 +286,6 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         });
 
-        // 1. Feliratkozás kezelése (POST kérés)
         async function handleSubscribe(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -338,7 +295,7 @@
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> <span>Küldés...</span>';
-            statusMsg.className = 'font-mono text-xs pt-2 text-cyan';
+            statusMsg.className = 'font-mono text-xs pt-2 text-techBlue';
             statusMsg.textContent = 'Feldolgozás folyamatban...';
             statusMsg.classList.remove('hidden');
 
@@ -351,42 +308,33 @@
                 });
 
                 statusMsg.className = 'font-mono text-xs pt-2 text-emerald-400';
-                statusMsg.textContent = '✓ Sikeres feliratkozás! Köszönjük, hamarosan küldjük az első hírlevelet.';
+                statusMsg.textContent = '✓ Sikeres feliratkozás! Köszönjük.';
                 document.getElementById('subscribeForm').reset();
             } catch (error) {
-                console.error(error);
                 statusMsg.className = 'font-mono text-xs pt-2 text-rose-400';
-                statusMsg.textContent = '✕ Hiba történt a feliratkozás során. Kérjük próbáld újra!';
+                statusMsg.textContent = '✕ Hiba történt. Kérjük próbáld újra!';
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>Feliratkozom</span> <i class="fa-solid fa-paper-plane"></i>';
+                submitBtn.innerHTML = '<span>Feliratkozom</span> <i class="fa-solid fa-paper-plane text-xs"></i>';
             }
         }
 
-        // 2. Archívum/Utolsó hírlevél beolvasása (GET kérés)
         async function fetchLatestNewsletter() {
             if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') return;
-
             try {
                 const res = await fetch(SCRIPT_URL);
                 const editions = await res.json();
                 const dateKeys = Object.keys(editions);
-
                 if (dateKeys.length > 0) {
-                    const latestKey = dateKeys[0];
-                    const latestEdition = editions[latestKey];
-
+                    const latestEdition = editions[dateKeys[0]];
                     if (latestEdition) {
                         document.getElementById('preview-title').textContent = latestEdition.dateTitle || 'SUPERAGENT REGGELI KIADÁS';
                         document.getElementById('newsletter-sample-body').textContent = latestEdition.bodyText.substring(0, 180) + '...';
                     }
                 }
-            } catch (err) {
-                console.log('Archívum betöltési értesítés: Az alapértelmezett minta jelenik meg.');
-            }
+            } catch (err) {}
         }
 
-        // Élő Óra
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
@@ -398,14 +346,12 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Egér nyomkövető fény
         const glowContainer = document.getElementById('interactive-glow');
         window.addEventListener('mousemove', (e) => {
             glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
             glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
         });
 
-        // Részecske animáció
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [];
@@ -422,11 +368,10 @@
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.4;
-                this.vy = (Math.random() - 0.5) * 0.4;
-                this.radius = Math.random() * 1.5 + 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
-                this.alpha = Math.random() * 0.5 + 0.2;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.radius = Math.random() * 1.2 + 0.5;
+                this.alpha = Math.random() * 0.4 + 0.1;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
@@ -436,12 +381,12 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ')';
+                ctx.fillStyle = `rgba(14, 165, 233, ${this.alpha})`;
                 ctx.fill();
             }
         }
 
-        for (let i = 0; i < Math.min(Math.floor(window.innerWidth / 16), 80); i++) {
+        for (let i = 0; i < Math.min(Math.floor(window.innerWidth / 20), 50); i++) {
             particles.push(new Particle());
         }
 
