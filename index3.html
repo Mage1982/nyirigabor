@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAgent.ai | AI Kvantum Játszótér</title>
+    <title>SuperAgent.ai | AI Mandelbrot Utazás</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -36,7 +36,7 @@
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%': { filter: 'drop-shadow(0 0 12px rgba(138, 43, 226, 0.4))' },
+                            '0%': { filter: 'drop-shadow(0 0 12px rgba(255, 12, 157, 0.4))' },
                             '100%': { filter: 'drop-shadow(0 0 25px rgba(0, 255, 255, 0.6))' }
                         },
                         gridMove: {
@@ -56,8 +56,8 @@
     <style>
         .bg-cyber-grid {
             background-image: 
-                linear-gradient(to right, rgba(138, 43, 226, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+                linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 12, 157, 0.04) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
@@ -65,24 +65,24 @@
             background: rgba(15, 20, 32, 0.65);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(138, 43, 226, 0.25);
+            border: 1px solid rgba(255, 12, 157, 0.25);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .glass-card:hover {
-            border-color: rgba(138, 43, 226, 0.6);
-            box-shadow: 0 10px 30px -5px rgba(138, 43, 226, 0.3);
+            border-color: rgba(255, 12, 157, 0.6);
+            box-shadow: 0 10px 30px -5px rgba(255, 12, 157, 0.3);
         }
 
         .neon-text-gradient {
-            background: linear-gradient(135deg, #00FFFF 0%, #8A2BE2 50%, #FF0C9D 100%);
+            background: linear-gradient(135deg, #FF0C9D 0%, #FFFFFF 50%, #00FFFF 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         #interactive-glow {
             pointer-events: none;
-            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(138, 43, 226, 0.1), rgba(0, 255, 255, 0.05), transparent 70%);
+            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 12, 157, 0.1), rgba(0, 255, 255, 0.05), transparent 70%);
         }
 
         /* Light Mode Stílusok */
@@ -93,13 +93,13 @@
 
         body.light-mode .glass-card {
             background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(138, 43, 226, 0.3);
+            border-color: rgba(217, 70, 239, 0.3);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
         body.light-mode .glass-card:hover {
-            border-color: rgba(138, 43, 226, 0.8);
-            box-shadow: 0 15px 35px -5px rgba(138, 43, 226, 0.25);
+            border-color: rgba(217, 70, 239, 0.8);
+            box-shadow: 0 15px 35px -5px rgba(217, 70, 239, 0.25);
         }
 
         body.light-mode h1, body.light-mode h2, body.light-mode h3 {
@@ -117,21 +117,21 @@
 
         body.light-mode .bg-cyber-grid {
             background-image: 
-                linear-gradient(to right, rgba(138, 43, 226, 0.08) 1px, transparent 1px),
+                linear-gradient(to right, rgba(217, 70, 239, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(14, 165, 233, 0.08) 1px, transparent 1px);
         }
 
         body.light-mode .floating-back-btn {
             background-color: rgba(255, 255, 255, 0.8) !important;
             color: #0f172a !important;
-            border-color: rgba(138, 43, 226, 0.4) !important;
+            border-color: rgba(217, 70, 239, 0.4) !important;
         }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-purpleGlow selection:text-white bg-[#090b10] relative transition-colors duration-500">
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative transition-colors duration-500">
 
     <!-- Floating Back Button (Bal felső sarok) -->
-    <a href="index.html" class="floating-back-btn fixed top-6 left-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900/80 text-purple-400 border border-purple-500/40 backdrop-blur-md shadow-lg shadow-purple-500/10 hover:scale-105 hover:border-purple-400 transition-all duration-300 flex items-center gap-2.5 font-mono text-xs font-bold tracking-wider uppercase">
+    <a href="index.html" class="floating-back-btn fixed top-6 left-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900/80 text-magenta border border-magenta/40 backdrop-blur-md shadow-lg shadow-magenta/10 hover:scale-105 hover:border-magenta transition-all duration-300 flex items-center gap-2.5 font-mono text-xs font-bold tracking-wider uppercase">
         <i class="fa-solid fa-arrow-left text-sm"></i>
         <span>Főoldal</span>
     </a>
@@ -140,7 +140,7 @@
     <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
     <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
 
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
     <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-cyan/20 rounded-full blur-[140px] pointer-events-none"></div>
 
     <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
@@ -148,91 +148,91 @@
         <!-- Main Content Area -->
         <main class="my-auto py-12 pt-16 lg:pt-12">
             <div class="text-center space-y-4 max-w-3xl mx-auto mb-12">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-300 text-xs font-mono tracking-widest uppercase">
-                    <i class="fa-solid fa-atom text-purple-400 animate-spin" style="animation-duration: 8s;"></i>
-                    Interaktív Algoritmus Szimulátor
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-magenta/10 border border-magenta/30 text-magenta text-xs font-mono tracking-widest uppercase">
+                    <i class="fa-solid fa-network-wired text-cyan"></i>
+                    Matematikai Fraktál Generátor
                 </div>
 
                 <h1 class="text-4xl sm:text-6xl font-orbitron font-black text-white leading-tight uppercase tracking-tight transition-colors">
-                    AI Kvantum <span class="neon-text-gradient">Játszótér</span>
+                    AI Mandelbrot <span class="neon-text-gradient">Utazás</span>
                 </h1>
 
                 <p class="text-slate-300 text-base sm:text-lg font-light leading-relaxed transition-colors">
-                    Szimuláld a kvantum-szuperpozíciót és az összefonódást! A mesterséges intelligencia és a kvantumfizika találkozása az algoritmusok világában.
+                    Fedezd fel a végtelen összetettségű fraktál architektúrákat! Rendereld újra a Mandelbrot halmazt és kísérletezz a komplex számok iterációjával.
                 </p>
             </div>
 
-            <!-- Quantum Simulator Grid -->
+            <!-- Fractal Canvas & Controls Section -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
                 
                 <!-- Controls Panel -->
                 <div class="lg:col-span-5 space-y-6">
-                    <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 border border-purple-500/30">
+                    <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 border border-magenta/30">
                         <h2 class="font-orbitron font-bold text-white text-lg flex items-center gap-2 transition-colors">
-                            <i class="fa-solid fa-sliders text-purple-400"></i>
-                            Qubit Paraméterek
+                            <i class="fa-solid fa-sliders text-magenta"></i>
+                            Fraktál Paraméterek
                         </h2>
 
-                        <!-- Qubit Count Slider -->
+                        <!-- Iteration Slider -->
                         <div class="space-y-2">
                             <div class="flex justify-between text-xs font-mono text-slate-300">
-                                <span>Aktivált Qubitek Száma:</span>
-                                <span id="qubitValue" class="text-cyan font-bold">4 Qubit</span>
+                                <span>Iterációk Száma:</span>
+                                <span id="iterValue" class="text-magenta font-bold">50</span>
                             </div>
-                            <input type="range" id="qubitSlider" min="1" max="8" value="4" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500">
+                            <input type="range" id="iterSlider" min="10" max="200" value="50" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-magenta">
                         </div>
 
-                        <!-- Entanglement Toggle -->
-                        <div class="flex items-center justify-between p-3.5 rounded-xl bg-white/5 border border-white/10">
-                            <span class="text-xs font-mono text-slate-300">Kvantum Összefonódás</span>
-                            <button id="entangleToggle" onclick="toggleEntanglement()" class="px-3 py-1.5 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold uppercase hover:bg-purple-500/30 transition-all">
-                                KIKAPCSOLVA
-                            </button>
+                        <!-- Zoom Controls -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-xs font-mono text-slate-300">
+                                <span>Nagyítás (Zoom):</span>
+                                <span id="zoomValue" class="text-cyan font-bold">1.0x</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="changeZoom(1.5)" class="w-1/2 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-magenta text-slate-200 font-mono text-xs font-bold transition-all">
+                                    <i class="fa-solid fa-magnifying-glass-plus text-magenta"></i> Nagyítás
+                                </button>
+                                <button onclick="changeZoom(0.67)" class="w-1/2 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-cyan text-slate-200 font-mono text-xs font-bold transition-all">
+                                    <i class="fa-solid fa-magnifying-glass-minus text-cyan"></i> Kicsinyítés
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Action Buttons -->
+                        <!-- Render Actions -->
                         <div class="space-y-3 pt-2">
-                            <button onclick="runSimulation()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purpleGlow to-cyan text-white font-orbitron font-bold tracking-wider hover:opacity-90 transition-all shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 uppercase text-xs">
-                                <i class="fa-solid fa-play"></i>
-                                <span>Mérés Indítása</span>
+                            <button onclick="drawMandelbrot()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-magenta to-cyan text-white font-orbitron font-bold tracking-wider hover:opacity-90 transition-all shadow-lg shadow-magenta/20 flex items-center justify-center gap-2 uppercase text-xs">
+                                <i class="fa-solid fa-rotate text-sm"></i>
+                                <span>Újrarenderelés</span>
                             </button>
-                            <button onclick="resetSimulation()" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 hover:border-cyan/40 text-slate-300 hover:text-cyan font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 uppercase">
-                                <i class="fa-solid fa-rotate-left"></i>
-                                <span>Alaphelyzet</span>
+                            <button onclick="resetFractal()" class="w-full py-3 rounded-xl bg-white/5 border border-white/10 hover:border-magenta/40 text-slate-300 hover:text-magenta font-mono text-xs font-bold transition-all flex items-center justify-center gap-2 uppercase">
+                                <i class="fa-solid fa-arrow-rotate-left"></i>
+                                <span>Nézet Visszaállítása</span>
                             </button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quantum Visualizer Display -->
+                <!-- Fractal Render Display -->
                 <div class="lg:col-span-7">
-                    <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6 border border-purple-500/30 relative overflow-hidden min-h-[380px] flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-center mb-6">
-                                <span class="text-xs font-mono text-purple-300 uppercase tracking-widest font-bold">
-                                    <i class="fa-solid fa-microchip text-cyan mr-1.5"></i> Qubit Állapotok
-                                </span>
-                                <span id="simState" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
-                                    Szuperpozíció
-                                </span>
-                            </div>
-
-                            <!-- Interactive Qubits Display Container -->
-                            <div id="qubitsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4">
-                                <!-- Dynamic Qubits will render here via JS -->
-                            </div>
+                    <div class="glass-card rounded-2xl p-4 sm:p-6 space-y-4 border border-magenta/30 relative overflow-hidden flex flex-col items-center">
+                        <div class="w-full flex justify-between items-center px-2">
+                            <span class="text-xs font-mono text-magenta uppercase tracking-widest font-bold">
+                                <i class="fa-solid fa-eye text-cyan mr-1.5"></i> Vizuális Mátrix
+                            </span>
+                            <span class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-magenta/10 border border-magenta/40 text-magenta font-bold uppercase">
+                                Real-Time Render
+                            </span>
                         </div>
 
-                        <!-- Quantum Output Stats -->
-                        <div class="p-4 rounded-xl bg-black/40 border border-white/10 font-mono text-xs space-y-2">
-                            <div class="flex justify-between text-slate-400">
-                                <span>Fázis Ekvilibrium:</span>
-                                <span id="phaseVal" class="text-purple-400 font-bold">98.4%</span>
-                            </div>
-                            <div class="flex justify-between text-slate-400">
-                                <span>Mérési Állapot (Entrópia):</span>
-                                <span id="entropyVal" class="text-cyan font-bold">0.842 BIT</span>
-                            </div>
+                        <!-- Fractal Canvas -->
+                        <div class="w-full aspect-square max-w-[400px] rounded-xl overflow-hidden border border-white/10 shadow-2xl relative bg-black">
+                            <canvas id="mandelbrotCanvas" width="400" height="400" class="w-full h-full cursor-crosshair"></canvas>
+                        </div>
+
+                        <!-- Stats Output -->
+                        <div class="w-full p-3.5 rounded-xl bg-black/40 border border-white/10 font-mono text-xs flex justify-between text-slate-400">
+                            <span>Formagenerálási Képlet:</span>
+                            <span class="text-cyan font-bold">Z_{n+1} = Z_n^2 + C</span>
                         </div>
                     </div>
                 </div>
@@ -244,18 +244,18 @@
         <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors">
             <div class="flex items-center gap-3">
                 <span class="relative flex h-2.5 w-2.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purpleGlow opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-purpleGlow"></span>
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-magenta opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-magenta"></span>
                 </span>
-                <span class="tracking-widest uppercase text-slate-300">QUANTUM NODE: ACTIVE</span>
+                <span class="tracking-widest uppercase text-slate-300">FRACTAL ENGINE: ONLINE</span>
             </div>
 
             <div class="flex items-center gap-6">
                 <div>
-                    LATENCY: <span class="text-purple-400 font-bold">8ms</span>
+                    LATENCY: <span class="text-magenta font-bold">14ms</span>
                 </div>
                 <div>
-                    CLOCK: <span id="live-clock" class="text-purple-400 font-bold">00:00:00</span>
+                    CLOCK: <span id="live-clock" class="text-magenta font-bold">00:00:00</span>
                 </div>
             </div>
 
@@ -267,7 +267,7 @@
     </div>
 
     <!-- Floating Theme Toggle Button (Jobb alsó sarok) -->
-    <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-slate-900/80 text-purple-400 border border-purple-500/40 backdrop-blur-md shadow-lg shadow-purple-500/20 hover:scale-110 hover:border-purple-400 transition-all duration-300 flex items-center justify-center">
+    <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-slate-900/80 text-magenta border border-magenta/40 backdrop-blur-md shadow-lg shadow-magenta/20 hover:scale-110 hover:border-magenta transition-all duration-300 flex items-center justify-center">
         <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
     </button>
 
@@ -281,14 +281,14 @@
                 document.body.classList.add('light-mode');
                 themeIcon.classList.remove('fa-sun');
                 themeIcon.classList.add('fa-moon');
-                themeToggleBtn.classList.remove('text-purple-400', 'border-purple-500/40', 'bg-slate-900/80', 'shadow-purple-500/20');
+                themeToggleBtn.classList.remove('text-magenta', 'border-magenta/40', 'bg-slate-900/80', 'shadow-magenta/20');
                 themeToggleBtn.classList.add('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
             } else {
                 document.body.classList.remove('light-mode');
                 themeIcon.classList.remove('fa-moon');
                 themeIcon.classList.add('fa-sun');
                 themeToggleBtn.classList.remove('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
-                themeToggleBtn.classList.add('text-purple-400', 'border-purple-500/40', 'bg-slate-900/80', 'shadow-purple-500/20');
+                themeToggleBtn.classList.add('text-magenta', 'border-magenta/40', 'bg-slate-900/80', 'shadow-magenta/20');
             }
         }
 
@@ -303,72 +303,81 @@
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
         });
 
-        // Interactive Quantum Simulator Logic
-        const qubitSlider = document.getElementById('qubitSlider');
-        const qubitValue = document.getElementById('qubitValue');
-        const qubitsContainer = document.getElementById('qubitsContainer');
-        const entangleToggleBtn = document.getElementById('entangleToggle');
-        let isEntangled = false;
+        // Interactive Mandelbrot Fractal Render Engine
+        const mCanvas = document.getElementById('mandelbrotCanvas');
+        const mCtx = mCanvas.getContext('2d');
+        const iterSlider = document.getElementById('iterSlider');
+        const iterValue = document.getElementById('iterValue');
+        const zoomValue = document.getElementById('zoomValue');
 
-        function renderQubits(count) {
-            qubitsContainer.innerHTML = '';
-            for (let i = 0; i < count; i++) {
-                const val = Math.random() > 0.5 ? '|1⟩' : '|0⟩';
-                const qubitCard = document.createElement('div');
-                qubitCard.className = 'p-4 rounded-xl bg-white/5 border border-purple-500/30 text-center space-y-2 animate-pulse-glow';
-                qubitCard.innerHTML = `
-                    <div class="text-[10px] font-mono text-slate-400">Q_${i}</div>
-                    <div class="text-xl font-orbitron font-bold text-cyan qubit-val">${val}</div>
-                    <div class="text-[9px] font-mono text-purple-400 uppercase">Superpos</div>
-                `;
-                qubitsContainer.appendChild(qubitCard);
-            }
-        }
+        let zoom = 1.0;
+        let panX = -0.5;
+        let panY = 0.0;
+        let maxIterations = 50;
 
-        qubitSlider.addEventListener('input', (e) => {
-            const count = e.target.value;
-            qubitValue.textContent = `${count} Qubit`;
-            renderQubits(count);
+        iterSlider.addEventListener('input', (e) => {
+            maxIterations = parseInt(e.target.value);
+            iterValue.textContent = maxIterations;
+            drawMandelbrot();
         });
 
-        function toggleEntanglement() {
-            isEntangled = !isEntangled;
-            if (isEntangled) {
-                entangleToggleBtn.textContent = 'BEKAPCSOLVA';
-                entangleToggleBtn.className = 'px-3 py-1.5 rounded-lg bg-cyan/20 border border-cyan/40 text-cyan text-xs font-mono font-bold uppercase hover:bg-cyan/30 transition-all';
-            } else {
-                entangleToggleBtn.textContent = 'KIKAPCSOLVA';
-                entangleToggleBtn.className = 'px-3 py-1.5 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold uppercase hover:bg-purple-500/30 transition-all';
-            }
+        function changeZoom(factor) {
+            zoom *= factor;
+            zoomValue.textContent = zoom.toFixed(1) + 'x';
+            drawMandelbrot();
         }
 
-        function runSimulation() {
-            const elements = document.querySelectorAll('.qubit-val');
-            document.getElementById('simState').textContent = 'Mérés alatt...';
-            document.getElementById('simState').className = 'text-[10px] font-mono px-2.5 py-1 rounded-full bg-magenta/20 border border-magenta/40 text-magenta font-bold uppercase';
+        function resetFractal() {
+            zoom = 1.0;
+            panX = -0.5;
+            panY = 0.0;
+            maxIterations = 50;
+            iterSlider.value = 50;
+            iterValue.textContent = 50;
+            zoomValue.textContent = '1.0x';
+            drawMandelbrot();
+        }
 
-            setTimeout(() => {
-                const masterVal = Math.random() > 0.5 ? '|1⟩' : '|0⟩';
-                elements.forEach(el => {
-                    if (isEntangled) {
-                        el.textContent = masterVal;
-                    } else {
-                        el.textContent = Math.random() > 0.5 ? '|1⟩' : '|0⟩';
+        function drawMandelbrot() {
+            const w = mCanvas.width;
+            const h = mCanvas.height;
+            const imgData = mCtx.createImageData(w, h);
+            const data = imgData.data;
+
+            for (let x = 0; x < w; x++) {
+                for (let y = 0; y < h; y++) {
+                    let a = (x - w / 2) / (0.5 * zoom * w) + panX;
+                    let b = (y - h / 2) / (0.5 * zoom * h) + panY;
+
+                    const ca = a;
+                    const cb = b;
+                    let n = 0;
+
+                    while (n < maxIterations) {
+                        let aa = a * a - b * b;
+                        let bb = 2 * a * b;
+                        a = aa + ca;
+                        b = bb + cb;
+                        if (a * a + b * b > 4) break;
+                        n++;
                     }
-                });
-                document.getElementById('simState').textContent = 'Kollapszált Állapot';
-                document.getElementById('simState').className = 'text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-bold uppercase';
-                document.getElementById('phaseVal').textContent = (Math.random() * 5 + 95).toFixed(1) + '%';
-                document.getElementById('entropyVal').textContent = (Math.random() * 0.5).toFixed(3) + ' BIT';
-            }, 600);
-        }
 
-        function resetSimulation() {
-            renderQubits(qubitSlider.value);
-            document.getElementById('simState').textContent = 'Szuperpozíció';
-            document.getElementById('simState').className = 'text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase';
-            document.getElementById('phaseVal').textContent = '98.4%';
-            document.getElementById('entropyVal').textContent = '0.842 BIT';
+                    const pix = (x + y * w) * 4;
+                    if (n === maxIterations) {
+                        data[pix] = 9;
+                        data[pix + 1] = 11;
+                        data[pix + 2] = 16;
+                        data[pix + 3] = 255;
+                    } else {
+                        const hue = (n / maxIterations) * 360;
+                        data[pix] = Math.sin(hue) * 127 + 128;
+                        data[pix + 1] = (n / maxIterations) * 255;
+                        data[pix + 2] = 255 - (n / maxIterations) * 255;
+                        data[pix + 3] = 255;
+                    }
+                }
+            }
+            mCtx.putImageData(imgData, 0, 0);
         }
 
         // Élő Óra
@@ -410,7 +419,7 @@
                 this.vx = (Math.random() - 0.5) * 0.4;
                 this.vy = (Math.random() - 0.5) * 0.4;
                 this.radius = Math.random() * 1.5 + 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(138, 43, 226, ' : 'rgba(0, 255, 255, ';
+                this.color = Math.random() > 0.5 ? 'rgba(255, 12, 157, ' : 'rgba(0, 255, 255, ';
                 this.alpha = Math.random() * 0.5 + 0.2;
             }
             update() {
@@ -441,7 +450,7 @@
 
         window.onload = function() {
             animateParticles();
-            renderQubits(4);
+            drawMandelbrot();
         };
     </script>
 </body>
