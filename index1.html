@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAgent.ai | Nyíri Gábor - Mesterséges Intelligencia</title>
+    <title>SuperAgent.ai | Automatikus AI Hírlevél</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Orbitron, Share Tech Mono & Inter -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -54,7 +54,6 @@
     </script>
 
     <style>
-        /* Cyber Grid Overlay Background */
         .bg-cyber-grid {
             background-image: 
                 linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
@@ -62,41 +61,31 @@
             background-size: 40px 40px;
         }
 
-        /* Glassmorphism Card Effect */
         .glass-card {
             background: rgba(15, 20, 32, 0.65);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 255, 255, 0.15);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
         }
 
         .glass-card:hover {
-            border-color: rgba(0, 255, 255, 0.7);
-            box-shadow: 0 10px 35px -5px rgba(0, 255, 255, 0.35), inset 0 0 20px rgba(0, 255, 255, 0.1);
-            transform: translateY(-8px);
+            border-color: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 10px 30px -5px rgba(0, 255, 255, 0.2);
         }
 
-        .glass-card-magenta:hover {
-            border-color: rgba(255, 12, 157, 0.8);
-            box-shadow: 0 10px 35px -5px rgba(255, 12, 157, 0.4), inset 0 0 20px rgba(255, 12, 157, 0.1);
-        }
-
-        /* Neon Gradient Text */
         .neon-text-gradient {
             background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #FF0C9D 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        /* Interactive Cursor Spotlight */
         #interactive-glow {
             pointer-events: none;
             background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(255, 12, 157, 0.05), transparent 70%);
         }
 
-        /* Light Mode Styles */
+        /* Light Mode Stílusok */
         body.light-mode {
             background-color: #f1f5f9 !important;
             color: #0f172a !important;
@@ -113,15 +102,11 @@
             box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.25);
         }
 
-        body.light-mode .section-title {
+        body.light-mode h1, body.light-mode h2, body.light-mode h3 {
             color: #0f172a !important;
         }
 
-        body.light-mode .card-title {
-            color: #0f172a !important;
-        }
-
-        body.light-mode .card-desc {
+        body.light-mode p {
             color: #475569 !important;
         }
 
@@ -135,123 +120,146 @@
                 linear-gradient(to right, rgba(14, 165, 233, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(217, 70, 239, 0.08) 1px, transparent 1px);
         }
+
+        body.light-mode input {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            color: #0f172a !important;
+            border-color: rgba(14, 165, 233, 0.4) !important;
+        }
+
+        body.light-mode input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        body.light-mode .floating-back-btn {
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            color: #0f172a !important;
+            border-color: rgba(14, 165, 233, 0.4) !important;
+        }
     </style>
 </head>
 <body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative transition-colors duration-500">
 
-    <!-- Dynamic Interactive Mouse Glow -->
+    <!-- Floating Back Button (Bal felső sarok) -->
+    <a href="index.html" class="floating-back-btn fixed top-6 left-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900/80 text-cyan border border-cyan/40 backdrop-blur-md shadow-lg shadow-cyan/10 hover:scale-105 hover:border-cyan transition-all duration-300 flex items-center gap-2.5 font-mono text-xs font-bold tracking-wider uppercase">
+        <i class="fa-solid fa-arrow-left text-sm"></i>
+        <span>Főoldal</span>
+    </a>
+
     <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
-
-    <!-- HTML5 Particle Canvas -->
     <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
-
-    <!-- Animated Cyber Grid Background -->
     <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
 
-    <!-- Ambient Glowing Orbs -->
     <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
     <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none"></div>
 
-    <!-- Main Content Container -->
     <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
 
-        <!-- Main Grid Container -->
-        <main class="my-auto py-8">
-            <div class="text-center mb-8 sm:mb-12">
-                <p class="section-title text-2xl sm:text-4xl font-orbitron font-bold text-white tracking-wide transition-colors duration-300">
-                    Mesterséges Intelligencia Fejlesztések
-                </p>
+        <!-- Main Content Area -->
+        <main class="my-auto py-12 pt-16 lg:pt-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center max-w-6xl mx-auto">
+                
+                <!-- Left Hero Text -->
+                <div class="lg:col-span-7 text-center lg:text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan/10 border border-cyan/30 text-cyan text-xs font-mono tracking-widest uppercase">
+                        <span class="w-2 h-2 rounded-full bg-cyan animate-ping"></span>
+                        Kávé mellé optimalizálva - Minden munkanap 07:00
+                    </div>
+
+                    <h1 class="text-4xl sm:text-6xl font-orbitron font-black text-white leading-tight uppercase tracking-tight transition-colors">
+                        A legfontosabb hírek <span class="neon-text-gradient">zaj nélkül.</span>
+                    </h1>
+
+                    <p class="text-slate-300 text-base sm:text-lg font-light leading-relaxed max-w-xl mx-auto lg:mx-0 transition-colors">
+                        Mesterséges intelligencia által szűrt, strukturált napi hírösszefoglaló belföldi, külföldi, gazdasági és tech témákban. Spórolj meg napi 20 perc céltalan görgetést!
+                    </p>
+
+                    <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <button onclick="scrollToSubscribe()" class="px-8 py-4 rounded-xl bg-cyan text-black font-orbitron font-bold tracking-wider hover:bg-cyan/90 transition-all duration-300 shadow-xl shadow-cyan/20 flex items-center justify-center gap-3 group">
+                            <span>KÉREM A REGGELI ÖSSZEFOGLALÓT</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Card Preview -->
+                <div class="lg:col-span-5">
+                    <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden border border-cyan/30">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan font-bold font-orbitron text-sm">
+                                    SA
+                                </div>
+                                <div>
+                                    <h2 class="font-orbitron font-bold text-white text-sm transition-colors" id="preview-title">SUPERAGENT REGGELI KIADÁS</h2>
+                                    <p class="text-[10px] font-mono text-slate-400" id="preview-time">07:00 &bull; 3 perc olvasás</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-magenta/20 border border-magenta/40 text-magenta font-bold uppercase">
+                                Élő Minta
+                            </span>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                                <span class="text-[10px] font-mono text-cyan uppercase tracking-wider font-bold">Tech & AI &bull; Kiemelt</span>
+                                <h3 class="font-orbitron text-sm font-bold text-white transition-colors" id="newsletter-sample-title">Generatív AI modellek a vállalati hatékonyságban</h3>
+                                <p class="text-xs text-slate-300 font-light line-clamp-3 transition-colors" id="newsletter-sample-body">
+                                    Az automatizált munkafolyamatok és a személyre szabott asszisztensek áttörést hoznak a hazai kkv szektorban...
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-cyan"></i> Reklámmentes</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-magenta"></i> Lényegre törő</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            <!-- Subscription Form Section -->
+            <div id="subscribe-section" class="mt-20 max-w-3xl mx-auto">
+                <div class="glass-card rounded-3xl p-8 sm:p-12 relative overflow-hidden border border-magenta/30 text-center space-y-6">
+                    <div class="absolute top-0 right-0 w-48 h-48 bg-magenta/10 rounded-full blur-3xl pointer-events-none"></div>
 
-                <!-- CARD 1: Automatikus AI Hírlevél -->
-                <a href="https://nyirigabor.hu/index1.html" class="glass-card group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-2xl group-hover:bg-cyan/20 transition-all duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
-                                <i class="fa-solid fa-robot"></i>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-magenta/10 border border-magenta/30 text-magenta text-xs font-mono tracking-widest uppercase">
+                        Csatlakozz a tudatos reggeli olvasókhoz
+                    </div>
+
+                    <h2 class="text-3xl sm:text-5xl font-orbitron font-black text-white uppercase tracking-tight transition-colors">
+                        Iratkozz fel a <span class="neon-text-gradient">reggeli hírekre!</span>
+                    </h2>
+
+                    <p class="text-slate-300 text-sm sm:text-base font-light max-w-xl mx-auto transition-colors">
+                        Spórolj meg napi 20 perc céltalan böngészést. Kapj kézhez minden munkanapon, e-mailben egy lényegre törő, átlátható hírösszefoglalót!
+                    </p>
+
+                    <!-- Google Apps Script Newsletter Subscription Form -->
+                    <form id="subscribeForm" onsubmit="handleSubscribe(event)" class="pt-4 space-y-4 max-w-xl mx-auto">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <input type="text" id="subscriberName" required placeholder="Neved..." class="w-full px-5 py-3.5 rounded-xl bg-black/50 border border-white/15 focus:border-cyan focus:outline-none text-white text-sm font-mono placeholder:text-slate-500 transition-colors">
                             </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
-                                AI Content
-                            </span>
-                        </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
-                            Automatikus AI Hírlevél
-                        </h3>
-                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
-                            Friss, intelligens AI hírlevelek egyenesen a postaládádba – a tökéletes társ a reggeli kávéd mellé.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-mug-hot text-[10px] text-cyan"></i> AI Hírlevél Indítása
-                        </span>
-                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </div>
-                </a>
-
-                <!-- CARD 2: AI Kvantum Szimuláció -->
-                <a href="https://nyirigabor.hu/index3.html" class="glass-card group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purpleGlow/10 rounded-full blur-2xl group-hover:bg-purpleGlow/20 transition-all duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-purple-500/10">
-                                <i class="fa-solid fa-atom"></i>
+                            <div>
+                                <input type="email" id="subscriberEmail" required placeholder="E-mail címed..." class="w-full px-5 py-3.5 rounded-xl bg-black/50 border border-white/15 focus:border-cyan focus:outline-none text-white text-sm font-mono placeholder:text-slate-500 transition-colors">
                             </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/40 text-purple-300 font-bold uppercase">
-                                AI & Quantum
-                            </span>
                         </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors mb-4">
-                            AI Kvantum Játszótér
-                        </h3>
-                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
-                            Intelligens kvantummixek és algoritmusok! Interaktív szimuláció, ahol a mesterséges intelligencia találkozik a kvantumszuperpozícióval.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-purple-300">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-gamepad text-[10px] text-purple-400"></i> Szimuláció Indítása
-                        </span>
-                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </div>
-                </a>
 
-                <!-- CARD 3: AI Fraktál Engine -->
-                <a href="mandelbrot_info.html" class="glass-card glass-card-magenta group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-2xl group-hover:bg-cyan/20 transition-all duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
-                                <i class="fa-solid fa-network-wired"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
-                                AI Visuals
-                            </span>
-                        </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
-                            AI Mandelbrot Utazás
-                        </h3>
-                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
-                            Algoritmusok generálta végtelen világok. Vizuális felfedezés a matematikai struktúrák és a mesterséges intelligencia találkozásánál.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-compass text-[10px] text-cyan"></i> Felfedezés
-                        </span>
-                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </div>
-                </a>
+                        <button type="submit" id="submitBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-magenta via-purpleGlow to-cyan text-white font-orbitron font-bold tracking-wider hover:opacity-95 transition-all shadow-xl shadow-magenta/20 flex items-center justify-center gap-3 uppercase">
+                            <span>Feliratkozom</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
 
+                    <div id="statusMessage" class="hidden font-mono text-xs pt-2"></div>
+                </div>
             </div>
         </main>
 
-        <!-- Footer Bar -->
-        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors duration-300">
+        <!-- Footer -->
+        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors">
             <div class="flex items-center gap-3">
                 <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
@@ -262,7 +270,10 @@
 
             <div class="flex items-center gap-6">
                 <div>
-                    <span id="live-clock" class="text-cyan font-bold">00:00:00</span>
+                    LATENCY: <span class="text-cyan font-bold">12ms</span>
+                </div>
+                <div>
+                    CLOCK: <span id="live-clock" class="text-cyan font-bold">00:00:00</span>
                 </div>
             </div>
 
@@ -278,70 +289,136 @@
         <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
     </button>
 
-    <!-- Background Canvas Particles & Real-time Scripts -->
     <script>
-        // Real-Time Digital Clock
+        // GOOGLE APPS SCRIPT WEB APP URL (Cseréld ki a sajátodra)
+        const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
+
+        function scrollToSubscribe() {
+            document.getElementById('subscribe-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Téma váltás & LocalStorage elmentés
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        function applyTheme(isLight) {
+            if (isLight) {
+                document.body.classList.add('light-mode');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeToggleBtn.classList.remove('text-cyan', 'border-cyan/40', 'bg-slate-900/80', 'shadow-cyan/20');
+                themeToggleBtn.classList.add('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
+            } else {
+                document.body.classList.remove('light-mode');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeToggleBtn.classList.remove('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
+                themeToggleBtn.classList.add('text-cyan', 'border-cyan/40', 'bg-slate-900/80', 'shadow-cyan/20');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'light') {
+            applyTheme(true);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            const isLight = !document.body.classList.contains('light-mode');
+            applyTheme(isLight);
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        });
+
+        // 1. Feliratkozás kezelése (POST kérés)
+        async function handleSubscribe(event) {
+            event.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const statusMsg = document.getElementById('statusMessage');
+            const name = document.getElementById('subscriberName').value;
+            const email = document.getElementById('subscriberEmail').value;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> <span>Küldés...</span>';
+            statusMsg.className = 'font-mono text-xs pt-2 text-cyan';
+            statusMsg.textContent = 'Feldolgozás folyamatban...';
+            statusMsg.classList.remove('hidden');
+
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, email: email })
+                });
+
+                statusMsg.className = 'font-mono text-xs pt-2 text-emerald-400';
+                statusMsg.textContent = '✓ Sikeres feliratkozás! Köszönjük, hamarosan küldjük az első hírlevelet.';
+                document.getElementById('subscribeForm').reset();
+            } catch (error) {
+                console.error(error);
+                statusMsg.className = 'font-mono text-xs pt-2 text-rose-400';
+                statusMsg.textContent = '✕ Hiba történt a feliratkozás során. Kérjük próbáld újra!';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Feliratkozom</span> <i class="fa-solid fa-paper-plane"></i>';
+            }
+        }
+
+        // 2. Archívum/Utolsó hírlevél beolvasása (GET kérés)
+        async function fetchLatestNewsletter() {
+            if (!SCRIPT_URL || SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') return;
+
+            try {
+                const res = await fetch(SCRIPT_URL);
+                const editions = await res.json();
+                const dateKeys = Object.keys(editions);
+
+                if (dateKeys.length > 0) {
+                    const latestKey = dateKeys[0];
+                    const latestEdition = editions[latestKey];
+
+                    if (latestEdition) {
+                        document.getElementById('preview-title').textContent = latestEdition.dateTitle || 'SUPERAGENT REGGELI KIADÁS';
+                        document.getElementById('newsletter-sample-body').textContent = latestEdition.bodyText.substring(0, 180) + '...';
+                    }
+                }
+            } catch (err) {
+                console.log('Archívum betöltési értesítés: Az alapértelmezett minta jelenik meg.');
+            }
+        }
+
+        // Élő Óra
         function updateClock() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             const clockEl = document.getElementById('live-clock');
-            if (clockEl) {
-                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
-            }
+            if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Mouse Spotlight Follower
+        // Egér nyomkövető fény
         const glowContainer = document.getElementById('interactive-glow');
         window.addEventListener('mousemove', (e) => {
             glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
             glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
         });
 
-        // Theme Toggle Functionality
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        
-        themeToggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            const isLight = document.body.classList.contains('light-mode');
-            
-            if (isLight) {
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
-                themeToggleBtn.classList.remove('text-cyan', 'border-cyan/40', 'bg-slate-900/80');
-                themeToggleBtn.classList.add('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
-            } else {
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-                themeToggleBtn.classList.remove('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
-                themeToggleBtn.classList.add('text-cyan', 'border-cyan/40', 'bg-slate-900/80', 'shadow-cyan/20');
-            }
-        });
-
-        // Interactive HTML5 Particle Network Canvas
+        // Részecske animáció
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
-
-        let width, height;
-        let particles = [];
+        let width, height, particles = [];
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
         }
-
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
         class Particle {
-            constructor() {
-                this.reset();
-            }
-
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
@@ -351,15 +428,11 @@
                 this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
                 this.alpha = Math.random() * 0.5 + 0.2;
             }
-
             update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
+                this.x += this.vx; this.y += this.vy;
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
             }
-
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
@@ -368,39 +441,22 @@
             }
         }
 
-        const particleCount = Math.min(Math.floor(window.innerWidth / 16), 80);
-        for (let i = 0; i < particleCount; i++) {
+        for (let i = 0; i < Math.min(Math.floor(window.innerWidth / 16), 80); i++) {
             particles.push(new Particle());
         }
 
         function animateParticles() {
             ctx.clearRect(0, 0, width, height);
-
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.12 * (1 - dist / 120)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                }
             }
-
             requestAnimationFrame(animateParticles);
         }
 
         window.onload = function() {
             animateParticles();
+            fetchLatestNewsletter();
         };
     </script>
 </body>
