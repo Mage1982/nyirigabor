@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hu" class="h-full bg-[#090b10]">
+<html lang="hu" class="h-full bg-[#090b10] transition-colors duration-500">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -95,9 +95,49 @@
             pointer-events: none;
             background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(255, 12, 157, 0.05), transparent 70%);
         }
+
+        /* Light Mode Styles */
+        body.light-mode {
+            background-color: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light-mode .glass-card:hover {
+            border-color: rgba(14, 165, 233, 0.8);
+            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.25);
+        }
+
+        body.light-mode .section-title {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .card-title {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .card-desc {
+            color: #475569 !important;
+        }
+
+        body.light-mode footer {
+            border-color: rgba(0, 0, 0, 0.1) !important;
+            color: #64748b !important;
+        }
+
+        body.light-mode .bg-cyber-grid {
+            background-image: 
+                linear-gradient(to right, rgba(14, 165, 233, 0.08) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(217, 70, 239, 0.08) 1px, transparent 1px);
+        }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative">
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative transition-colors duration-500">
 
     <!-- Dynamic Interactive Mouse Glow -->
     <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
@@ -119,7 +159,7 @@
         <!-- Main Grid Container -->
         <main class="my-auto py-8">
             <div class="text-center mb-8 sm:mb-12">
-                <p class="text-2xl sm:text-4xl font-orbitron font-bold text-white tracking-wide">
+                <p class="section-title text-2xl sm:text-4xl font-orbitron font-bold text-white tracking-wide transition-colors duration-300">
                     Mesterséges Intelligencia Fejlesztések
                 </p>
             </div>
@@ -138,10 +178,10 @@
                                 AI Content
                             </span>
                         </div>
-                        <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
+                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
                             Automatikus AI Hírlevél
                         </h3>
-                        <p class="text-sm text-slate-400 leading-relaxed font-light">
+                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
                             Friss, intelligens AI hírlevelek egyenesen a postaládádba – a tökéletes társ a reggeli kávéd mellé.
                         </p>
                     </div>
@@ -165,10 +205,10 @@
                                 AI & Quantum
                             </span>
                         </div>
-                        <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors mb-4">
+                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors mb-4">
                             AI Kvantum Játszótér
                         </h3>
-                        <p class="text-sm text-slate-400 leading-relaxed font-light">
+                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
                             Intelligens kvantummixek és algoritmusok! Interaktív szimuláció, ahol a mesterséges intelligencia találkozik a kvantumszuperpozícióval.
                         </p>
                     </div>
@@ -192,10 +232,10 @@
                                 AI Visuals
                             </span>
                         </div>
-                        <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
+                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
                             AI Mandelbrot Utazás
                         </h3>
-                        <p class="text-sm text-slate-400 leading-relaxed font-light">
+                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
                             Algoritmusok generálta végtelen világok. Vizuális felfedezés a matematikai struktúrák és a mesterséges intelligencia találkozásánál.
                         </p>
                     </div>
@@ -211,7 +251,7 @@
         </main>
 
         <!-- Footer Bar -->
-        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors duration-300">
             <div class="flex items-center gap-3">
                 <span class="relative flex h-2.5 w-2.5">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
@@ -232,6 +272,11 @@
         </footer>
 
     </div>
+
+    <!-- Floating Theme Toggle Button (Jobb alsó sarok) -->
+    <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-slate-900/80 text-cyan border border-cyan/40 backdrop-blur-md shadow-lg shadow-cyan/20 hover:scale-110 hover:border-cyan transition-all duration-300 flex items-center justify-center">
+        <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
+    </button>
 
     <!-- Background Canvas Particles & Real-time Scripts -->
     <script>
@@ -254,6 +299,27 @@
         window.addEventListener('mousemove', (e) => {
             glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
             glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
+        });
+
+        // Theme Toggle Functionality
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            
+            if (isLight) {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                themeToggleBtn.classList.remove('text-cyan', 'border-cyan/40', 'bg-slate-900/80');
+                themeToggleBtn.classList.add('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
+            } else {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                themeToggleBtn.classList.remove('text-amber-500', 'border-amber-500/40', 'bg-white/80', 'shadow-amber-500/20');
+                themeToggleBtn.classList.add('text-cyan', 'border-cyan/40', 'bg-slate-900/80', 'shadow-cyan/20');
+            }
         });
 
         // Interactive HTML5 Particle Network Canvas
