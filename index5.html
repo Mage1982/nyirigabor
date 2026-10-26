@@ -1,709 +1,370 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" class="h-full bg-[#090b10]">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>WebGL GPU Fractal Explorer Pro</title>
-  <style>
-    :root {
-      --bg-color: #090b10;
-      --card-bg: rgba(15, 20, 32, 0.75);
-      --accent: #00ffff;
-      --accent-magenta: #ff0c9d;
-      --accent-glow: rgba(0, 255, 255, 0.35);
-      --text: #e2e8f0;
-      --text-dim: #94a3b8;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAgent.ai | Nyíri Gábor - Mesterséges Intelligencia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron, Share Tech Mono & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        magenta: '#FF0C9D',
+                        cyan: '#00FFFF',
+                        purpleGlow: '#8A2BE2',
+                        darkBg: '#090b10',
+                        cardBg: 'rgba(15, 20, 32, 0.65)'
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'grid-move': 'gridMove 20s linear infinite',
+                        'float': 'float 4s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { filter: 'drop-shadow(0 0 12px rgba(255, 12, 157, 0.4))' },
+                            '100%': { filter: 'drop-shadow(0 0 25px rgba(0, 255, 255, 0.6))' }
+                        },
+                        gridMove: {
+                            '0%': { transform: 'translateY(0)' },
+                            '100%': { transform: 'translateY(40px)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    <style>
+        /* Cyber Grid Overlay Background */
+        .bg-cyber-grid {
+            background-image: 
+                linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 12, 157, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text);
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      position: relative;
-    }
+        /* Glassmorphism Card Effect */
+        .glass-card {
+            background: rgba(15, 20, 32, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
 
-    #canvas-container {
-      flex: 1;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #000;
-      width: 100%;
-      height: 100%;
-    }
+        .glass-card:hover {
+            border-color: rgba(0, 255, 255, 0.7);
+            box-shadow: 0 10px 35px -5px rgba(0, 255, 255, 0.35), inset 0 0 20px rgba(0, 255, 255, 0.1);
+            transform: translateY(-8px);
+        }
 
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: grab;
-      touch-action: none;
-    }
+        .glass-card-magenta:hover {
+            border-color: rgba(255, 12, 157, 0.8);
+            box-shadow: 0 10px 35px -5px rgba(255, 12, 157, 0.4), inset 0 0 20px rgba(255, 12, 157, 0.1);
+        }
 
-    canvas:active {
-      cursor: grabbing;
-    }
+        /* Neon Gradient Text */
+        .neon-text-gradient {
+            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #FF0C9D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    /* Floating Open Button (When Sidebar is Hidden) */
-    #sidebar-toggle-open {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      z-index: 20;
-      background: rgba(15, 20, 32, 0.85);
-      border: 1px solid rgba(0, 255, 255, 0.4);
-      color: var(--accent);
-      padding: 10px 16px;
-      border-radius: 30px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-10px);
-    }
-
-    #sidebar-toggle-open.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
-
-    #sidebar-toggle-open:hover {
-      background: var(--accent);
-      color: #090b10;
-      border-color: var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    /* Off-Canvas Overlay for Mobile */
-    #sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 25;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    #sidebar-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* Modern Glassmorphism Sidebar */
-    #sidebar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 340px;
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-left: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      z-index: 30;
-      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8), inset 1px 0 0 rgba(255, 255, 255, 0.05);
-      overflow-y: auto;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    #sidebar.collapsed {
-      transform: translateX(100%);
-    }
-
-    /* Sidebar Header */
-    .sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      border-b: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .title-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .title-badge {
-      width: 8 h-8;
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-magenta));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      color: #000;
-      font-weight: bold;
-    }
-
-    h1 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #00ffff 0%, #ffffff 50%, #ff0c9d 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hide-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-dim);
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      transition: all 0.2s ease;
-    }
-
-    .hide-btn:hover {
-      background: rgba(0, 255, 255, 0.15);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    /* Control Groups */
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 700;
-      color: var(--text-dim);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .val-tag {
-      color: var(--accent);
-      font-family: monospace;
-      font-size: 0.85rem;
-      background: rgba(0, 255, 255, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(0, 255, 255, 0.2);
-    }
-
-    select, input[type="range"] {
-      width: 100%;
-      background: rgba(10, 15, 26, 0.8);
-      color: #fff;
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 10px 12px;
-      border-radius: 10px;
-      outline: none;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-
-    select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-
-    input[type="range"] {
-      accent-color: var(--accent);
-      height: 6px;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    /* Action Buttons */
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 255, 255, 0.05));
-      color: var(--accent);
-      border: 1px solid rgba(0, 255, 255, 0.4);
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn:hover {
-      background: var(--accent);
-      color: #090b10;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.15);
-      color: var(--text-dim);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      box-shadow: none;
-    }
-
-    /* Info Card */
-    .info-box {
-      font-size: 0.78rem;
-      line-height: 1.6;
-      color: var(--text-dim);
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: auto;
-    }
-
-    .info-box strong {
-      color: var(--accent);
-    }
-
-    /* Mobile Responsive Adjustments */
-    @media (max-width: 768px) {
-      #sidebar-overlay {
-        display: block;
-      }
-
-      #sidebar {
-        width: 85vw;
-        max-width: 320px;
-      }
-    }
-  </style>
+        /* Interactive Cursor Spotlight */
+        #interactive-glow {
+            pointer-events: none;
+            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(255, 12, 157, 0.05), transparent 70%);
+        }
+    </style>
 </head>
-<body>
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative">
 
-  <!-- Floating Open Button (Visible when sidebar is collapsed) -->
-  <button id="sidebar-toggle-open" title="Menü Megnyitása (H)">
-    <span>⚙️</span>
-    <span>Vezérlőpult</span>
-  </button>
+    <!-- Dynamic Interactive Mouse Glow -->
+    <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
 
-  <!-- Mobile Off-Canvas Backdrop -->
-  <div id="sidebar-overlay"></div>
+    <!-- HTML5 Particle Canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
 
-  <!-- WebGL Canvas Container -->
-  <div id="canvas-container">
-    <canvas id="glCanvas"></canvas>
-  </div>
+    <!-- Animated Cyber Grid Background -->
+    <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
 
-  <!-- Modern Glassmorphism Sidebar -->
-  <div id="sidebar">
-    <div class="sidebar-header">
-      <div class="title-area">
-        <div class="title-badge">FX</div>
-        <h1>Fractal Explorer</h1>
-      </div>
-      <button class="hide-btn" id="sidebar-hide-btn" title="Elrejtés (H)">➔</button>
+    <!-- Ambient Glowing Orbs -->
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none"></div>
+
+    <!-- Main Content Container -->
+    <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
+
+        <!-- Top Header Bar -->
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 py-4 border-b border-white/10">
+            <div class="text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start gap-3">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-gradient-to-br from-cyan to-magenta rounded-xl p-[2px] shadow-lg shadow-cyan/20 animate-float">
+                        <div class="w-full h-full bg-[#090b10] rounded-[10px] flex items-center justify-center">
+                            <i class="fa-solid fa-brain text-cyan text-lg"></i>
+                        </div>
+                    </div>
+                    <h1 class="font-orbitron font-black text-2xl sm:text-3xl tracking-wider neon-text-gradient uppercase">
+                        SuperAgent<span class="text-cyan text-xs align-super ml-1 font-mono px-2 py-0.5 rounded-full border border-cyan/40 bg-cyan/10">.AI</span>
+                    </h1>
+                </div>
+                <p class="text-xs sm:text-sm text-slate-400 font-mono mt-1 tracking-widest flex items-center justify-center md:justify-start gap-2">
+                    <i class="fa-solid fa-microchip text-cyan text-xs"></i>
+                    Nyíri Gábor &bull; Mesterséges Intelligencia
+                </p>
+            </div>
+
+            <!-- Domain Link -->
+            <div class="flex items-center gap-3">
+                <a href="https://nyirigabor.hu" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-cyan/50 transition-all duration-300 text-xs font-mono text-slate-300 hover:text-cyan shadow-sm">
+                    <i class="fa-solid fa-globe text-cyan group-hover:rotate-180 transition-transform duration-700"></i>
+                    <span>nyirigabor.hu</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] opacity-60"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Grid Container -->
+        <main class="my-auto py-8">
+            <div class="text-center mb-8 sm:mb-12">
+                <p class="text-2xl sm:text-4xl font-orbitron font-bold text-white tracking-wide">
+                    Mesterséges Intelligencia Fejlesztések
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+
+                <!-- CARD 1: Automatikus AI Hírlevél -->
+                <a href="https://nyirigabor.hu/index1.html" class="glass-card group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-2xl group-hover:bg-cyan/20 transition-all duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
+                                AI Content
+                            </span>
+                        </div>
+                        <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
+                            Automatikus AI Hírlevél
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed font-light">
+                            Friss, intelligens AI hírlevelek egyenesen a postaládádba – a tökéletes társ a reggeli kávéd mellé.
+                        </p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-mug-hot text-[10px] text-cyan"></i> AI Hírlevél Indítása
+                        </span>
+                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
+                    </div>
+                </a>
+
+                <!-- CARD 2: AI Kvantum Szimuláció -->
+                <a href="https://nyirigabor.hu/index3.html" class="glass-card group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purpleGlow/10 rounded-full blur-2xl group-hover:bg-purpleGlow/20 transition-all duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-purple-500/10">
+                                <i class="fa-solid fa-atom"></i>
+                            </div>
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/40 text-purple-300 font-bold uppercase">
+                                AI & Quantum
+                            </span>
+                        </div>
+                        <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors mb-4">
+                            AI Kvantum Játszótér
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed font-light">
+                            Intelligens kvantummixek és algoritmusok! Interaktív szimuláció, ahol a mesterséges intelligencia találkozik a kvantumszuperpozícióval.
+                        </p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-purple-300">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-[10px] text-purple-400"></i> Szimuláció Indítása
+                        </span>
+                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
+                    </div>
+                </a>
+
+                <!-- CARD 3: AI Fraktál Engine -->
+                <a href="mandelbrot_info.html" class="glass-card glass-card-magenta group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-2xl group-hover:bg-cyan/20 transition-all duration-500"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </div>
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
+                                AI Visuals
+                            </span>
+                        </div>
+                        <h3 class="font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
+                            AI Mandelbrot Utazás
+                        </h3>
+                        <p class="text-sm text-slate-400 leading-relaxed font-light">
+                            Algoritmusok generálta végtelen világok. Vizuális felfedezés a matematikai struktúrák és a mesterséges intelligencia találkozásánál.
+                        </p>
+                    </div>
+                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-[10px] text-cyan"></i> Felfedezés
+                        </span>
+                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
+                    </div>
+                </a>
+
+            </div>
+        </main>
+
+        <!-- Footer Bar -->
+        <footer class="pt-6 border-t border-white/10 text-xs font-mono text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan"></span>
+                </span>
+                <span class="tracking-widest uppercase text-slate-300">CORE NODE: ONLINE</span>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <div>
+                    <span id="live-clock" class="text-cyan font-bold">00:00:00</span>
+                </div>
+            </div>
+
+            <div class="text-slate-500">
+                &copy; 2026 SuperAgent.ai &bull; Nyíri Gábor
+            </div>
+        </footer>
+
     </div>
 
-    <div class="control-group">
-      <label for="fractalType">Fraktál Típus</label>
-      <select id="fractalType">
-        <option value="0">Mandelbrot-halmaz</option>
-        <option value="1">Julia-halmaz</option>
-        <option value="2">Burning Ship (Lángoló Hajó)</option>
-        <option value="3">Tricorn (Mandelbar)</option>
-        <option value="4">Mandelbrot z³ (Cubic)</option>
-      </select>
-    </div>
-
-    <div class="control-group">
-      <label for="iterations">
-        <span>Részletesség</span>
-        <span class="val-tag" id="iterVal">350</span>
-      </label>
-      <input type="range" id="iterations" min="50" max="1000" value="350">
-    </div>
-
-    <div class="control-group">
-      <label for="colorPalette">Színséma</label>
-      <select id="colorPalette">
-        <option value="0">Electric Neon</option>
-        <option value="1">Inferno Fire</option>
-        <option value="2">Deep Ocean</option>
-        <option value="3">Psychedelic</option>
-        <option value="4">Cyberpunk Pink</option>
-      </select>
-    </div>
-
-    <div class="btn-group">
-      <button class="btn" id="saveBtn">📸 HD Kép Mentése</button>
-      <button class="btn btn-secondary" id="resetBtn">↺ Nézet Alaphelyzetbe</button>
-    </div>
-
-    <div class="info-box">
-      <strong>GPU Gyorsított Vezérlés:</strong><br>
-      • <strong>Görgetés / 2 Ujj:</strong> Zoomolás<br>
-      • <strong>Húzás (Egér/Érintés):</strong> Mozgatás<br>
-      • <strong>Julia mód:</strong> Mozgasd az egeret a mintához!<br>
-      • <strong>Gomb parancs:</strong> 'H' billentyű a menü elrejtéséhez.
-    </div>
-  </div>
-
-  <script>
-    const canvas = document.getElementById('glCanvas');
-    const gl = canvas.getContext('webgl', { preserveDrawingBuffer: true });
-
-    if (!gl) {
-      alert('A böngésződ nem támogatja a WebGL-t!');
-    }
-
-    const vsSource = `
-      attribute vec2 a_position;
-      void main() {
-        gl_Position = vec4(a_position, 0.0, 1.0);
-      }
-    `;
-
-    const fsSource = `
-      precision highp float;
-
-      uniform vec2 u_resolution;
-      uniform vec2 u_offset;
-      uniform float u_zoom;
-      uniform int u_max_iterations;
-      uniform int u_type;
-      uniform int u_palette;
-      uniform vec2 u_julia_c;
-
-      vec3 getColor(float iter, float maxIter) {
-        if (iter >= maxIter) return vec3(0.0);
-        float t = iter / maxIter;
-
-        if (u_palette == 0) {
-          return vec3(sin(t * 10.0) * 0.5 + 0.5, cos(t * 15.0) * 0.5 + 0.5, t);
-        } else if (u_palette == 1) {
-          return vec3(min(1.0, t * 5.0), min(1.0, t * 2.5), min(1.0, t * 0.5));
-        } else if (u_palette == 2) {
-          return vec3(sin(t * 5.0) * 0.2, sin(t * 10.0) * 0.4 + 0.4, sin(t * 20.0) * 0.5 + 0.5);
-        } else if (u_palette == 3) {
-          return vec3(sin(t * 50.0) * 0.5 + 0.5, cos(t * 30.0) * 0.5 + 0.5, sin(t * 80.0) * 0.5 + 0.5);
-        } else {
-          return vec3(sin(t * 12.0) * 0.5 + 0.5, sin(t * 3.0) * 0.2, cos(t * 10.0) * 0.5 + 0.5);
+    <!-- Background Canvas Particles & Real-time Scripts -->
+    <script>
+        // Real-Time Digital Clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) {
+                clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            }
         }
-      }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-      void main() {
-        vec2 st = (gl_FragCoord.xy - u_resolution * 0.5) / min(u_resolution.x, u_resolution.y);
-        vec2 z = st * 3.0 / u_zoom - u_offset;
-        vec2 c = (u_type == 1) ? u_julia_c : z;
+        // Mouse Spotlight Follower
+        const glowContainer = document.getElementById('interactive-glow');
+        window.addEventListener('mousemove', (e) => {
+            glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
+            glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
+        });
 
-        if (u_type != 1) {
-          if (u_type == 2) z = abs(z);
-          else if (u_type == 0 || u_type == 3 || u_type == 4) z = vec2(0.0);
+        // Interactive HTML5 Particle Network Canvas
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
         }
 
-        float n = 0.0;
-        float maxI = float(u_max_iterations);
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        for (int i = 0; i < 1000; i++) {
-          if (float(i) >= maxI) break;
-          if (dot(z, z) > 4.0) break;
+        class Particle {
+            constructor() {
+                this.reset();
+            }
 
-          if (u_type == 0 || u_type == 1) {
-            z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
-          } else if (u_type == 2) {
-            z = vec2(abs(z.x), abs(z.y));
-            z = vec2(z.x * z.x - z.y * z.y, -2.0 * z.x * z.y) + c;
-          } else if (u_type == 3) {
-            z = vec2(z.x * z.x - z.y * z.y, -2.0 * z.x * z.y) + c;
-          } else if (u_type == 4) {
-            float x2 = z.x * z.x;
-            float y2 = z.y * z.y;
-            z = vec2(z.x * (x2 - 3.0 * y2), z.y * (3.0 * x2 - y2)) + c;
-          }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 1.5 + 0.5;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
 
-          n += 1.0;
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color + this.alpha + ')';
+                ctx.fill();
+            }
         }
 
-        if (n < maxI) {
-          float log_zn = log(dot(z, z)) / 2.0;
-          float nu = log(log_zn / log(2.0)) / log(2.0);
-          n = n + 1.0 - nu;
+        const particleCount = Math.min(Math.floor(window.innerWidth / 16), 80);
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
         }
 
-        gl_FragColor = vec4(getColor(n, maxI), 1.0);
-      }
-    `;
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
 
-    function createShader(gl, type, source) {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
-      return shader;
-    }
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
 
-    const program = gl.createProgram();
-    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
-    gl.linkProgram(program);
-    gl.useProgram(program);
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
 
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      -1, -1, 1, -1, -1, 1,
-      -1,  1, 1, -1,  1, 1,
-    ]), gl.STATIC_DRAW);
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.12 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
 
-    const positionLocation = gl.getAttribLocation(program, 'a_position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-    const locations = {
-      resolution: gl.getUniformLocation(program, 'u_resolution'),
-      offset: gl.getUniformLocation(program, 'u_offset'),
-      zoom: gl.getUniformLocation(program, 'u_zoom'),
-      maxIterations: gl.getUniformLocation(program, 'u_max_iterations'),
-      type: gl.getUniformLocation(program, 'u_type'),
-      palette: gl.getUniformLocation(program, 'u_palette'),
-      juliaC: gl.getUniformLocation(program, 'u_julia_c')
-    };
-
-    let zoom = 1.0, targetZoom = 1.0;
-    let offsetX = 0.0, targetOffsetX = 0.0;
-    let offsetY = 0.0, targetOffsetY = 0.0;
-    let maxIter = 350;
-    let fractalType = 0;
-    let palette = 0;
-    let juliaCx = -0.7, juliaCy = 0.27015;
-
-    function render() {
-      zoom += (targetZoom - zoom) * 0.12;
-      offsetX += (targetOffsetX - offsetX) * 0.12;
-      offsetY += (targetOffsetY - offsetY) * 0.12;
-
-      if (canvas.width !== canvas.parentElement.clientWidth || canvas.height !== canvas.parentElement.clientHeight) {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-        gl.viewport(0, 0, canvas.width, canvas.height);
-      }
-
-      gl.uniform2f(locations.resolution, canvas.width, canvas.height);
-      gl.uniform2f(locations.offset, offsetX, offsetY);
-      gl.uniform1f(locations.zoom, zoom);
-      gl.uniform1i(locations.maxIterations, maxIter);
-      gl.uniform1i(locations.type, fractalType);
-      gl.uniform1i(locations.palette, palette);
-      gl.uniform2f(locations.juliaC, juliaCx, juliaCy);
-
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
-    }
-
-    /* UI Controls & Event Listeners */
-    document.getElementById('iterations').addEventListener('input', (e) => {
-      maxIter = parseInt(e.target.value);
-      document.getElementById('iterVal').innerText = maxIter;
-    });
-
-    document.getElementById('fractalType').addEventListener('change', (e) => {
-      fractalType = parseInt(e.target.value);
-    });
-
-    document.getElementById('colorPalette').addEventListener('change', (e) => {
-      palette = parseInt(e.target.value);
-    });
-
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      targetZoom = 1.0;
-      targetOffsetX = 0.0;
-      targetOffsetY = 0.0;
-    });
-
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = `fractal_${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    });
-
-    /* Sidebar Hide / Show Toggle Logic */
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    const hideBtn = document.getElementById('sidebar-hide-btn');
-    const openBtn = document.getElementById('sidebar-toggle-open');
-
-    function hideSidebar() {
-      sidebar.classList.add('collapsed');
-      overlay.classList.remove('active');
-      openBtn.classList.add('visible');
-    }
-
-    function showSidebar() {
-      sidebar.classList.remove('collapsed');
-      if (window.innerWidth <= 768) {
-        overlay.classList.add('active');
-      }
-      openBtn.classList.remove('visible');
-    }
-
-    hideBtn.addEventListener('click', hideSidebar);
-    openBtn.addEventListener('click', showSidebar);
-    overlay.addEventListener('click', hideSidebar);
-
-    // Keyboard Shortcut 'H' to Hide/Show Sidebar
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'h' || e.key === 'H') {
-        if (sidebar.classList.contains('collapsed')) {
-          showSidebar();
-        } else {
-          hideSidebar();
+            requestAnimationFrame(animateParticles);
         }
-      }
-    });
 
-    /* Mouse Controls */
-    canvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const zoomFactor = e.deltaY < 0 ? 1.25 : 0.8;
-      targetZoom *= zoomFactor;
-    }, { passive: false });
-
-    let isDragging = false;
-    let startX, startY;
-
-    canvas.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        const dx = e.clientX - startX;
-        const dy = -(e.clientY - startY);
-        const scale = 3.0 / (zoom * Math.min(canvas.width, canvas.height));
-        targetOffsetX += dx * scale;
-        targetOffsetY += dy * scale;
-        startX = e.clientX;
-        startY = e.clientY;
-      } else if (fractalType === 1) {
-        juliaCx = (e.clientX / canvas.width) * 2.0 - 1.0;
-        juliaCy = -((e.clientY / canvas.height) * 2.0 - 1.0);
-      }
-    });
-
-    window.addEventListener('mouseup', () => isDragging = false);
-
-    /* Multi-Touch Controls (1-finger Pan & 2-finger Pinch Zoom) */
-    let initialPinchDist = null;
-
-    function getTouchDistance(e) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    canvas.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        isDragging = true;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-
-        if (fractalType === 1) {
-          juliaCx = (startX / canvas.width) * 2.0 - 1.0;
-          juliaCy = -((startY / canvas.height) * 2.0 - 1.0);
-        }
-      } else if (e.touches.length === 2) {
-        isDragging = false;
-        initialPinchDist = getTouchDistance(e);
-      }
-    }, { passive: true });
-
-    canvas.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1 && isDragging) {
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-        const dx = currentX - startX;
-        const dy = -(currentY - startY);
-        const scale = 3.0 / (zoom * Math.min(canvas.width, canvas.height));
-        targetOffsetX += dx * scale;
-        targetOffsetY += dy * scale;
-        startX = currentX;
-        startY = currentY;
-
-        if (fractalType === 1) {
-          juliaCx = (currentX / canvas.width) * 2.0 - 1.0;
-          juliaCy = -((currentY / canvas.height) * 2.0 - 1.0);
-        }
-      } else if (e.touches.length === 2 && initialPinchDist) {
-        const currentDist = getTouchDistance(e);
-        const factor = currentDist / initialPinchDist;
-        if (Math.abs(factor - 1) > 0.01) {
-          targetZoom *= factor;
-          initialPinchDist = currentDist;
-        }
-      }
-    }, { passive: true });
-
-    canvas.addEventListener('touchend', (e) => {
-      if (e.touches.length < 2) initialPinchDist = null;
-      if (e.touches.length === 0) isDragging = false;
-    });
-
-    requestAnimationFrame(render);
-  </script>
+        window.onload = function() {
+            animateParticles();
+        };
+    </script>
 </body>
 </html>
