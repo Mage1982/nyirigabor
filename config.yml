@@ -1,0 +1,21 @@
+backend:
+  name: github # vagy 'git-gateway' ha Netlify-t használsz
+  repo: felhasznalonev/projekt-repo-neve # A GitHub tárhelyed
+  branch: main # A használni kívánt ág
+
+# A feltöltött képek/médiamátrix helye
+media_folder: "assets/images" # Ahol a feltöltött képek tárolódnak a repóban
+public_folder: "/assets/images" # Ahogyan a weboldal hivatkozik rájuk
+
+# Gyűjtemények (Bejegyzések, Oldalak)
+collections:
+  - name: "blog"
+    label: "Blogbejegyzések"
+    folder: "_posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Cím", name: "title", widget: "string" }
+      - { label: "Dátum", name: "date", widget: "datetime" }
+      - { label: "Borítókép", name: "image", widget: "image", required: false }
+      - { label: "Tartalom", name: "body", widget: "markdown" }
