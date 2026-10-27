@@ -2,52 +2,27 @@
 <html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>NEXUS v3.0 - Quantum Audio Visualizer</title>
-    <!-- Tailwind CSS for sleek UI layouts -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHERIA // Generative Cyber Visualizer</title>
     <style>
         :root {
-            --bg-color: #04050a;
-            --panel-bg: rgba(8, 11, 22, 0.78);
-            --panel-border: rgba(0, 255, 255, 0.18);
-            --text-main: #f0f4f8;
-            --text-muted: #8899ac;
-            --accent-primary: #00ffff;
-            --accent-secondary: #ff0c9d;
-            --glow-color: rgba(0, 255, 255, 0.35);
+            --bg-color: #08090d;
+            --panel-bg: rgba(16, 19, 28, 0.65);
+            --panel-border: rgba(0, 240, 255, 0.18);
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --text: #e0e8f0;
+            --text-dim: #7a8b9e;
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', monospace;
         }
 
-        /* Light Mode Overrides */
-        [data-theme="light"] {
-            --bg-color: #f0f4f8;
-            --panel-bg: rgba(255, 255, 255, 0.88);
-            --panel-border: rgba(0, 0, 0, 0.12);
-            --text-main: #0b1120;
-            --text-muted: #52657a;
-            --glow-color: rgba(0, 150, 255, 0.2);
-        }
-
-        /* UV Neon Palette Presets */
-        [data-uv="cyan"] {
-            --accent-primary: #00ffff;
-            --accent-secondary: #ff0c9d;
-            --glow-color: rgba(0, 255, 255, 0.35);
-        }
-        [data-uv="ultraviolet"] {
-            --accent-primary: #a855f7;
-            --accent-secondary: #ec4899;
-            --glow-color: rgba(168, 85, 247, 0.35);
-        }
-        [data-uv="lime"] {
-            --accent-primary: #22c55e;
-            --accent-secondary: #06b6d4;
-            --glow-color: rgba(34, 197, 94, 0.35);
-        }
-        [data-uv="solar"] {
-            --accent-primary: #f59e0b;
-            --accent-secondary: #ef4444;
-            --glow-color: rgba(245, 158, 11, 0.35);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
         }
 
         body, html {
@@ -55,208 +30,308 @@
             height: 100%;
             overflow: hidden;
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            transition: background-color 0.4s ease, color 0.4s ease;
+            color: var(--text);
+            font-family: var(--font-main);
         }
 
-        canvas {
-            display: block;
+        /* Fullscreen Canvas */
+        #viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            z-index: 1;
+            cursor: crosshair;
         }
 
-        /* High-Tech Futuristic Glassmorphism HUD */
-        .glass-hud {
+        /* Glassmorphism UI Overlay */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
+        }
+
+        .interactive {
+            pointer-events: auto;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--panel-border);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            padding: 10px 18px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        .btn-neon {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--panel-border);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            color: var(--text-main);
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
         }
 
-        .btn-neon:hover {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 12px var(--glow-color);
-            transform: translateY(-1px);
-        }
-
-        .btn-neon.active {
-            background: var(--accent-primary);
-            color: #000;
+        .brand-title {
+            font-size: 14px;
             font-weight: 700;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 18px var(--accent-primary);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            color: #fff;
         }
 
-        /* Custom Tech Sliders */
+        .brand-title span {
+            color: var(--primary);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--panel-border);
+            padding: 20px;
+            border-radius: 16px;
+            width: 320px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .panel-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .panel-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+        }
+
+        .btn.active {
+            background: var(--primary);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* Range Slider Styling */
         input[type=range] {
             -webkit-appearance: none;
-            background: rgba(255, 255, 255, 0.1);
-            height: 5px;
-            border-radius: 3px;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
             outline: none;
         }
 
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--accent-primary);
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
             cursor: pointer;
-            box-shadow: 0 0 8px var(--accent-primary);
-            transition: transform 0.15s ease;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
         }
 
-        input[type=range]::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
+        input[type=range]::-webkit-slider-thumb {
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -5px;
+            box-shadow: 0 0 10px var(--primary);
         }
 
-        /* Scanline Overlay for Sci-Fi visual depth */
-        .scanlines {
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0, 0, 0, 0.12) 50%,
-                rgba(0, 0, 0, 0.12)
-            );
-            background-size: 100% 4px;
-            pointer-events: none;
+        /* Footer Info */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 12px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+
+        .instructions {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        @media (max-width: 768px) {
+            .ui-layer { padding: 12px; }
+            .control-panel { width: 100%; max-width: 280px; }
+            .instructions { display: none; }
         }
     </style>
 </head>
-<body class="relative w-full h-full select-none overflow-hidden">
+<body>
 
-    <!-- Subtle Tech Overlay Lines -->
-    <div class="scanlines absolute inset-0 z-0 opacity-40"></div>
+    <canvas id="viewport"></canvas>
 
-    <!-- WebGL / 2D Canvas Layer -->
-    <canvas id="nexusCanvas" class="absolute inset-0 z-0"></canvas>
-
-    <!-- Top Left Header Title -->
-    <header class="absolute top-4 left-4 z-20 glass-hud rounded-2xl px-5 py-3.5 flex items-center gap-3">
-        <div class="relative flex items-center justify-center w-3.5 h-3.5">
-            <div class="absolute w-full h-full rounded-full animate-ping opacity-75" style="background-color: var(--accent-primary);"></div>
-            <div class="w-2.5 h-2.5 rounded-full" style="background-color: var(--accent-primary);"></div>
-        </div>
-        <div>
-            <h1 class="font-black text-lg tracking-widest uppercase bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">
-                NEXUS <span class="text-xs font-mono font-normal px-2 py-0.5 rounded border border-[var(--accent-primary)] text-[var(--accent-primary)] ml-1">v3.0</span>
-            </h1>
-            <p class="text-[9px] tracking-wider uppercase text-[var(--text-muted)] font-mono">Quantum Sound & Geometry Engine</p>
-        </div>
-    </header>
-
-    <!-- Right Side HUD Control Panel -->
-    <div class="absolute top-4 right-4 z-20 glass-hud rounded-2xl p-4 w-80 flex flex-col gap-4 text-xs">
-        
-        <!-- Movement Mode Selector -->
-        <div>
-            <div class="flex items-center justify-between mb-1.5">
-                <span class="font-semibold tracking-wider text-[var(--text-muted)] uppercase text-[10px]">MOZGÁSI MÓD</span>
-                <span id="currentModeLabel" class="font-mono text-[var(--accent-primary)] font-bold text-[10px]">GRAVITÁCIÓ</span>
+    <div class="ui-layer">
+        <header class="interactive">
+            <div class="brand">
+                <div class="brand-dot"></div>
+                <div class="brand-title">Aetheria <span>// Labs</span></div>
             </div>
-            <div class="grid grid-cols-2 gap-1.5">
-                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium active" id="modeGravity" onclick="setMovementMode('gravity')">🌀 Gravitáció</button>
-                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium" id="modeStationary" onclick="setMovementMode('stationary')">📍 Stacionárius</button>
-                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium" id="modeDrift" onclick="setMovementMode('drift')">🌌 Drift</button>
-                <button class="btn-neon py-2 px-2.5 rounded-xl text-left font-medium" id="modeWave" onclick="setMovementMode('wave')">🌊 Wave</button>
-            </div>
-        </div>
+        </header>
 
-        <hr class="border-t border-[var(--panel-border)] my-0.5">
-
-        <!-- Dynamic Controls -->
-        <div class="flex flex-col gap-3">
-            <!-- Gravity Force Control -->
-            <div id="gravityControlContainer">
-                <div class="flex justify-between items-center mb-1">
-                    <label class="font-semibold text-[var(--text-muted)] text-[10px] uppercase tracking-wider">Gravitációs Erő</label>
-                    <span id="gravityValue" class="font-mono text-[var(--accent-primary)] font-bold">2.5x</span>
+        <main class="interactive" style="align-self: flex-start; margin-top: auto; margin-bottom: 20px;">
+            <div class="control-panel">
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Szimulációs Mód</span>
+                    </div>
+                    <div class="btn-grid">
+                        <button class="btn active" onclick="setMode('neural')">Neuronháló</button>
+                        <button class="btn" onclick="setMode('quantum')">Kvantumraj</button>
+                        <button class="btn" onclick="setMode('matrix')">Mátrix Rács</button>
+                        <button class="btn" onclick="setMode('pulse')">Kozmosz</button>
+                    </div>
                 </div>
-                <input type="range" id="gravitySlider" min="0.5" max="8.0" step="0.1" value="2.5" class="w-full cursor-pointer">
-            </div>
 
-            <!-- Speed Control -->
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <label class="font-semibold text-[var(--text-muted)] text-[10px] uppercase tracking-wider">Sebesség</label>
-                    <span id="speedValue" class="font-mono text-[var(--accent-primary)] font-bold">1.5x</span>
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Színpaletta</span>
+                    </div>
+                    <div class="btn-grid">
+                        <button class="btn active" onclick="setPalette('cyan')">Cian Négyzet</button>
+                        <button class="btn" onclick="setPalette('neon')">Neo Violet</button>
+                        <button class="btn" onclick="setPalette('amber')">Kiber Arany</button>
+                        <button class="btn" onclick="setPalette('emerald')">Smaragd</button>
+                    </div>
                 </div>
-                <input type="range" id="speedSlider" min="0.2" max="4.0" step="0.1" value="1.5" class="w-full cursor-pointer">
-            </div>
 
-            <!-- Density / Particle Count Control -->
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <label class="font-semibold text-[var(--text-muted)] text-[10px] uppercase tracking-wider">Részecskesűrűség</label>
-                    <span id="densityValue" class="font-mono text-[var(--accent-primary)] font-bold">75 db</span>
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Sűrűség</span>
+                        <span id="count-val">100</span>
+                    </div>
+                    <input type="range" id="particle-count" min="30" max="250" value="100" oninput="updateParticleCount(this.value)">
                 </div>
-                <input type="range" id="densitySlider" min="30" max="150" step="5" value="75" class="w-full cursor-pointer">
+
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Audio Szintetizátor</span>
+                        <span id="audio-status">Ki</span>
+                    </div>
+                    <button class="btn" id="audio-btn" onclick="toggleAudio()" style="width: 100%;">Hang Aktiválása</button>
+                </div>
             </div>
-        </div>
+        </main>
 
-        <hr class="border-t border-[var(--panel-border)] my-0.5">
-
-        <!-- UV Color Palettes -->
-        <div>
-            <label class="block font-semibold mb-1.5 text-[var(--text-muted)] text-[10px] uppercase tracking-wider">UV Színpaletta</label>
-            <div class="grid grid-cols-4 gap-2">
-                <button onclick="setUvPalette('cyan')" class="h-6 rounded-lg bg-gradient-to-r from-cyan-400 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Cyber Neon"></button>
-                <button onclick="setUvPalette('ultraviolet')" class="h-6 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 border border-white/20 hover:scale-105 transition-transform" title="Ultra Violet"></button>
-                <button onclick="setUvPalette('lime')" class="h-6 rounded-lg bg-gradient-to-r from-green-400 to-cyan-400 border border-white/20 hover:scale-105 transition-transform" title="Electric Lime"></button>
-                <button onclick="setUvPalette('solar')" class="h-6 rounded-lg bg-gradient-to-r from-amber-400 to-red-500 border border-white/20 hover:scale-105 transition-transform" title="Solar Flare"></button>
+        <footer>
+            <div class="instructions">
+                Kattints vagy húzd az egeret az interakcióhoz
             </div>
-        </div>
-    </div>
-
-    <!-- Bottom Center Audio & Support Controls -->
-    <div class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 glass-hud rounded-2xl p-2 flex items-center gap-2">
-        <button id="audioToggleBtn" class="btn-neon px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 tracking-wide">
-            <span id="audioIcon">🔇</span>
-            <span id="audioText">Audio Synth: Ki</span>
-        </button>
-        <button id="supportBtn" class="btn-neon px-4 py-2 rounded-xl text-xs font-bold tracking-wide">
-            ☕ Támogatás
-        </button>
-    </div>
-
-    <!-- Bottom Right Theme Toggle Floating Button -->
-    <button id="themeToggleBtn" class="absolute bottom-5 right-5 z-20 glass-hud p-3.5 rounded-2xl btn-neon flex items-center justify-center text-lg shadow-xl" title="Téma Váltása (Sötét / Világos)">
-        <span id="themeIcon">🌙</span>
-    </button>
-
-    <!-- Support Modal -->
-    <div id="supportModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="glass-hud p-6 rounded-3xl max-w-sm w-full mx-4 text-center flex flex-col items-center gap-4">
-            <h2 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-primary)] to-[var(--accent-secondary)]">Nexus v3.0 Support</h2>
-            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
-                Köszönöm, hogy felfedezed a Nexus interaktív audio-vizuális kvantum rendszert! Ha elnyerte tetszésedet a kísérleti projekt, az alábbi gombra kattintva támogathatod a jövőbeli fejlesztéseket.
-            </p>
-            <button onclick="window.open('https://paypal.me', '_blank')" class="btn-neon w-full py-2.5 rounded-xl font-bold active text-xs tracking-wider">
-                PayPal Támogatás
-            </button>
-            <button id="closeModalBtn" class="w-full py-2 rounded-xl text-xs text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
-                Bezárás
-            </button>
-        </div>
+            <div style="font-size: 10px; opacity: 0.6;">
+                DESIGNED FOR NYIRIGABOR.HU
+            </div>
+        </footer>
     </div>
 
     <script>
-        /* --- Web Audio API Pentatonic Synthesizer --- */
+        const canvas = document.getElementById('viewport');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initParticles();
+        });
+
+        // App State
+        let currentMode = 'neural';
+        let currentPalette = 'cyan';
+        let particleCount = 100;
+        let particles = [];
+        let mouse = { x: width / 2, y: height / 2, active: false, radius: 150 };
+        let audioEnabled = false;
+
+        // Color Palettes
+        const palettes = {
+            cyan: { primary: '#00f0ff', secondary: '#7000ff', bgLines: 'rgba(0, 240, 255, 0.15)' },
+            neon: { primary: '#ff007f', secondary: '#7000ff', bgLines: 'rgba(255, 0, 127, 0.15)' },
+            amber: { primary: '#ffb700', secondary: '#ff5500', bgLines: 'rgba(255, 183, 0, 0.15)' },
+            emerald: { primary: '#00ff66', secondary: '#0088ff', bgLines: 'rgba(0, 255, 102, 0.15)' }
+        };
+
+        // Web Audio API Synth Engine
         let audioCtx = null;
-        let isAudioActive = false;
-        const pentatonicScale = [130.81, 146.83, 164.81, 196.00, 220.00, 261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+        const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // C Pentatonic Scale
 
         function initAudio() {
             if (!audioCtx) {
@@ -264,9 +339,8 @@
             }
         }
 
-        function playSynthTone(freq, duration = 0.35) {
-            if (!isAudioActive || !audioCtx) return;
-
+        function playSynthTone(freq) {
+            if (!audioEnabled || !audioCtx) return;
             try {
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
@@ -274,429 +348,200 @@
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-                // Smooth attack and exponential decay
-                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
 
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
 
                 osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch (e) {
-                console.warn("Audio Context Error:", e);
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {}
+        }
+
+        function toggleAudio() {
+            initAudio();
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-btn');
+            const status = document.getElementById('audio-status');
+            if (audioEnabled) {
+                btn.classList.add('active');
+                btn.innerText = "Hang Kikapcsolása";
+                status.innerText = "Be";
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = "Hang Aktiválása";
+                status.innerText = "Ki";
             }
         }
 
-        /* --- High Performance Canvas Visualizer Engine --- */
-        const canvas = document.getElementById('nexusCanvas');
-        const ctx = canvas.getContext('2d');
-
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
-
-        let particles = [];
-        let ripples = []; // NEW: Click Shockwave / Ripple effect array
-        let particleCount = 75;
-        let globalSpeedMultiplier = 1.5;
-        let gravityPullForce = 2.5;
-        let movementMode = 'gravity'; // 'gravity', 'stationary', 'drift', 'wave'
-        let pointer = { x: width / 2, y: height / 2, active: false };
-        let time = 0;
-
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            if (movementMode === 'stationary') {
-                repositionStationaryGrid();
-            }
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-
-        // NEW: Shockwave / Ripple Class for Click/Tap Visual Effect
-        class ClickRipple {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.radius = 5;
-                this.maxRadius = 140;
-                this.speed = 4.5;
-                this.alpha = 1.0;
-                this.lineWidth = 3.5;
+        // Particle Class
+        class Particle {
+            constructor() {
+                this.reset();
             }
 
-            update() {
-                this.radius += this.speed * globalSpeedMultiplier;
-                this.alpha = 1 - (this.radius / this.maxRadius);
-                this.lineWidth = Math.max(0.5, 3.5 * (1 - this.radius / this.maxRadius));
-            }
-
-            draw() {
-                if (this.alpha <= 0) return;
-
-                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
-                const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-secondary').trim();
-
-                ctx.save();
-                
-                // Outer Primary Glowing Ring
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = primaryColor;
-                ctx.globalAlpha = Math.max(0, this.alpha * 0.85);
-                ctx.lineWidth = this.lineWidth;
-                ctx.shadowColor = primaryColor;
-                ctx.shadowBlur = 15;
-                ctx.stroke();
-
-                // Inner Secondary Echo Ring
-                if (this.radius > 20) {
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.radius * 0.65, 0, Math.PI * 2);
-                    ctx.strokeStyle = secondaryColor;
-                    ctx.globalAlpha = Math.max(0, this.alpha * 0.5);
-                    ctx.lineWidth = this.lineWidth * 0.6;
-                    ctx.shadowColor = secondaryColor;
-                    ctx.shadowBlur = 10;
-                    ctx.stroke();
-                }
-
-                ctx.restore();
-            }
-        }
-
-        class QuantumParticle {
-            constructor(anchorX, anchorY) {
-                this.anchorX = anchorX !== undefined ? anchorX : Math.random() * width;
-                this.anchorY = anchorY !== undefined ? anchorY : Math.random() * height;
-                this.x = this.anchorX;
-                this.y = this.anchorY;
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
                 this.vx = (Math.random() - 0.5) * 1.5;
                 this.vy = (Math.random() - 0.5) * 1.5;
-                this.baseVx = this.vx;
-                this.baseVy = this.vy;
-                this.radius = Math.random() * 2.5 + 2;
-                this.freq = pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)];
-                this.phase = Math.random() * Math.PI * 2;
+                this.radius = Math.random() * 2 + 1;
+                this.baseRadius = this.radius;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 0.02 + 0.005;
+                this.dist = Math.random() * (width > height ? height : width) * 0.4;
             }
 
             update() {
-                if (movementMode === 'gravity') {
-                    // NEW: Gravitációs vonzás a kurzor felé
-                    if (pointer.active) {
-                        const dx = pointer.x - this.x;
-                        const dy = pointer.y - this.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (dist > 5) {
-                            const force = (gravityPullForce * 0.15) / Math.max(dist * 0.05, 1);
-                            this.vx += (dx / dist) * force * globalSpeedMultiplier;
-                            this.vy += (dy / dist) * force * globalSpeedMultiplier;
-                        }
-                    }
-
-                    // Csillapítás & Pozíció frissítés
-                    this.vx *= 0.94;
-                    this.vy *= 0.94;
+                if (currentMode === 'neural' || currentMode === 'matrix') {
                     this.x += this.vx;
                     this.y += this.vy;
 
-                    // Kerethatárok kezelése
-                    if (this.x < 0) { this.x = 0; this.vx *= -1; }
-                    if (this.x > width) { this.x = width; this.vx *= -1; }
-                    if (this.y < 0) { this.y = 0; this.vy *= -1; }
-                    if (this.y > height) { this.y = height; this.vy *= -1; }
-
-                } else if (movementMode === 'stationary') {
-                    // Stacionárius rugó-fizika
-                    const dxAnchor = this.anchorX - this.x;
-                    const dyAnchor = this.anchorY - this.y;
-                    
-                    const stiffness = 0.05 * globalSpeedMultiplier;
-                    const damping = 0.88;
-
-                    this.vx += dxAnchor * stiffness;
-                    this.vy += dyAnchor * stiffness;
-                    this.vx *= damping;
-                    this.vy *= damping;
-
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                } else if (currentMode === 'quantum') {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist > 10) {
+                        this.vx += (dx / dist) * 0.1;
+                        this.vy += (dy / dist) * 0.1;
+                    }
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
                     this.x += this.vx;
                     this.y += this.vy;
+                } else if (currentMode === 'pulse') {
+                    this.angle += this.speed;
+                    const targetX = width / 2 + Math.cos(this.angle) * this.dist;
+                    const targetY = height / 2 + Math.sin(this.angle) * this.dist;
+                    this.x += (targetX - this.x) * 0.05;
+                    this.y += (targetY - this.y) * 0.05;
+                }
 
-                    // Kurzor taszító impulzus Stacionárius módban
-                    if (pointer.active) {
-                        const dx = this.x - pointer.x;
-                        const dy = this.y - pointer.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist < 150 && dist > 0) {
-                            const force = (1 - dist / 150) * 10 * globalSpeedMultiplier;
-                            this.vx += (dx / dist) * force;
-                            this.vy += (dy / dist) * force;
-                        }
-                    }
+                // Mouse interaction distance
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
 
-                } else if (movementMode === 'drift') {
-                    this.x += this.baseVx * globalSpeedMultiplier;
-                    this.y += this.baseVy * globalSpeedMultiplier;
-
-                    if (this.x < 0 || this.x > width) this.baseVx *= -1;
-                    if (this.y < 0 || this.y > height) this.baseVy *= -1;
-
-                } else if (movementMode === 'wave') {
-                    this.x += (this.baseVx + Math.sin(time + this.phase) * 1.5) * globalSpeedMultiplier;
-                    this.y += (this.baseVy + Math.cos(time + this.phase) * 1.5) * globalSpeedMultiplier;
-
-                    if (this.x < 0 || this.x > width) this.baseVx *= -1;
-                    if (this.y < 0 || this.y > height) this.baseVy *= -1;
+                if (dist < mouse.radius) {
+                    this.radius = this.baseRadius + (1 - dist / mouse.radius) * 4;
+                } else {
+                    this.radius = this.baseRadius;
                 }
             }
 
             draw() {
-                const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = primaryColor;
+                ctx.fillStyle = palettes[currentPalette].primary;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = palettes[currentPalette].primary;
                 ctx.fill();
+                ctx.shadowBlur = 0;
             }
         }
 
-        function adjustParticleDensity(newCount) {
-            particleCount = newCount;
-            if (particles.length < particleCount) {
-                while (particles.length < particleCount) {
-                    particles.push(new QuantumParticle());
-                }
-            } else if (particles.length > particleCount) {
-                particles.splice(particleCount);
-            }
-            if (movementMode === 'stationary') {
-                repositionStationaryGrid();
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
             }
         }
 
-        function repositionStationaryGrid() {
-            const cols = Math.ceil(Math.sqrt(particles.length * (width / height)));
-            const rows = Math.ceil(particles.length / cols);
-            const spacingX = width / (cols + 1);
-            const spacingY = height / (rows + 1);
-
-            let idx = 0;
-            for (let r = 1; r <= rows; r++) {
-                for (let c = 1; c <= cols; c++) {
-                    if (idx < particles.length) {
-                        particles[idx].anchorX = c * spacingX;
-                        particles[idx].anchorY = r * spacingY;
-                        idx++;
-                    }
-                }
-            }
-        }
-
-        // Initialize particles
-        adjustParticleDensity(particleCount);
-
-        function drawConnections() {
-            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
-            const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-secondary').trim();
-
-            const maxConnectDist = 140;
+        function renderConnections() {
+            const maxDist = 120;
+            const activeColor = palettes[currentPalette].bgLines;
 
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
-                    
-                    // Quick Bounding Check optimization for performance
-                    if (Math.abs(dx) > maxConnectDist || Math.abs(dy) > maxConnectDist) continue;
-
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    if (dist < maxConnectDist) {
-                        const alpha = 1 - (dist / maxConnectDist);
+                    if (dist < maxDist) {
+                        const alpha = 1 - dist / maxDist;
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        
-                        const gradient = ctx.createLinearGradient(particles[i].x, particles[i].y, particles[j].x, particles[j].y);
-                        gradient.addColorStop(0, primaryColor);
-                        gradient.addColorStop(1, secondaryColor);
-
-                        ctx.globalAlpha = alpha * 0.65;
-                        ctx.strokeStyle = gradient;
-                        ctx.lineWidth = 0.9;
+                        ctx.strokeStyle = activeColor.replace('0.15', (alpha * 0.25).toString());
+                        ctx.lineWidth = 1;
                         ctx.stroke();
-                        ctx.globalAlpha = 1.0;
                     }
                 }
             }
         }
 
-        function renderLoop() {
-            ctx.clearRect(0, 0, width, height);
-            time += 0.02;
+        function animate() {
+            ctx.fillStyle = 'rgba(8, 9, 13, 0.25)'; // Smooth trails effect
+            ctx.fillRect(0, 0, width, height);
 
-            // Render & Update Quantum Particles
+            if (currentMode === 'neural' || currentMode === 'matrix') {
+                renderConnections();
+            }
+
             particles.forEach(p => {
                 p.update();
                 p.draw();
             });
 
-            // Render Inter-particle Connection Geometry
-            drawConnections();
-
-            // NEW: Render & Update Click Shockwave Ripples
-            for (let i = ripples.length - 1; i >= 0; i--) {
-                ripples[i].update();
-                ripples[i].draw();
-                if (ripples[i].alpha <= 0 || ripples[i].radius >= ripples[i].maxRadius) {
-                    ripples.splice(i, 1);
-                }
-            }
-
-            requestAnimationFrame(renderLoop);
+            requestAnimationFrame(animate);
         }
 
-        renderLoop();
-
-        /* --- Event Handlers & User Interaction --- */
-        function handlePointerMove(x, y) {
-            pointer.x = x;
-            pointer.y = y;
-            pointer.active = true;
-
-            if (isAudioActive && Math.random() < 0.08) {
-                const randomParticle = particles[Math.floor(Math.random() * particles.length)];
-                playSynthTone(randomParticle.freq, 0.3);
-            }
+        // Controls Logic
+        function setMode(mode) {
+            currentMode = mode;
+            updateActiveButtons(event.target);
         }
 
-        function triggerImpulse(x, y) {
-            handlePointerMove(x, y);
+        function setPalette(palette) {
+            currentPalette = palette;
+            updateActiveButtons(event.target);
+            document.documentElement.style.setProperty('--primary', palettes[palette].primary);
+            document.documentElement.style.setProperty('--secondary', palettes[palette].secondary);
+        }
 
-            // NEW: Spawn Visual Click Shockwave / Ripple Effect
-            ripples.push(new ClickRipple(x, y));
+        function updateParticleCount(val) {
+            particleCount = parseInt(val);
+            document.getElementById('count-val').innerText = val;
+            initParticles();
+        }
 
+        function updateActiveButtons(target) {
+            const siblings = target.parentElement.children;
+            for (let btn of siblings) {
+                btn.classList.remove('active');
+            }
+            target.classList.add('active');
+        }
+
+        // Event Listeners
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('click', (e) => {
+            // Trigger audio tone based on Y position
+            const noteIndex = Math.floor((1 - e.clientY / height) * notes.length);
+            playSynthTone(notes[Math.min(notes.length - 1, Math.max(0, noteIndex))]);
+
+            // Shockwave particle boost
             particles.forEach(p => {
-                const dx = p.x - x;
-                const dy = p.y - y;
+                const dx = e.clientX - p.x;
+                const dy = e.clientY - p.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 200 && dist > 0) {
-                    const force = (1 - dist / 200) * 20 * globalSpeedMultiplier;
-                    p.vx += (dx / dist) * force;
-                    p.vy += (dy / dist) * force;
+                if (dist < 200) {
+                    p.vx -= (dx / dist) * 4;
+                    p.vy -= (dy / dist) * 4;
                 }
             });
-            if (isAudioActive) {
-                playSynthTone(pentatonicScale[Math.floor(Math.random() * pentatonicScale.length)], 0.45);
-            }
-        }
-
-        window.addEventListener('mousemove', (e) => handlePointerMove(e.clientX, e.clientY));
-        window.addEventListener('mousedown', (e) => triggerImpulse(e.clientX, e.clientY));
-        window.addEventListener('mouseleave', () => pointer.active = false);
-
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches.length > 0) {
-                handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        }, { passive: true });
-        window.addEventListener('touchstart', (e) => {
-            if (e.touches.length > 0) {
-                triggerImpulse(e.touches[0].clientX, e.touches[0].clientY);
-            }
-        }, { passive: true });
-        window.addEventListener('touchend', () => pointer.active = false);
-
-        /* --- HUD Control Binding --- */
-        window.setMovementMode = function(mode) {
-            movementMode = mode;
-            document.getElementById('modeGravity').classList.toggle('active', mode === 'gravity');
-            document.getElementById('modeStationary').classList.toggle('active', mode === 'stationary');
-            document.getElementById('modeDrift').classList.toggle('active', mode === 'drift');
-            document.getElementById('modeWave').classList.toggle('active', mode === 'wave');
-
-            const modeLabels = {
-                'gravity': 'GRAVITÁCIÓ',
-                'stationary': 'STACIONÁRIUS',
-                'drift': 'DRIFT',
-                'wave': 'WAVE'
-            };
-            document.getElementById('currentModeLabel').textContent = modeLabels[mode];
-
-            // Toggle Gravity slider visibility
-            const gravityContainer = document.getElementById('gravityControlContainer');
-            if (mode === 'gravity') {
-                gravityContainer.style.display = 'block';
-            } else {
-                gravityContainer.style.display = 'none';
-            }
-
-            if (mode === 'stationary') {
-                repositionStationaryGrid();
-            }
-        };
-
-        // Sliders
-        const gravitySlider = document.getElementById('gravitySlider');
-        gravitySlider.addEventListener('input', (e) => {
-            gravityPullForce = parseFloat(e.target.value);
-            document.getElementById('gravityValue').textContent = gravityPullForce.toFixed(1) + 'x';
         });
 
-        const speedSlider = document.getElementById('speedSlider');
-        speedSlider.addEventListener('input', (e) => {
-            globalSpeedMultiplier = parseFloat(e.target.value);
-            document.getElementById('speedValue').textContent = globalSpeedMultiplier.toFixed(1) + 'x';
-        });
-
-        const densitySlider = document.getElementById('densitySlider');
-        densitySlider.addEventListener('input', (e) => {
-            const count = parseInt(e.target.value);
-            document.getElementById('densityValue').textContent = count + ' db';
-            adjustParticleDensity(count);
-        });
-
-        // UV Palette Switcher
-        window.setUvPalette = function(palette) {
-            document.documentElement.setAttribute('data-uv', palette);
-        };
-
-        // Bottom Right Theme Toggle
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const themeIcon = document.getElementById('themeIcon');
-        let currentTheme = 'dark';
-
-        themeToggleBtn.addEventListener('click', () => {
-            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', currentTheme);
-            themeIcon.textContent = currentTheme === 'dark' ? '🌙' : '☀️';
-        });
-
-        // Audio Toggle
-        const audioBtn = document.getElementById('audioToggleBtn');
-        const audioIcon = document.getElementById('audioIcon');
-        const audioText = document.getElementById('audioText');
-
-        audioBtn.addEventListener('click', () => {
-            initAudio();
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            isAudioActive = !isAudioActive;
-            audioBtn.classList.toggle('active', isAudioActive);
-            audioIcon.textContent = isAudioActive ? '🔊' : '🔇';
-            audioText.textContent = isAudioActive ? 'Audio Synth: Be' : 'Audio Synth: Ki';
-        });
-
-        // Support Modal Toggle
-        const supportModal = document.getElementById('supportModal');
-        document.getElementById('supportBtn').addEventListener('click', () => {
-            supportModal.classList.remove('opacity-0', 'pointer-events-none');
-        });
-        document.getElementById('closeModalBtn').addEventListener('click', () => {
-            supportModal.classList.add('opacity-0', 'pointer-events-none');
-        });
+        // Initialize App
+        initParticles();
+        animate();
     </script>
 </body>
 </html>
