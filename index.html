@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAgent.ai | Nyíri Gábor - Mesterséges Intelligencia</title>
+    <title>SuperAgent.ai | Nyíri Gábor</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -20,6 +20,7 @@
                     colors: {
                         magenta: '#FF0C9D',
                         cyan: '#00FFFF',
+                        deepBlue: '#1e40af',
                         purpleGlow: '#8A2BE2',
                         darkBg: '#090b10',
                         cardBg: 'rgba(15, 20, 32, 0.65)'
@@ -36,7 +37,7 @@
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%': { filter: 'drop-shadow(0 0 12px rgba(255, 12, 157, 0.4))' },
+                            '0%': { filter: 'drop-shadow(0 0 12px rgba(30, 64, 175, 0.4))' },
                             '100%': { filter: 'drop-shadow(0 0 25px rgba(0, 255, 255, 0.6))' }
                         },
                         gridMove: {
@@ -75,7 +76,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.45; /* Finom beállítás, hogy a háttér ne nyomja el a tartalmat */
+            opacity: 0.45;
         }
 
         /* Dark Overlay a jobb olvashatóságért */
@@ -91,7 +92,7 @@
         .bg-cyber-grid {
             background-image: 
                 linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 12, 157, 0.04) 1px, transparent 1px);
+                linear-gradient(to bottom, rgba(30, 64, 175, 0.04) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
@@ -111,14 +112,20 @@
             transform: translateY(-8px);
         }
 
-        .glass-card-magenta:hover {
-            border-color: rgba(255, 12, 157, 0.8);
-            box-shadow: 0 10px 35px -5px rgba(255, 12, 157, 0.4), inset 0 0 20px rgba(255, 12, 157, 0.1);
+        /* 3. Mandelbrot kártya: Férfiasabb, mély tengerkék / elektromos kék hover árnyalat */
+        .glass-card-mandelbrot {
+            border: 1px solid rgba(30, 144, 255, 0.2);
+        }
+
+        .glass-card-mandelbrot:hover {
+            border-color: rgba(30, 144, 255, 0.8);
+            box-shadow: 0 10px 35px -5px rgba(30, 144, 255, 0.45), inset 0 0 25px rgba(14, 116, 144, 0.25);
+            transform: translateY(-8px);
         }
 
         /* Neon Gradient Text */
         .neon-text-gradient {
-            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #FF0C9D 100%);
+            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #1e40af 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -126,7 +133,7 @@
         /* Interactive Cursor Spotlight */
         #interactive-glow {
             pointer-events: none;
-            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(255, 12, 157, 0.05), transparent 70%);
+            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(30, 64, 175, 0.05), transparent 70%);
         }
 
         /* Light Mode Styles */
@@ -146,10 +153,6 @@
             box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.25);
         }
 
-        body.light-mode .section-title {
-            color: #0f172a !important;
-        }
-
         body.light-mode .card-title {
             color: #0f172a !important;
         }
@@ -166,7 +169,7 @@
         body.light-mode .bg-cyber-grid {
             background-image: 
                 linear-gradient(to right, rgba(14, 165, 233, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(217, 70, 239, 0.08) 1px, transparent 1px);
+                linear-gradient(to bottom, rgba(30, 64, 175, 0.08) 1px, transparent 1px);
         }
 
         body.light-mode .video-overlay {
@@ -174,7 +177,7 @@
         }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative transition-colors duration-500">
+<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative transition-colors duration-500">
 
     <!-- YouTube Background Video -->
     <div class="video-background-container">
@@ -200,7 +203,7 @@
 
     <!-- Ambient Glowing Orbs -->
     <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
-    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
+    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-blue-900/30 rounded-full blur-[140px] pointer-events-none z-10"></div>
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none z-10"></div>
 
     <!-- Main Content Container -->
@@ -208,12 +211,6 @@
 
         <!-- Main Grid Container -->
         <main class="my-auto py-8">
-            <div class="text-center mb-8 sm:mb-12">
-                <p class="section-title text-2xl sm:text-4xl font-orbitron font-bold text-white tracking-wide transition-colors duration-300">
-                    Mesterséges Intelligencia Fejlesztések
-                </p>
-            </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
 
                 <!-- CARD 1: Automatikus AI Hírlevél -->
@@ -270,28 +267,28 @@
                     </div>
                 </a>
 
-                <!-- CARD 3: AI Fraktál Engine -->
-                <a href="mandelbrot_info.html" class="glass-card glass-card-magenta group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-2xl group-hover:bg-cyan/20 transition-all duration-500"></div>
+                <!-- CARD 3: AI Fraktál Engine (Mély tengerkék / elektromos kék hover stílus) -->
+                <a href="mandelbrot_info.html" class="glass-card glass-card-mandelbrot group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
                     <div class="relative z-10">
                         <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
+                            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 text-2xl group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/10">
                                 <i class="fa-solid fa-network-wired"></i>
                             </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/40 text-blue-400 font-bold uppercase">
                                 AI Visuals
                             </span>
                         </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
+                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors mb-4">
                             AI Mandelbrot Utazás
                         </h3>
                         <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
                             Algoritmusok generálta végtelen világok. Vizuális felfedezés a matematikai struktúrák és a mesterséges intelligencia találkozásánál.
                         </p>
                     </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
+                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-blue-400">
                         <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-compass text-[10px] text-cyan"></i> Felfedezés
+                            <i class="fa-solid fa-compass text-[10px] text-blue-400"></i> Felfedezés
                         </span>
                         <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
                     </div>
@@ -398,7 +395,7 @@
                 this.vx = (Math.random() - 0.5) * 0.4;
                 this.vy = (Math.random() - 0.5) * 0.4;
                 this.radius = Math.random() * 1.5 + 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
+                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(30, 64, 175, ';
                 this.alpha = Math.random() * 0.5 + 0.2;
             }
 
