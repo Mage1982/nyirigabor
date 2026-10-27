@@ -54,6 +54,39 @@
     </script>
 
     <style>
+        /* YouTube Video Background Styling */
+        .video-background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .video-background-container iframe {
+            width: 100vw;
+            height: 56.25vw;
+            min-height: 100vh;
+            min-width: 177.77vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.45; /* Finom beállítás, hogy a háttér ne nyomja el a tartalmat */
+        }
+
+        /* Dark Overlay a jobb olvashatóságért */
+        .video-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 11, 16, 0.65);
+            z-index: 1;
+            pointer-events: none;
+        }
+
         /* Cyber Grid Overlay Background */
         .bg-cyber-grid {
             background-image: 
@@ -135,26 +168,43 @@
                 linear-gradient(to right, rgba(14, 165, 233, 0.08) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(217, 70, 239, 0.08) 1px, transparent 1px);
         }
+
+        body.light-mode .video-overlay {
+            background: rgba(241, 245, 249, 0.75);
+        }
     </style>
 </head>
 <body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative transition-colors duration-500">
 
+    <!-- YouTube Background Video -->
+    <div class="video-background-container">
+        <iframe 
+            src="https://www.youtube.com/embed/WtiJDFQGY0U?autoplay=1&mute=1&loop=1&playlist=WtiJDFQGY0U&controls=0&showinfo=0&rel=0&enablejsapi=1" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+        </iframe>
+    </div>
+    
+    <!-- Dark/Light Mode Overlay for readability -->
+    <div class="video-overlay"></div>
+
     <!-- Dynamic Interactive Mouse Glow -->
-    <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
+    <div id="interactive-glow" class="fixed inset-0 z-10 transition-opacity duration-300"></div>
 
     <!-- HTML5 Particle Canvas -->
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-45"></canvas>
 
     <!-- Animated Cyber Grid Background -->
-    <div class="fixed inset-0 bg-cyber-grid z-0 opacity-60 animate-grid-move pointer-events-none"></div>
+    <div class="fixed inset-0 bg-cyber-grid z-10 opacity-60 animate-grid-move pointer-events-none"></div>
 
     <!-- Ambient Glowing Orbs -->
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none"></div>
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none"></div>
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
+    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none z-10"></div>
 
     <!-- Main Content Container -->
-    <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
+    <div class="relative z-20 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
 
         <!-- Main Grid Container -->
         <main class="my-auto py-8">
