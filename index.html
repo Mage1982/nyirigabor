@@ -8,10 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Orbitron, Share Tech Mono & Inter -->
+    <!-- Google Fonts: Oswald, Orbitron, Share Tech Mono & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Oswald:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -26,6 +26,7 @@
                         cardBg: 'rgba(15, 20, 32, 0.65)'
                     },
                     fontFamily: {
+                        oswald: ['Oswald', 'sans-serif'],
                         orbitron: ['Orbitron', 'sans-serif'],
                         mono: ['Share Tech Mono', 'monospace'],
                         sans: ['Inter', 'sans-serif']
@@ -33,7 +34,8 @@
                     animation: {
                         'pulse-glow': 'pulseGlow 3s infinite alternate',
                         'grid-move': 'gridMove 20s linear infinite',
-                        'float': 'float 4s ease-in-out infinite'
+                        'float': 'float 4s ease-in-out infinite',
+                        'bounce-slow': 'bounce 2s infinite'
                     },
                     keyframes: {
                         pulseGlow: {
@@ -55,7 +57,37 @@
     </script>
 
     <style>
-        /* YouTube Video Background Styling */
+        /* CSS Változók az Intro és a Főoldal témájához */
+        :root {
+            --intro-bg: #ffffff;
+            --intro-text: #000000;
+        }
+
+        body.light-mode {
+            --intro-bg: #f8fafc;
+            --intro-text: #0f172a;
+        }
+
+        /* Első Teljes Képernyős Intro Szekció */
+        .intro-hero {
+            width: 100%;
+            height: 100vh;
+            background-color: var(--intro-bg);
+            transition: background-color 0.5s ease;
+        }
+
+        .brand-title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 300;
+            font-size: clamp(3.5rem, 12vw, 10rem);
+            color: var(--intro-text);
+            text-transform: lowercase;
+            letter-spacing: 4px;
+            line-height: 1;
+            transition: color 0.5s ease;
+        }
+
+        /* YouTube Background Video Styling */
         .video-background-container {
             position: fixed;
             top: 0;
@@ -86,6 +118,7 @@
             background: rgba(9, 11, 16, 0.65);
             z-index: 1;
             pointer-events: none;
+            transition: background 0.5s ease;
         }
 
         /* Cyber Grid Overlay Background */
@@ -112,7 +145,7 @@
             transform: translateY(-8px);
         }
 
-        /* 3. Mandelbrot kártya: Férfiasabb, mély tengerkék / elektromos kék hover árnyalat */
+        /* 3. Mandelbrot kártya hover stílus */
         .glass-card-mandelbrot {
             border: 1px solid rgba(30, 144, 255, 0.2);
         }
@@ -121,13 +154,6 @@
             border-color: rgba(30, 144, 255, 0.8);
             box-shadow: 0 10px 35px -5px rgba(30, 144, 255, 0.45), inset 0 0 25px rgba(14, 116, 144, 0.25);
             transform: translateY(-8px);
-        }
-
-        /* Neon Gradient Text */
-        .neon-text-gradient {
-            background: linear-gradient(135deg, #00FFFF 0%, #FFFFFF 50%, #1e40af 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         /* Interactive Cursor Spotlight */
@@ -177,9 +203,20 @@
         }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative transition-colors duration-500">
+<body class="text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative transition-colors duration-500">
 
-    <!-- YouTube Background Video -->
+    <!-- 1. SZEKCIÓ: Fehér / Világos Intro Nyitóoldal -->
+    <section class="intro-hero relative z-30 flex flex-col justify-center items-center p-4">
+        <h1 class="brand-title select-none">nyirigabor.hu</h1>
+        
+        <!-- Animált lefelé görgetés jelző nyíl -->
+        <a href="#main-dashboard" class="absolute bottom-8 text-slate-400 hover:text-black dark:hover:text-cyan transition-colors duration-300 animate-bounce-slow flex flex-col items-center gap-2">
+            <span class="text-xs font-mono tracking-widest uppercase">Gördíts lejjebb</span>
+            <i class="fa-solid fa-chevron-down text-xl"></i>
+        </a>
+    </section>
+
+    <!-- YouTube Background Video (Háttérben fut a 2. szekciónál) -->
     <div class="video-background-container">
         <iframe 
             src="https://www.youtube.com/embed/WtiJDFQGY0U?autoplay=1&mute=1&loop=1&playlist=WtiJDFQGY0U&controls=0&showinfo=0&rel=0&enablejsapi=1" 
@@ -189,7 +226,7 @@
         </iframe>
     </div>
     
-    <!-- Dark/Light Mode Overlay for readability -->
+    <!-- Dark/Light Mode Overlay -->
     <div class="video-overlay"></div>
 
     <!-- Dynamic Interactive Mouse Glow -->
@@ -206,11 +243,11 @@
     <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-blue-900/30 rounded-full blur-[140px] pointer-events-none z-10"></div>
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none z-10"></div>
 
-    <!-- Main Content Container -->
-    <div class="relative z-20 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
+    <!-- 2. SZEKCIÓ: SuperAgent.ai Irányítópult (A görgetés után ez látható) -->
+    <div id="main-dashboard" class="relative z-20 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
 
         <!-- Main Grid Container -->
-        <main class="my-auto py-8">
+        <main class="my-auto py-12 sm:py-16">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
 
                 <!-- CARD 1: Automatikus AI Hírlevél -->
@@ -267,7 +304,7 @@
                     </div>
                 </a>
 
-                <!-- CARD 3: AI Fraktál Engine (Mély tengerkék / elektromos kék hover stílus) -->
+                <!-- CARD 3: AI Mandelbrot Utazás -->
                 <a href="mandelbrot_info.html" class="glass-card glass-card-mandelbrot group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
                     <div class="relative z-10">
@@ -320,12 +357,12 @@
 
     </div>
 
-    <!-- Floating Theme Toggle Button (Jobb alsó sarok) -->
+    <!-- Floating Theme Toggle Button (Rögzítve a jobb alsó sarokban) -->
     <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3.5 rounded-full bg-slate-900/80 text-cyan border border-cyan/40 backdrop-blur-md shadow-lg shadow-cyan/20 hover:scale-110 hover:border-cyan transition-all duration-300 flex items-center justify-center">
         <i id="theme-icon" class="fa-solid fa-sun text-lg"></i>
     </button>
 
-    <!-- Background Canvas Particles & Real-time Scripts -->
+    <!-- Scripts -->
     <script>
         // Real-Time Digital Clock
         function updateClock() {
