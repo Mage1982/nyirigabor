@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nyirigabor.hu</title>
+  
+  <!-- Google Fonts: Great Vibes (Elegáns írott betűtípus) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    /* Alapbeállítások a felesleges margók eltüntetéséhez */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    /* Példa az előző/felette lévő tartalomra, hogy lehessen lefelé görgetni */
+    .hero-placeholder {
+      width: 100%;
+      height: 100vh;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: sans-serif;
+      font-size: 1.5rem;
+    }
+
+    /* A kért teljes fehér szekció */
+    .full-white-section {
+      width: 100%;
+      height: 100vh; /* Megtölti a teljes képernyőmagasságot */
+      background-color: #ffffff; /* Tiszta fehér háttér */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Az óriási, fekete írott betűs címsor */
+    .brand-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(3.5rem, 10vw, 8rem); /* Képernyőmérethez alkalmazkodó óriás méret */
+      color: #000000; /* Fekete betűszín */
+      margin: 0;
+      text-align: center;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tetszőleges tartalom a görgetés előtti részhez (eltávolítható) -->
+  <div class="hero-placeholder">
+    <p>Gördíts lejjebb ↓</p>
+  </div>
+
+  <!-- A kért fehér oldal a címsorral -->
+  <section class="full-white-section">
+    <h1 class="brand-title">nyirigabor.hu</h1>
+  </section>
+
+</body>
+</html>
