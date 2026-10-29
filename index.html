@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hu" class="h-full bg-[#090b10] transition-colors duration-500" data-theme="dark">
+<html lang="hu" class="h-full bg-[#090b10]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,75 +57,21 @@
     </script>
 
     <style>
-        /* CSS Változók a teljes oldal témájához */
-        :root {
-            --bg-intro: #ffffff;
-            --text-intro: #000000;
-            --btn-bg: #000000;
-            --btn-text: #ffffff;
-            --btn-border: #000000;
-        }
-
-        /* Sötét mód beállításai (Alapértelmezett) */
-        [data-theme="dark"] {
-            --bg-intro: #ffffff;
-            --text-intro: #000000;
-            --btn-bg: #000000;
-            --btn-text: #ffffff;
-            --btn-border: #000000;
-        }
-
-        /* Világos mód beállításai - A TELJES OLDALRA */
-        [data-theme="light"] {
-            --bg-intro: #f8fafc;
-            --text-intro: #0f172a;
-            --btn-bg: #ffffff;
-            --btn-text: #000000;
-            --btn-border: #000000;
-        }
-
-        /* Az előző, letisztult felső gomb stílusa */
-        .theme-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            padding: 10px 18px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border: 1px solid var(--btn-border);
-            background-color: var(--btn-bg);
-            color: var(--btn-text);
-            cursor: pointer;
-            border-radius: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .theme-toggle-btn:hover {
-            opacity: 0.8;
-            transform: scale(1.05);
-        }
-
         /* Első Teljes Képernyős Intro Szekció */
         .intro-hero {
             width: 100%;
             height: 100vh;
-            background-color: var(--bg-intro);
-            transition: background-color 0.5s ease;
+            background-color: #ffffff;
         }
 
         .brand-title {
             font-family: 'Oswald', sans-serif;
             font-weight: 300;
             font-size: clamp(3.5rem, 12vw, 10rem);
-            color: var(--text-intro);
+            color: #000000;
             text-transform: lowercase;
             letter-spacing: 4px;
             line-height: 1;
-            transition: color 0.5s ease;
         }
 
         /* YouTube Background Video Styling */
@@ -159,7 +105,6 @@
             background: rgba(9, 11, 16, 0.65);
             z-index: 1;
             pointer-events: none;
-            transition: background 0.5s ease;
         }
 
         /* Cyber Grid Overlay Background */
@@ -200,52 +145,9 @@
             pointer-events: none;
             background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(30, 64, 175, 0.05), transparent 70%);
         }
-
-        /* Globális Light Mode stílusok az egész oldalra */
-        body.light-mode {
-            background-color: #f1f5f9 !important;
-            color: #0f172a !important;
-        }
-
-        body.light-mode .glass-card {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: rgba(14, 165, 233, 0.3);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-        }
-
-        body.light-mode .glass-card:hover {
-            border-color: rgba(14, 165, 233, 0.8);
-            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.25);
-        }
-
-        body.light-mode .card-title {
-            color: #0f172a !important;
-        }
-
-        body.light-mode .card-desc {
-            color: #475569 !important;
-        }
-
-        body.light-mode footer {
-            border-color: rgba(0, 0, 0, 0.1) !important;
-            color: #64748b !important;
-        }
-
-        body.light-mode .bg-cyber-grid {
-            background-image: 
-                linear-gradient(to right, rgba(14, 165, 233, 0.08) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 64, 175, 0.08) 1px, transparent 1px);
-        }
-
-        body.light-mode .video-overlay {
-            background: rgba(241, 245, 249, 0.85);
-        }
     </style>
 </head>
-<body class="text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative transition-colors duration-500">
-
-    <!-- Az előző, elegáns téma váltó gomb (Jobb felső sarok) -->
-    <button class="theme-toggle-btn" id="themeToggle">Sötét mód</button>
+<body class="text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative">
 
     <!-- 1. SZEKCIÓ: Fehér / Világos Intro Nyitóoldal -->
     <section class="intro-hero relative z-30 flex flex-col justify-center items-center p-4">
@@ -268,7 +170,7 @@
         </iframe>
     </div>
     
-    <!-- Dark/Light Mode Overlay -->
+    <!-- Dark Mode Overlay -->
     <div class="video-overlay"></div>
 
     <!-- Dynamic Interactive Mouse Glow -->
@@ -420,24 +322,6 @@
         window.addEventListener('mousemove', (e) => {
             glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
             glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
-        });
-
-        // Globális Téma Váltó Funkció
-        const toggleBtn = document.getElementById('themeToggle');
-        
-        toggleBtn.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const isLight = currentTheme === 'light';
-
-            if (isLight) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                document.body.classList.remove('light-mode');
-                toggleBtn.textContent = 'Sötét mód';
-            } else {
-                document.documentElement.setAttribute('data-theme', 'light');
-                document.body.classList.add('light-mode');
-                toggleBtn.textContent = 'Világos mód';
-            }
         });
 
         // Interactive HTML5 Particle Network Canvas
