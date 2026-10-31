@@ -23,7 +23,7 @@
                         deepBlue: '#1e40af',
                         purpleGlow: '#8A2BE2',
                         darkBg: '#090b10',
-                        cardBg: 'rgba(15, 20, 32, 0.65)'
+                        cardBg: 'rgba(15, 20, 32, 0.85)'
                     },
                     fontFamily: {
                         oswald: ['Oswald', 'sans-serif'],
@@ -62,6 +62,7 @@
             width: 100%;
             height: 100vh;
             background-color: #ffffff;
+            transition: background-color 0.4s ease;
         }
 
         .brand-title {
@@ -96,56 +97,60 @@
             left: 50%;
             transform: translate(-50%, -50%);
             opacity: 0.45;
+            transition: opacity 0.4s ease;
         }
 
         /* Dark Overlay a jobb olvashatóságért */
         .video-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(9, 11, 16, 0.65);
+            background: rgba(9, 11, 16, 0.75);
             z-index: 1;
             pointer-events: none;
+            transition: background 0.4s ease;
         }
 
         /* Cyber Grid Overlay Background */
         .bg-cyber-grid {
             background-image: 
-                linear-gradient(to right, rgba(0, 255, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(30, 64, 175, 0.04) 1px, transparent 1px);
+                linear-gradient(to right, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 12, 157, 0.05) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
-        /* Glassmorphism Card Effect */
+        /* Magas Kontrasztú Glassmorphism Kártyák */
         .glass-card {
-            background: rgba(15, 20, 32, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 255, 255, 0.2);
+            background: rgba(13, 18, 28, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 255, 0.3);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .glass-card:hover {
-            border-color: rgba(0, 255, 255, 0.7);
-            box-shadow: 0 10px 30px -5px rgba(0, 255, 255, 0.35);
-            transform: translateY(-4px);
+            background: rgba(18, 25, 40, 0.98);
+            border-color: #00FFFF;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), inset 0 0 15px rgba(0, 255, 255, 0.15);
+            transform: translateY(-5px);
         }
 
         .glass-card-mandelbrot {
-            border: 1px solid rgba(30, 144, 255, 0.25);
+            border: 2px solid rgba(59, 130, 246, 0.4);
         }
 
         .glass-card-mandelbrot:hover {
-            border-color: rgba(30, 144, 255, 0.8);
-            box-shadow: 0 10px 30px -5px rgba(30, 144, 255, 0.45);
-            transform: translateY(-4px);
+            background: rgba(18, 25, 40, 0.98);
+            border-color: #3B82F6;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.15);
+            transform: translateY(-5px);
         }
 
         #interactive-glow {
             pointer-events: none;
-            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(30, 64, 175, 0.05), transparent 70%);
+            background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.1), rgba(255, 12, 157, 0.08), transparent 70%);
         }
 
-        /* Overlay Menü Animációk */
+        /* Overlay Menü Animációk & Magas Kontraszt */
         .menu-modal {
             opacity: 0;
             visibility: hidden;
@@ -165,28 +170,83 @@
         .menu-modal.active .menu-content {
             transform: scale(1) translateY(0);
         }
+
+        /* --- VILÁGOS MÓD (LIGHT MODE) OVERRIDES --- */
+        body.light-mode {
+            background-color: #e2e8f0 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .intro-hero {
+            background-color: #f8fafc;
+        }
+
+        body.light-mode .video-overlay {
+            background: rgba(241, 245, 249, 0.82);
+        }
+
+        body.light-mode .video-background-container iframe {
+            opacity: 0.25;
+        }
+
+        body.light-mode .menu-content {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+            border-color: #0284c7 !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        body.light-mode .glass-card {
+            background: rgba(248, 250, 252, 0.95) !important;
+            border-color: #0284c7 !important;
+        }
+
+        body.light-mode .glass-card:hover {
+            background: #ffffff !important;
+            border-color: #0369a1 !important;
+            box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.4) !important;
+        }
+
+        body.light-mode .menu-title-text,
+        body.light-mode .glass-card h3 {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .glass-card p {
+            color: #334155 !important;
+        }
+
+        body.light-mode .menu-divider {
+            border-color: rgba(0, 0, 0, 0.15) !important;
+        }
     </style>
 </head>
-<body class="text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative">
+<body class="text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative">
 
     <!-- LEBEGŐ MENÜ IKON GOMB (Jobb Felső Sarok) -->
     <div class="fixed top-6 right-6 z-50">
-        <button id="menu-toggle-btn" onclick="toggleMenu()" aria-label="Menü megnyitása" class="w-14 h-14 rounded-2xl bg-[#0f1420]/80 backdrop-blur-md border border-cyan/40 text-cyan flex items-center justify-center text-xl shadow-lg shadow-cyan/10 hover:border-cyan hover:shadow-cyan/30 hover:scale-105 transition-all duration-300 group cursor-pointer">
+        <button id="menu-toggle-btn" onclick="toggleMenu()" aria-label="Menü megnyitása" class="w-14 h-14 rounded-2xl bg-[#080c14]/90 backdrop-blur-md border-2 border-cyan text-cyan flex items-center justify-center text-xl shadow-[0_0_20px_rgba(0,255,255,0.25)] hover:border-magenta hover:text-magenta hover:shadow-[0_0_25px_rgba(255,12,157,0.4)] hover:scale-105 transition-all duration-300 group cursor-pointer">
             <i id="menu-icon" class="fa-solid fa-bars-staggered group-hover:rotate-12 transition-transform duration-300"></i>
         </button>
     </div>
 
-    <!-- POPUP GLASSMORPHISM MENÜ MODAL -->
-    <div id="nav-menu" class="menu-modal fixed inset-0 z-40 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-        <div class="menu-content w-full max-w-4xl bg-[#0d121f]/90 border border-cyan/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative my-auto">
+    <!-- LEBEGŐ SÖTÉT / VILÁGOS MÓD VÁLTÓ IKON (Jobb Alsó Sarok) -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" aria-label="Sötét/Világos mód váltása" class="w-14 h-14 rounded-2xl bg-[#080c14]/90 backdrop-blur-md border-2 border-magenta text-magenta flex items-center justify-center text-xl shadow-[0_0_20px_rgba(255,12,157,0.25)] hover:border-cyan hover:text-cyan hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] hover:scale-105 transition-all duration-300 group cursor-pointer">
+            <i id="theme-icon" class="fa-solid fa-moon group-hover:rotate-45 transition-transform duration-300"></i>
+        </button>
+    </div>
+
+    <!-- POPUP GLASSMORPHISM MENÜ MODAL (MAGAS KONTRASZTÚ) -->
+    <div id="nav-menu" class="menu-modal fixed inset-0 z-40 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div class="menu-content w-full max-w-4xl bg-[#060910]/95 border-2 border-cyan rounded-3xl p-6 sm:p-10 shadow-[0_0_50px_rgba(0,255,255,0.25)] relative my-auto">
             
             <!-- Fejléc -->
-            <div class="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
+            <div class="flex items-center justify-between pb-6 mb-8 border-b-2 border-cyan/30 menu-divider">
                 <div>
-                    <h2 class="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-wider">Navigáció</h2>
-                    <p class="text-xs font-mono text-cyan mt-1">// SuperAgent.ai Modulok</p>
+                    <h2 class="menu-title-text font-orbitron text-2xl sm:text-3xl font-black text-white tracking-wider">NAVIGÁCIÓ</h2>
+                    <p class="text-xs font-mono text-cyan font-bold mt-1 tracking-widest">// SUPERAGENT.AI MODULOK</p>
                 </div>
-                <button onclick="toggleMenu()" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-cyan/50 text-slate-400 hover:text-cyan transition-all flex items-center justify-center text-lg">
+                <button onclick="toggleMenu()" class="w-12 h-12 rounded-2xl bg-cyan/10 border-2 border-cyan/50 text-cyan hover:bg-magenta hover:border-magenta hover:text-white transition-all duration-300 flex items-center justify-center text-xl shadow-lg">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -196,82 +256,82 @@
 
                 <!-- MENU ITEM 1 -->
                 <a href="https://nyirigabor.hu/index1.html" onclick="toggleMenu()" class="glass-card group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-cyan/10 rounded-full blur-xl group-hover:bg-cyan/20 transition-all"></div>
+                    <div class="absolute top-0 right-0 w-28 h-28 bg-cyan/20 rounded-full blur-2xl group-hover:bg-cyan/35 transition-all"></div>
                     <div>
                         <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-cyan border-2 border-cyan flex items-center justify-center text-black text-xl font-bold group-hover:scale-110 group-hover:bg-magenta group-hover:border-magenta group-hover:text-white transition-all duration-300 shadow-md shadow-cyan/30">
                                 <i class="fa-solid fa-robot"></i>
                             </div>
-                            <span class="text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan text-black font-extrabold uppercase shadow-sm">
                                 AI Content
                             </span>
                         </div>
-                        <h3 class="font-orbitron text-lg font-bold text-white group-hover:text-cyan transition-colors mb-2">
+                        <h3 class="font-orbitron text-xl font-bold text-white group-hover:text-cyan transition-colors mb-2 tracking-wide">
                             AI Hírlevél
                         </h3>
-                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                        <p class="text-xs text-slate-200 leading-relaxed font-normal">
                             Friss, intelligens AI hírlevelek egyenesen a postaládádba.
                         </p>
                     </div>
-                    <div class="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
-                        <span class="flex items-center gap-1.5 text-[11px]">
-                            <i class="fa-solid fa-mug-hot text-cyan"></i> Indítás
+                    <div class="mt-6 pt-4 border-t border-white/20 menu-divider flex items-center justify-between text-xs font-mono text-cyan font-bold group-hover:text-magenta">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-mug-hot text-sm"></i> Indítás
                         </span>
-                        <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
+                        <i class="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-2 transition-transform"></i>
                     </div>
                 </a>
 
                 <!-- MENU ITEM 2 -->
                 <a href="https://nyirigabor.hu/index3.html" onclick="toggleMenu()" class="glass-card group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-purpleGlow/10 rounded-full blur-xl group-hover:bg-purpleGlow/20 transition-all"></div>
+                    <div class="absolute top-0 right-0 w-28 h-28 bg-purpleGlow/25 rounded-full blur-2xl group-hover:bg-purpleGlow/40 transition-all"></div>
                     <div>
                         <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xl group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500 border-2 border-purple-400 flex items-center justify-center text-white text-xl font-bold group-hover:scale-110 group-hover:bg-magenta group-hover:border-magenta transition-all duration-300 shadow-md shadow-purple-500/30">
                                 <i class="fa-solid fa-atom"></i>
                             </div>
-                            <span class="text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/40 text-purple-300 font-bold uppercase">
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-purple-500 text-white font-extrabold uppercase shadow-sm">
                                 Quantum
                             </span>
                         </div>
-                        <h3 class="font-orbitron text-lg font-bold text-white group-hover:text-purple-300 transition-colors mb-2">
+                        <h3 class="font-orbitron text-xl font-bold text-white group-hover:text-purple-300 transition-colors mb-2 tracking-wide">
                             Kvantum Játszótér
                         </h3>
-                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                        <p class="text-xs text-slate-200 leading-relaxed font-normal">
                             Interaktív kvantumszuperpozíció és AI algoritmus szimuláció.
                         </p>
                     </div>
-                    <div class="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-purple-300">
-                        <span class="flex items-center gap-1.5 text-[11px]">
-                            <i class="fa-solid fa-gamepad text-purple-400"></i> Szimuláció
+                    <div class="mt-6 pt-4 border-t border-white/20 menu-divider flex items-center justify-between text-xs font-mono text-purple-300 font-bold group-hover:text-magenta">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-sm"></i> Szimuláció
                         </span>
-                        <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
+                        <i class="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-2 transition-transform"></i>
                     </div>
                 </a>
 
                 <!-- MENU ITEM 3 -->
                 <a href="mandelbrot_info.html" onclick="toggleMenu()" class="glass-card glass-card-mandelbrot group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-600/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
+                    <div class="absolute top-0 right-0 w-28 h-28 bg-blue-600/25 rounded-full blur-2xl group-hover:bg-blue-500/40 transition-all"></div>
                     <div>
                         <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-blue-600 border-2 border-blue-400 flex items-center justify-center text-white text-xl font-bold group-hover:scale-110 group-hover:bg-magenta group-hover:border-magenta transition-all duration-300 shadow-md shadow-blue-500/30">
                                 <i class="fa-solid fa-network-wired"></i>
                             </div>
-                            <span class="text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-400/40 text-blue-400 font-bold uppercase">
+                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-blue-600 text-white font-extrabold uppercase shadow-sm">
                                 Visuals
                             </span>
                         </div>
-                        <h3 class="font-orbitron text-lg font-bold text-white group-hover:text-blue-400 transition-colors mb-2">
+                        <h3 class="font-orbitron text-xl font-bold text-white group-hover:text-blue-300 transition-colors mb-2 tracking-wide">
                             Mandelbrot Utazás
                         </h3>
-                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                        <p class="text-xs text-slate-200 leading-relaxed font-normal">
                             Végtelen matematikai struktúrák és fraktál világok.
                         </p>
                     </div>
-                    <div class="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-blue-400">
-                        <span class="flex items-center gap-1.5 text-[11px]">
-                            <i class="fa-solid fa-compass text-blue-400"></i> Felfedezés
+                    <div class="mt-6 pt-4 border-t border-white/20 menu-divider flex items-center justify-between text-xs font-mono text-blue-300 font-bold group-hover:text-magenta">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-compass text-sm"></i> Felfedezés
                         </span>
-                        <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
+                        <i class="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-2 transition-transform"></i>
                     </div>
                 </a>
 
@@ -301,15 +361,15 @@
     <div id="interactive-glow" class="fixed inset-0 z-10 transition-opacity duration-300"></div>
 
     <!-- HTML5 Particle Canvas -->
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-45"></canvas>
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-55"></canvas>
 
     <!-- Animated Cyber Grid Background -->
-    <div class="fixed inset-0 bg-cyber-grid z-10 opacity-60 animate-grid-move pointer-events-none"></div>
+    <div class="fixed inset-0 bg-cyber-grid z-10 opacity-70 animate-grid-move pointer-events-none"></div>
 
     <!-- Ambient Glowing Orbs -->
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
-    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-blue-900/30 rounded-full blur-[140px] pointer-events-none z-10"></div>
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none z-10"></div>
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/25 rounded-full blur-[140px] pointer-events-none z-10"></div>
+    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/15 rounded-full blur-[180px] pointer-events-none z-10"></div>
 
     <!-- Scripts -->
     <script>
@@ -326,6 +386,20 @@
             } else {
                 icon.className = 'fa-solid fa-bars-staggered group-hover:rotate-12 transition-transform duration-300';
                 document.body.style.overflow = '';
+            }
+        }
+
+        // Toggle Sötét/Világos Téma Funkció
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                icon.className = 'fa-solid fa-sun group-hover:rotate-45 transition-transform duration-300 text-amber-400';
+            } else {
+                icon.className = 'fa-solid fa-moon group-hover:rotate-45 transition-transform duration-300 text-magenta';
             }
         }
 
@@ -372,8 +446,8 @@
                 this.vx = (Math.random() - 0.5) * 0.4;
                 this.vy = (Math.random() - 0.5) * 0.4;
                 this.radius = Math.random() * 1.5 + 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(30, 64, 175, ';
-                this.alpha = Math.random() * 0.5 + 0.2;
+                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
+                this.alpha = Math.random() * 0.5 + 0.3;
             }
 
             update() {
@@ -413,8 +487,8 @@
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.12 * (1 - dist / 120)})`;
-                        ctx.lineWidth = 0.5;
+                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.15 * (1 - dist / 120)})`;
+                        ctx.lineWidth = 0.6;
                         ctx.stroke();
                     }
                 }
