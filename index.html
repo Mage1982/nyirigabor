@@ -117,47 +117,171 @@
 
         /* Glassmorphism Card Effect */
         .glass-card {
-            background: rgba(15, 20, 32, 0.65);
+            background: rgba(15, 20, 32, 0.75);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(0, 255, 255, 0.15);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .glass-card:hover {
             border-color: rgba(0, 255, 255, 0.7);
-            box-shadow: 0 10px 35px -5px rgba(0, 255, 255, 0.35), inset 0 0 20px rgba(0, 255, 255, 0.1);
-            transform: translateY(-8px);
+            box-shadow: 0 10px 30px -5px rgba(0, 255, 255, 0.35);
+            transform: translateY(-4px);
         }
 
         .glass-card-mandelbrot {
-            border: 1px solid rgba(30, 144, 255, 0.2);
+            border: 1px solid rgba(30, 144, 255, 0.25);
         }
 
         .glass-card-mandelbrot:hover {
             border-color: rgba(30, 144, 255, 0.8);
-            box-shadow: 0 10px 35px -5px rgba(30, 144, 255, 0.45), inset 0 0 25px rgba(14, 116, 144, 0.25);
-            transform: translateY(-8px);
+            box-shadow: 0 10px 30px -5px rgba(30, 144, 255, 0.45);
+            transform: translateY(-4px);
         }
 
         #interactive-glow {
             pointer-events: none;
             background: radial-gradient(650px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 255, 255, 0.08), rgba(30, 64, 175, 0.05), transparent 70%);
         }
+
+        /* Overlay Menü Animációk */
+        .menu-modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .menu-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-modal .menu-content {
+            transform: scale(0.95) translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .menu-modal.active .menu-content {
+            transform: scale(1) translateY(0);
+        }
     </style>
 </head>
 <body class="text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-cyan selection:text-black bg-[#090b10] relative">
 
+    <!-- LEBEGŐ MENÜ IKON GOMB (Jobb Felső Sarok) -->
+    <div class="fixed top-6 right-6 z-50">
+        <button id="menu-toggle-btn" onclick="toggleMenu()" aria-label="Menü megnyitása" class="w-14 h-14 rounded-2xl bg-[#0f1420]/80 backdrop-blur-md border border-cyan/40 text-cyan flex items-center justify-center text-xl shadow-lg shadow-cyan/10 hover:border-cyan hover:shadow-cyan/30 hover:scale-105 transition-all duration-300 group cursor-pointer">
+            <i id="menu-icon" class="fa-solid fa-bars-staggered group-hover:rotate-12 transition-transform duration-300"></i>
+        </button>
+    </div>
+
+    <!-- POPUP GLASSMORPHISM MENÜ MODAL -->
+    <div id="nav-menu" class="menu-modal fixed inset-0 z-40 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+        <div class="menu-content w-full max-w-4xl bg-[#0d121f]/90 border border-cyan/30 rounded-3xl p-6 sm:p-10 shadow-2xl relative my-auto">
+            
+            <!-- Fejléc -->
+            <div class="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
+                <div>
+                    <h2 class="font-orbitron text-2xl sm:text-3xl font-bold text-white tracking-wider">Navigáció</h2>
+                    <p class="text-xs font-mono text-cyan mt-1">// SuperAgent.ai Modulok</p>
+                </div>
+                <button onclick="toggleMenu()" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:border-cyan/50 text-slate-400 hover:text-cyan transition-all flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Menü Kártyák Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <!-- MENU ITEM 1 -->
+                <a href="https://nyirigabor.hu/index1.html" onclick="toggleMenu()" class="glass-card group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-cyan/10 rounded-full blur-xl group-hover:bg-cyan/20 transition-all"></div>
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <span class="text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
+                                AI Content
+                            </span>
+                        </div>
+                        <h3 class="font-orbitron text-lg font-bold text-white group-hover:text-cyan transition-colors mb-2">
+                            AI Hírlevél
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Friss, intelligens AI hírlevelek egyenesen a postaládádba.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
+                        <span class="flex items-center gap-1.5 text-[11px]">
+                            <i class="fa-solid fa-mug-hot text-cyan"></i> Indítás
+                        </span>
+                        <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
+                    </div>
+                </a>
+
+                <!-- MENU ITEM 2 -->
+                <a href="https://nyirigabor.hu/index3.html" onclick="toggleMenu()" class="glass-card group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purpleGlow/10 rounded-full blur-xl group-hover:bg-purpleGlow/20 transition-all"></div>
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xl group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all">
+                                <i class="fa-solid fa-atom"></i>
+                            </div>
+                            <span class="text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-full bg-purple-500/10 border border-purple-500/40 text-purple-300 font-bold uppercase">
+                                Quantum
+                            </span>
+                        </div>
+                        <h3 class="font-orbitron text-lg font-bold text-white group-hover:text-purple-300 transition-colors mb-2">
+                            Kvantum Játszótér
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Interaktív kvantumszuperpozíció és AI algoritmus szimuláció.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-purple-300">
+                        <span class="flex items-center gap-1.5 text-[11px]">
+                            <i class="fa-solid fa-gamepad text-purple-400"></i> Szimuláció
+                        </span>
+                        <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
+                    </div>
+                </a>
+
+                <!-- MENU ITEM 3 -->
+                <a href="mandelbrot_info.html" onclick="toggleMenu()" class="glass-card glass-card-mandelbrot group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-600/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-all"></div>
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </div>
+                            <span class="text-[9px] font-mono tracking-widest px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-400/40 text-blue-400 font-bold uppercase">
+                                Visuals
+                            </span>
+                        </div>
+                        <h3 class="font-orbitron text-lg font-bold text-white group-hover:text-blue-400 transition-colors mb-2">
+                            Mandelbrot Utazás
+                        </h3>
+                        <p class="text-xs text-slate-400 leading-relaxed font-light">
+                            Végtelen matematikai struktúrák és fraktál világok.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-3 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-blue-400">
+                        <span class="flex items-center gap-1.5 text-[11px]">
+                            <i class="fa-solid fa-compass text-blue-400"></i> Felfedezés
+                        </span>
+                        <i class="fa-solid fa-arrow-right transform group-hover:translate-x-1.5 transition-transform"></i>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
     <!-- 1. SZEKCIÓ: Fehér / Világos Intro Nyitóoldal -->
     <section class="intro-hero relative z-30 flex flex-col justify-center items-center p-4">
         <h1 class="brand-title select-none">nyirigabor.hu</h1>
-        
-        <!-- Animált lefelé görgetés jelző nyíl -->
-        <a href="#main-dashboard" class="absolute bottom-8 text-slate-500 hover:text-black transition-colors duration-300 animate-bounce-slow flex flex-col items-center gap-2">
-            <span class="text-xs font-mono tracking-widest uppercase">Gördíts lejjebb</span>
-            <i class="fa-solid fa-chevron-down text-xl"></i>
-        </a>
     </section>
 
     <!-- YouTube Background Video -->
@@ -187,101 +311,34 @@
     <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-blue-900/30 rounded-full blur-[140px] pointer-events-none z-10"></div>
     <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/10 rounded-full blur-[180px] pointer-events-none z-10"></div>
 
-    <!-- 2. SZEKCIÓ: SuperAgent.ai Irányítópult -->
-    <div id="main-dashboard" class="relative z-20 min-h-screen flex flex-col justify-center p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
-
-        <!-- Main Grid Container -->
-        <main class="my-auto py-12 sm:py-16">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-
-                <!-- CARD 1: Automatikus AI Hírlevél -->
-                <a href="https://nyirigabor.hu/index1.html" class="glass-card group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-2xl group-hover:bg-cyan/20 transition-all duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-cyan/10 border border-cyan/30 flex items-center justify-center text-cyan text-2xl group-hover:scale-110 group-hover:bg-cyan group-hover:text-black transition-all duration-300 shadow-lg shadow-cyan/10">
-                                <i class="fa-solid fa-robot"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan/10 border border-cyan/40 text-cyan font-bold uppercase">
-                                AI Content
-                            </span>
-                        </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-cyan transition-colors mb-4">
-                            Automatikus AI Hírlevél
-                        </h3>
-                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
-                            Friss, intelligens AI hírlevelek egyenesen a postaládádba – a tökéletes társ a reggeli kávéd mellé.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-cyan">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-mug-hot text-[10px] text-cyan"></i> AI Hírlevél Indítása
-                        </span>
-                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </div>
-                </a>
-
-                <!-- CARD 2: AI Kvantum Szimuláció -->
-                <a href="https://nyirigabor.hu/index3.html" class="glass-card group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-purpleGlow/10 rounded-full blur-2xl group-hover:bg-purpleGlow/20 transition-all duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl group-hover:scale-110 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shadow-lg shadow-purple-500/10">
-                                <i class="fa-solid fa-atom"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/40 text-purple-300 font-bold uppercase">
-                                AI & Quantum
-                            </span>
-                        </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-purple-300 transition-colors mb-4">
-                            AI Kvantum Játszótér
-                        </h3>
-                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
-                            Intelligens kvantummixek és algoritmusok! Interaktív szimuláció, ahol a mesterséges intelligencia találkozik a kvantumszuperpozícióval.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-purple-300">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-gamepad text-[10px] text-purple-400"></i> Szimuláció Indítása
-                        </span>
-                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </div>
-                </a>
-
-                <!-- CARD 3: AI Mandelbrot Utazás -->
-                <a href="mandelbrot_info.html" class="glass-card glass-card-mandelbrot group rounded-2xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all duration-500"></div>
-                    <div class="relative z-10">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 text-2xl group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 shadow-lg shadow-blue-500/10">
-                                <i class="fa-solid fa-network-wired"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/40 text-blue-400 font-bold uppercase">
-                                AI Visuals
-                            </span>
-                        </div>
-                        <h3 class="card-title font-orbitron text-xl sm:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors mb-4">
-                            AI Mandelbrot Utazás
-                        </h3>
-                        <p class="card-desc text-sm text-slate-400 leading-relaxed font-light transition-colors">
-                            Algoritmusok generálta végtelen világok. Vizuális felfedezés a matematikai struktúrák és a mesterséges intelligencia találkozásánál.
-                        </p>
-                    </div>
-                    <div class="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-slate-400 group-hover:text-blue-400">
-                        <span class="flex items-center gap-2">
-                            <i class="fa-solid fa-compass text-[10px] text-blue-400"></i> Felfedezés
-                        </span>
-                        <i class="fa-solid fa-arrow-right-long transform group-hover:translate-x-2 transition-transform duration-300"></i>
-                    </div>
-                </a>
-
-            </div>
-        </main>
-
-    </div>
-
     <!-- Scripts -->
     <script>
+        // Toggle Menü Funkció
+        function toggleMenu() {
+            const menu = document.getElementById('nav-menu');
+            const icon = document.getElementById('menu-icon');
+            
+            menu.classList.toggle('active');
+            
+            if (menu.classList.contains('active')) {
+                icon.className = 'fa-solid fa-xmark group-hover:rotate-90 transition-transform duration-300';
+                document.body.style.overflow = 'hidden';
+            } else {
+                icon.className = 'fa-solid fa-bars-staggered group-hover:rotate-12 transition-transform duration-300';
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Bezárás ESC gombra
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const menu = document.getElementById('nav-menu');
+                if (menu.classList.contains('active')) {
+                    toggleMenu();
+                }
+            }
+        });
+
         // Mouse Spotlight Follower
         const glowContainer = document.getElementById('interactive-glow');
         window.addEventListener('mousemove', (e) => {
