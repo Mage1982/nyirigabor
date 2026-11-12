@@ -1,21 +1,91 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" data-theme="dark" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AETHERIA // Generative Cyber Visualizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#090b10" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>AETHERIA // Generative Visualizer | nyirigabor.hu</title>
+
+    <!-- Azonnali téma betöltés villanás nélkül -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('ng_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+            const meta = document.getElementById('meta-theme-color');
+            if (meta) meta.setAttribute('content', saved === 'light' ? '#eef2f6' : '#090b10');
+        })();
+    </script>
+
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        magenta: '#FF0C9D',
+                        cyan: '#00FFFF',
+                        purpleGlow: '#8A2BE2',
+                        emeraldGlow: '#10b981'
+                    },
+                    fontFamily: {
+                        oswald: ['Oswald', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
+        /* --- NYIRIGABOR-DESIGN-SYSTEM TOKENS --- */
         :root {
-            --bg-color: #08090d;
-            --panel-bg: rgba(16, 19, 28, 0.65);
-            --panel-border: rgba(0, 240, 255, 0.18);
-            --primary: #00f0ff;
-            --secondary: #7000ff;
-            --accent: #ff0055;
-            --text: #e0e8f0;
-            --text-dim: #7a8b9e;
-            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            --font-mono: 'Consolas', 'Courier New', monospace;
+            --bg-base: #090b10;
+            --bg-overlay: rgba(9, 11, 16, 0.82);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-primary: #00FFFF;
+            --accent-secondary: #FF0C9D;
+            --card-bg: rgba(13, 18, 28, 0.78);
+            --card-bg-hover: rgba(18, 26, 42, 0.94);
+            --card-inner: rgba(9, 13, 22, 0.68);
+            --card-border: rgba(0, 255, 255, 0.25);
+            --card-border-hover: #00FFFF;
+            --dock-bg: rgba(10, 14, 23, 0.86);
+            --grid-line-1: rgba(0, 255, 255, 0.05);
+            --grid-line-2: rgba(255, 12, 157, 0.04);
+            --shadow-glow: 0 12px 32px -8px rgba(0, 255, 255, 0.22);
+            --input-bg: rgba(9, 13, 22, 0.85);
+        }
+
+        html[data-theme="light"] {
+            --bg-base: #eef2f6;
+            --bg-overlay: rgba(241, 245, 249, 0.88);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --accent-primary: #0284c7;
+            --accent-secondary: #db2777;
+            --card-bg: rgba(255, 255, 255, 0.84);
+            --card-bg-hover: rgba(255, 255, 255, 0.98);
+            --card-inner: rgba(241, 245, 249, 0.88);
+            --card-border: rgba(2, 132, 199, 0.25);
+            --card-border-hover: #0284c7;
+            --dock-bg: rgba(255, 255, 255, 0.88);
+            --grid-line-1: rgba(2, 132, 199, 0.07);
+            --grid-line-2: rgba(219, 39, 119, 0.05);
+            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.16);
+            --input-bg: rgba(255, 255, 255, 0.95);
         }
 
         * {
@@ -23,284 +93,481 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body, html {
             width: 100%;
-            height: 100%;
+            height: 100dvh;
             overflow: hidden;
-            background-color: var(--bg-color);
-            color: var(--text);
-            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.45s ease, color 0.45s ease;
         }
 
         /* Fullscreen Canvas */
         #viewport {
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: fixed;
+            inset: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
             cursor: crosshair;
+            touch-action: none;
         }
 
-        /* Glassmorphism UI Overlay */
-        .ui-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 24px;
+        .bg-cyber-grid {
+            background-image: 
+                linear-gradient(to right, var(--grid-line-1) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line-2) 1px, transparent 1px);
+            background-size: 36px 36px;
         }
 
-        .interactive {
-            pointer-events: auto;
+        /* --- HUD & APP SURFACE --- */
+        .app-surface {
+            background: var(--dock-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-glow);
+            transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.2s ease;
         }
 
-        /* Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .app-inner-box {
+            background: var(--card-inner);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
-            padding: 10px 18px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .accent-gradient-text {
+            background: linear-gradient(120deg, var(--accent-primary) 15%, var(--accent-secondary) 95%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            line-height: 1.25;
+            padding-bottom: 0.1em;
         }
 
-        .brand-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
-            animation: pulse 2s infinite;
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7);
+            animation: pulseRing 2s infinite;
+        }
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.65); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
         }
 
-        .brand-title {
-            font-size: 14px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-family: var(--font-mono);
-            color: #fff;
+        /* --- CONTROL PANEL (DESKTOP SIDEBAR / MOBILE DRAWER) --- */
+        #panel-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 25;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .brand-title span {
-            color: var(--primary);
+        #panel-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        /* Control Panel */
-        .control-panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--panel-border);
+        #control-panel {
+            position: fixed;
+            top: calc(env(safe-area-inset-top) + 74px);
+            right: 20px;
+            bottom: 20px;
+            width: 340px;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1.5px solid var(--card-border);
+            border-radius: 24px;
             padding: 20px;
-            border-radius: 16px;
-            width: 320px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             gap: 16px;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+            z-index: 30;
+            box-shadow: var(--shadow-glow);
+            overflow-y: auto;
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        .panel-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .panel-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-dim);
-            font-family: var(--font-mono);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .btn-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-
-        .btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-family: var(--font-mono);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-
-        .btn:hover {
-            background: rgba(0, 240, 255, 0.1);
-            border-color: var(--primary);
-            color: #fff;
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
-        }
-
-        .btn.active {
-            background: var(--primary);
-            color: #000;
-            font-weight: bold;
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary);
-        }
-
-        /* Range Slider Styling */
-        input[type=range] {
-            -webkit-appearance: none;
-            width: 100%;
-            background: transparent;
-        }
-
-        input[type=range]:focus {
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            height: 14px;
-            width: 14px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -5px;
-            box-shadow: 0 0 10px var(--primary);
-        }
-
-        /* Footer Info */
-        footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            font-size: 12px;
-            color: var(--text-dim);
-            font-family: var(--font-mono);
-        }
-
-        .instructions {
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
-            padding: 8px 14px;
-            border-radius: 8px;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.4; transform: scale(0.9); }
-            50% { opacity: 1; transform: scale(1.1); }
-            100% { opacity: 0.4; transform: scale(0.9); }
+        #control-panel.collapsed {
+            transform: translateX(calc(100% + 32px));
+            opacity: 0;
+            pointer-events: none;
         }
 
         @media (max-width: 768px) {
-            .ui-layer { padding: 12px; }
-            .control-panel { width: 100%; max-width: 280px; }
-            .instructions { display: none; }
+            #control-panel {
+                top: auto;
+                left: 12px;
+                right: 12px;
+                bottom: calc(env(safe-area-inset-bottom) + 84px);
+                width: auto;
+                max-height: 70dvh;
+                border-radius: 26px;
+                padding: 18px;
+            }
+
+            #control-panel.collapsed {
+                transform: translateY(calc(100% + 110px));
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* --- MÓD ÉS PALETTA GOMBOK --- */
+        .mode-btn {
+            background: var(--card-inner);
+            border: 1.5px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 9px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #090b10;
+            border-color: transparent;
+            box-shadow: 0 6px 18px -4px rgba(0, 255, 255, 0.4);
+        }
+
+        /* Paletta választó kártyák */
+        .palette-btn {
+            background: var(--card-inner);
+            border: 1.5px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .palette-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .palette-btn.active {
+            border-color: var(--accent-primary);
+            background: var(--card-bg-hover);
+            box-shadow: 0 0 14px rgba(0, 255, 255, 0.22);
+        }
+
+        .swatch-dots {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .swatch-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .swatch-dots span + span {
+            margin-left: -4px;
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+            height: 6px;
+            cursor: pointer;
         }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-magenta selection:text-white">
 
+    <!-- Háttér finom rács + Fő Generatív Vászon -->
+    <div class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none opacity-60"></div>
     <canvas id="viewport"></canvas>
 
-    <div class="ui-layer">
-        <header class="interactive">
-            <div class="brand">
-                <div class="brand-dot"></div>
-                <div class="brand-title">Aetheria <span>// Labs</span></div>
+    <!-- FELSŐ HUD HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-20 pointer-events-none" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
+            
+            <!-- Főoldal gomb -->
+            <a href="index.html" class="pointer-events-auto app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-mono font-bold hover:scale-105 active:scale-95" style="color: var(--accent-primary);">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>FŐOLDAL</span>
+            </a>
+
+            <!-- Élő Státusz + Óra -->
+            <div class="pointer-events-auto app-surface px-3.5 py-2 rounded-full flex items-center gap-2.5">
+                <span class="w-2 h-2 rounded-full bg-cyan pulse-dot"></span>
+                <span class="font-mono text-[11px] sm:text-xs tracking-wider uppercase font-semibold" style="color: var(--text-secondary);">
+                    SYS.ONLINE <span class="opacity-40 mx-1">|</span> <span id="mode-indicator" style="color: var(--accent-primary);">NEURONHÁLÓ</span> <span class="hidden sm:inline opacity-40 mx-1">|</span> <span id="live-clock" class="hidden sm:inline">00:00</span>
+                </span>
             </div>
-        </header>
 
-        <main class="interactive" style="align-self: flex-start; margin-top: auto; margin-bottom: 20px;">
-            <div class="control-panel">
-                <div class="panel-group">
-                    <div class="panel-label">
-                        <span>Szimulációs Mód</span>
-                    </div>
-                    <div class="btn-grid">
-                        <button class="btn active" onclick="setMode('neural')">Neuronháló</button>
-                        <button class="btn" onclick="setMode('quantum')">Kvantumraj</button>
-                        <button class="btn" onclick="setMode('matrix')">Mátrix Rács</button>
-                        <button class="btn" onclick="setMode('pulse')">Kozmosz</button>
-                    </div>
+            <!-- Jobb oldali vezérlők: Sötét/Világos téma + Panel -->
+            <div class="pointer-events-auto flex items-center gap-2">
+                <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95" style="color: var(--accent-secondary);">
+                    <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
+                    <span id="theme-label" class="hidden md:inline">LIGHT</span>
+                </button>
+
+                <button onclick="togglePanel()" aria-label="Vezérlőpult megnyitása" class="hidden md:flex app-surface h-10 px-4 rounded-full items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95" style="color: var(--accent-primary);">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>VEZÉRLŐK</span>
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Mobil háttér sötétítés nyitott panelnél -->
+    <div id="panel-overlay" onclick="hidePanel()"></div>
+
+    <!-- VEZÉRLŐPULT (DESKTOP SIDEBAR / MOBILE BOTTOM SHEET) -->
+    <aside id="control-panel" aria-label="Aetheria vezérlőpult">
+        <!-- Mobil lehúzó sáv -->
+        <div class="w-12 h-1.5 rounded-full bg-slate-500/40 mx-auto -mt-1 mb-0.5 md:hidden"></div>
+
+        <!-- Panel Fejléc -->
+        <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--card-border);">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan to-magenta flex items-center justify-center text-slate-950 font-orbitron font-black text-xs shadow-md">
+                    AE
                 </div>
-
-                <div class="panel-group">
-                    <div class="panel-label">
-                        <span>Színpaletta</span>
-                    </div>
-                    <div class="btn-grid">
-                        <button class="btn active" onclick="setPalette('cyan')">Cian Négyzet</button>
-                        <button class="btn" onclick="setPalette('neon')">Neo Violet</button>
-                        <button class="btn" onclick="setPalette('amber')">Kiber Arany</button>
-                        <button class="btn" onclick="setPalette('emerald')">Smaragd</button>
-                    </div>
-                </div>
-
-                <div class="panel-group">
-                    <div class="panel-label">
-                        <span>Sűrűség</span>
-                        <span id="count-val">100</span>
-                    </div>
-                    <input type="range" id="particle-count" min="30" max="250" value="100" oninput="updateParticleCount(this.value)">
-                </div>
-
-                <div class="panel-group">
-                    <div class="panel-label">
-                        <span>Audio Szintetizátor</span>
-                        <span id="audio-status">Ki</span>
-                    </div>
-                    <button class="btn" id="audio-btn" onclick="toggleAudio()" style="width: 100%;">Hang Aktiválása</button>
+                <div>
+                    <h1 class="font-orbitron text-sm font-extrabold uppercase tracking-wider accent-gradient-text">
+                        Aetheria Labs
+                    </h1>
+                    <p class="text-[10px] font-mono" style="color: var(--text-muted);">// GENERATIVE CYBER VISUALIZER</p>
                 </div>
             </div>
-        </main>
 
-        <footer>
-            <div class="instructions">
-                Kattints vagy húzd az egeret az interakcióhoz
+            <button onclick="hidePanel()" aria-label="Panel bezárása" class="w-8 h-8 rounded-xl flex items-center justify-center border transition-colors cursor-pointer" style="border-color: var(--card-border); color: var(--text-secondary);">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- 1. Szimulációs Mód -->
+        <div class="space-y-2">
+            <div class="text-[11px] font-mono uppercase tracking-wider font-bold flex justify-between" style="color: var(--text-secondary);">
+                <span>Szimulációs Mód</span>
             </div>
-            <div style="font-size: 10px; opacity: 0.6;">
-                DESIGNED FOR NYIRIGABOR.HU
+            <div class="grid grid-cols-2 gap-2" id="mode-buttons">
+                <button class="mode-btn active" data-mode="neural" onclick="setMode('neural', this)">
+                    <i class="fa-solid fa-diagram-project"></i> Neuronháló
+                </button>
+                <button class="mode-btn" data-mode="quantum" onclick="setMode('quantum', this)">
+                    <i class="fa-solid fa-atom"></i> Kvantumraj
+                </button>
+                <button class="mode-btn" data-mode="matrix" onclick="setMode('matrix', this)">
+                    <i class="fa-solid fa-border-all"></i> Mátrix Rács
+                </button>
+                <button class="mode-btn" data-mode="pulse" onclick="setMode('pulse', this)">
+                    <i class="fa-solid fa-hurricane"></i> Kozmosz
+                </button>
             </div>
-        </footer>
-    </div>
+        </div>
+
+        <!-- 2. Látványos Színpaletták -->
+        <div class="space-y-2">
+            <div class="text-[11px] font-mono uppercase tracking-wider font-bold flex justify-between" style="color: var(--text-secondary);">
+                <span>Színpaletta</span>
+                <span id="palette-name" style="color: var(--accent-primary);">Cyber Cyan</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2" id="palette-buttons">
+                <button class="palette-btn active" data-palette="cyan" onclick="setPalette('cyan', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#00FFFF"></span>
+                        <span style="background:#8A2BE2"></span>
+                    </span>
+                    <span>Cyber Cyan</span>
+                </button>
+                <button class="palette-btn" data-palette="neon" onclick="setPalette('neon', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#FF0C9D"></span>
+                        <span style="background:#00FFFF"></span>
+                    </span>
+                    <span>Super Neon</span>
+                </button>
+                <button class="palette-btn" data-palette="amber" onclick="setPalette('amber', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#FFB700"></span>
+                        <span style="background:#FF2E63"></span>
+                    </span>
+                    <span>Kiber Arany</span>
+                </button>
+                <button class="palette-btn" data-palette="emerald" onclick="setPalette('emerald', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#00FF88"></span>
+                        <span style="background:#0EA5E9"></span>
+                    </span>
+                    <span>Smaragd</span>
+                </button>
+                <button class="palette-btn col-span-2 justify-center" data-palette="aurora" onclick="setPalette('aurora', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#00FFFF"></span>
+                        <span style="background:#FF0C9D"></span>
+                        <span style="background:#FFB700"></span>
+                    </span>
+                    <span>Prizma Spektrum (Multi-Color)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Részecske Sűrűség -->
+        <div class="space-y-1.5">
+            <div class="text-[11px] font-mono uppercase tracking-wider font-bold flex justify-between items-center" style="color: var(--text-secondary);">
+                <span>Sűrűség &amp; Energia</span>
+                <span id="count-val" class="font-mono text-xs px-2 py-0.5 rounded-md app-inner-box font-bold" style="color: var(--accent-primary);">110</span>
+            </div>
+            <input type="range" id="particle-count" min="40" max="240" value="110" oninput="updateParticleCount(this.value)">
+        </div>
+
+        <!-- 4. Audio Szintetizátor & Impulzus -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+            <button id="audio-btn" onclick="toggleAudio()" class="mode-btn py-3">
+                <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+                <span id="audio-label">Hang: Ki</span>
+            </button>
+
+            <button onclick="triggerSupernova()" class="py-3 px-3 rounded-xl bg-gradient-to-r from-cyan to-magenta text-slate-950 font-orbitron text-[11px] font-extrabold tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
+                <i class="fa-solid fa-burst"></i>
+                <span>Impulzus</span>
+            </button>
+        </div>
+
+        <!-- Rövid tipp -->
+        <div class="app-inner-box rounded-xl p-3 text-[11px] leading-relaxed mt-auto" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1" style="color: var(--accent-primary);"></i>
+            Érintsd meg vagy húzd a vásznat a részecskék vonzásához, lökéshullámhoz és pentaton hangokhoz.
+        </div>
+    </aside>
+
+    <!-- MOBIL APP BOTTOM NAVIGATION DOCK -->
+    <nav aria-label="Mobil alkalmazás navigáció" class="md:hidden fixed bottom-4 left-4 right-4 z-40 app-surface rounded-2xl px-2 py-2 shadow-2xl flex items-center justify-around">
+        <a href="index.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-house text-base mb-1"></i>
+            <span class="text-[10px]">Főoldal</span>
+        </a>
+
+        <button onclick="togglePanel()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-primary);">
+            <div class="w-10 h-7 rounded-full bg-gradient-to-r from-cyan to-magenta text-slate-950 flex items-center justify-center mb-0.5 shadow-md">
+                <i class="fa-solid fa-sliders text-xs"></i>
+            </div>
+            <span class="text-[10px] font-bold">Vezérlők</span>
+        </button>
+
+        <button onclick="triggerSupernova()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-wand-magic-sparkles text-base mb-1"></i>
+            <span class="text-[10px]">Impulzus</span>
+        </button>
+
+        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-secondary);">
+            <i id="dock-theme-icon" class="fa-solid fa-sun text-base mb-1"></i>
+            <span class="text-[10px]">Téma</span>
+        </button>
+    </nav>
 
     <script>
+        // --- 1. TÉMA RENDSZER SZINKRONIZÁCIÓ (NG_THEME) ---
+        const htmlEl = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+        const dockThemeIcon = document.getElementById('dock-theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        const metaTheme = document.getElementById('meta-theme-color');
+
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('ng_theme', theme);
+            const isLight = theme === 'light';
+            themeIcon.className = isLight ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
+            if (dockThemeIcon) dockThemeIcon.className = isLight ? 'fa-solid fa-moon text-base mb-1' : 'fa-solid fa-sun text-base mb-1';
+            if (themeLabel) themeLabel.textContent = isLight ? 'DARK' : 'LIGHT';
+            metaTheme.setAttribute('content', isLight ? '#eef2f6' : '#090b10');
+        }
+
+        function toggleTheme() {
+            const current = htmlEl.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        }
+
+        applyTheme(localStorage.getItem('ng_theme') || 'dark');
+
+        // --- 2. ÉLŐ ÓRA ---
+        function updateClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) {
+                clockEl.textContent = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- 3. PANEL VEZÉRLÉS ---
+        const controlPanel = document.getElementById('control-panel');
+        const panelOverlay = document.getElementById('panel-overlay');
+
+        function hidePanel() {
+            controlPanel.classList.add('collapsed');
+            panelOverlay.classList.remove('active');
+        }
+
+        function showPanel() {
+            controlPanel.classList.remove('collapsed');
+            if (window.innerWidth <= 768) {
+                panelOverlay.classList.add('active');
+            }
+        }
+
+        function togglePanel() {
+            if (controlPanel.classList.contains('collapsed')) {
+                showPanel();
+            } else {
+                hidePanel();
+            }
+        }
+
+        if (window.innerWidth <= 768) {
+            hidePanel();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'h' || e.key === 'H' || (e.key === 'Escape' && !controlPanel.classList.contains('collapsed'))) {
+                togglePanel();
+            }
+        });
+
+        // --- 4. VÁSZON ÉS GAZDAG SZÍNPALETTÁK ---
         const canvas = document.getElementById('viewport');
         const ctx = canvas.getContext('2d');
 
@@ -313,29 +580,73 @@
             initParticles();
         });
 
-        // App State
         let currentMode = 'neural';
         let currentPalette = 'cyan';
-        let particleCount = 100;
+        let particleCount = 110;
         let particles = [];
-        let mouse = { x: width / 2, y: height / 2, active: false, radius: 150 };
+        let shockwaves = [];
+        let neuralPulses = [];
+        let time = 0;
+
+        let pointer = { x: width / 2, y: height / 2, active: false, radius: 180 };
         let audioEnabled = false;
 
-        // Color Palettes
+        // Látványos, sötét és világos háttéren egyaránt ragyogó paletták
         const palettes = {
-            cyan: { primary: '#00f0ff', secondary: '#7000ff', bgLines: 'rgba(0, 240, 255, 0.15)' },
-            neon: { primary: '#ff007f', secondary: '#7000ff', bgLines: 'rgba(255, 0, 127, 0.15)' },
-            amber: { primary: '#ffb700', secondary: '#ff5500', bgLines: 'rgba(255, 183, 0, 0.15)' },
-            emerald: { primary: '#00ff66', secondary: '#0088ff', bgLines: 'rgba(0, 255, 102, 0.15)' }
+            cyan: {
+                label: 'Cyber Cyan',
+                dark: ['#00FFFF', '#38BDF8', '#8A2BE2'],
+                light: ['#0284C7', '#0EA5E9', '#7C3AED'],
+                lineDark: [0, 255, 255],
+                lineLight: [2, 132, 199]
+            },
+            neon: {
+                label: 'Super Neon',
+                dark: ['#FF0C9D', '#00FFFF', '#A855F7'],
+                light: ['#DB2777', '#0284C7', '#9333EA'],
+                lineDark: [255, 12, 157],
+                lineLight: [219, 39, 119]
+            },
+            amber: {
+                label: 'Kiber Arany',
+                dark: ['#FFB700', '#FF5500', '#FF0C9D'],
+                light: ['#D97706', '#EA580C', '#DB2777'],
+                lineDark: [255, 183, 0],
+                lineLight: [217, 119, 6]
+            },
+            emerald: {
+                label: 'Smaragd',
+                dark: ['#00FF88', '#00FFFF', '#10B981'],
+                light: ['#059669', '#0284C7', '#10B981'],
+                lineDark: [0, 255, 136],
+                lineLight: [5, 150, 105]
+            },
+            aurora: {
+                label: 'Prizma Spektrum',
+                dark: ['#00FFFF', '#FF0C9D', '#FFB700', '#00FF88', '#A855F7'],
+                light: ['#0284C7', '#DB2777', '#D97706', '#059669', '#7C3AED'],
+                lineDark: [168, 85, 247],
+                lineLight: [124, 58, 237]
+            }
         };
 
-        // Web Audio API Synth Engine
+        const modeLabels = {
+            neural: 'NEURONHÁLÓ',
+            quantum: 'KVANTUMRAJ',
+            matrix: 'MÁTRIX RÁCS',
+            pulse: 'KOZMOSZ'
+        };
+
+        // --- 5. WEB AUDIO API SZINTETIZÁTOR ---
         let audioCtx = null;
-        const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // C Pentatonic Scale
+        const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
 
         function initAudio() {
             if (!audioCtx) {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
             }
         }
 
@@ -343,19 +654,25 @@
             if (!audioEnabled || !audioCtx) return;
             try {
                 const osc = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
 
                 osc.type = 'sine';
+                osc2.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc2.frequency.setValueAtTime(freq * 1.5, audioCtx.currentTime);
 
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.65);
 
                 osc.connect(gain);
+                osc2.connect(gain);
                 gain.connect(audioCtx.destination);
 
                 osc.start();
-                osc.stop(audioCtx.currentTime + 0.5);
+                osc2.start();
+                osc.stop(audioCtx.currentTime + 0.65);
+                osc2.stop(audioCtx.currentTime + 0.65);
             } catch (e) {}
         }
 
@@ -363,183 +680,389 @@
             initAudio();
             audioEnabled = !audioEnabled;
             const btn = document.getElementById('audio-btn');
-            const status = document.getElementById('audio-status');
+            const icon = document.getElementById('audio-icon');
+            const label = document.getElementById('audio-label');
+
             if (audioEnabled) {
                 btn.classList.add('active');
-                btn.innerText = "Hang Kikapcsolása";
-                status.innerText = "Be";
+                icon.className = 'fa-solid fa-volume-high';
+                label.textContent = 'Hang: Be';
+                playSynthTone(523.25);
             } else {
                 btn.classList.remove('active');
-                btn.innerText = "Hang Aktiválása";
-                status.innerText = "Ki";
+                icon.className = 'fa-solid fa-volume-xmark';
+                label.textContent = 'Hang: Ki';
             }
         }
 
-        // Particle Class
+        // --- 6. RÉSZECSKE ÉS LÖKÉSHULLÁM OSZTÁLYOK ---
         class Particle {
-            constructor() {
+            constructor(index) {
+                this.index = index;
                 this.reset();
             }
 
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 1.5;
-                this.vy = (Math.random() - 0.5) * 1.5;
-                this.radius = Math.random() * 2 + 1;
-                this.baseRadius = this.radius;
+                this.vx = (Math.random() - 0.5) * 1.6;
+                this.vy = (Math.random() - 0.5) * 1.6;
+                this.baseRadius = Math.random() * 2.2 + 1.1;
+                this.radius = this.baseRadius;
                 this.angle = Math.random() * Math.PI * 2;
-                this.speed = Math.random() * 0.02 + 0.005;
-                this.dist = Math.random() * (width > height ? height : width) * 0.4;
+                this.angularSpeed = (Math.random() * 0.018 + 0.006) * (Math.random() > 0.3 ? 1 : -1);
+                this.orbitRadius = Math.random() * (Math.min(width, height) * 0.44) + 25;
+                this.colorIdx = Math.floor(Math.random() * 5);
+                this.phase = Math.random() * Math.PI * 2;
+            }
+
+            getColor(isLight) {
+                const list = isLight ? palettes[currentPalette].light : palettes[currentPalette].dark;
+                return list[this.colorIdx % list.length];
             }
 
             update() {
-                if (currentMode === 'neural' || currentMode === 'matrix') {
+                if (currentMode === 'neural') {
                     this.x += this.vx;
                     this.y += this.vy;
-
                     if (this.x < 0 || this.x > width) this.vx *= -1;
                     if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                    // Enyhe sebesség-csillapítás impulzus után
+                    this.vx *= 0.992;
+                    this.vy *= 0.992;
+                    if (Math.abs(this.vx) < 0.25) this.vx += (Math.random() - 0.5) * 0.15;
+                    if (Math.abs(this.vy) < 0.25) this.vy += (Math.random() - 0.5) * 0.15;
+
                 } else if (currentMode === 'quantum') {
-                    const dx = mouse.x - this.x;
-                    const dy = mouse.y - this.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist > 10) {
-                        this.vx += (dx / dist) * 0.1;
-                        this.vy += (dy / dist) * 0.1;
-                    }
-                    this.vx *= 0.95;
-                    this.vy *= 0.95;
+                    // Kvantumraj: keringés + hullámzó vonzás a kurzor/ujj körül
+                    const dx = pointer.x - this.x;
+                    const dy = pointer.y - this.y;
+                    const dist = Math.max(12, Math.sqrt(dx * dx + dy * dy));
+                    const tangentX = -dy / dist;
+                    const tangentY = dx / dist;
+
+                    this.vx += (dx / dist) * 0.16 + tangentX * 0.22;
+                    this.vy += (dy / dist) * 0.16 + tangentY * 0.22;
+                    this.vx *= 0.94;
+                    this.vy *= 0.94;
                     this.x += this.vx;
                     this.y += this.vy;
+
                 } else if (currentMode === 'pulse') {
-                    this.angle += this.speed;
-                    const targetX = width / 2 + Math.cos(this.angle) * this.dist;
-                    const targetY = height / 2 + Math.sin(this.angle) * this.dist;
-                    this.x += (targetX - this.x) * 0.05;
-                    this.y += (targetY - this.y) * 0.05;
+                    // Kozmosz: spirálgalaxis örvénylés
+                    this.angle += this.angularSpeed;
+                    const spiralOffset = Math.sin(time * 0.02 + this.phase) * 18;
+                    const r = this.orbitRadius + spiralOffset;
+                    const targetX = width / 2 + Math.cos(this.angle) * r;
+                    const targetY = height / 2 + Math.sin(this.angle) * r * 0.72;
+                    this.x += (targetX - this.x) * 0.06;
+                    this.y += (targetY - this.y) * 0.06;
                 }
 
-                // Mouse interaction distance
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
+                // Kurzor/ujj közelségi pulzálás
+                const dx = pointer.x - this.x;
+                const dy = pointer.y - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-
-                if (dist < mouse.radius) {
-                    this.radius = this.baseRadius + (1 - dist / mouse.radius) * 4;
+                if (dist < pointer.radius) {
+                    const boost = 1 - dist / pointer.radius;
+                    this.radius = this.baseRadius + boost * 4.5;
                 } else {
-                    this.radius = this.baseRadius;
+                    this.radius = this.baseRadius + Math.sin(time * 0.05 + this.phase) * 0.4;
                 }
             }
 
-            draw() {
+            draw(isLight) {
+                const col = this.getColor(isLight);
+                // Külső aura
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius * 2.4, 0, Math.PI * 2);
+                ctx.fillStyle = col;
+                ctx.globalAlpha = isLight ? 0.14 : 0.2;
+                ctx.fill();
+
+                // Mag
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = palettes[currentPalette].primary;
-                ctx.shadowBlur = 8;
-                ctx.shadowColor = palettes[currentPalette].primary;
+                ctx.fillStyle = col;
+                ctx.globalAlpha = 0.95;
                 ctx.fill();
-                ctx.shadowBlur = 0;
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        class Shockwave {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = 6;
+                this.alpha = 0.85;
+                this.color = color;
+            }
+            update() {
+                this.radius += 4.5;
+                this.alpha -= 0.024;
+            }
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.strokeStyle = this.color;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.stroke();
+                ctx.globalAlpha = 1.0;
             }
         }
 
         function initParticles() {
             particles = [];
+            neuralPulses = [];
             for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
+                particles.push(new Particle(i));
             }
         }
 
-        function renderConnections() {
-            const maxDist = 120;
-            const activeColor = palettes[currentPalette].bgLines;
+        // --- 7. MÓD-SPECIFIKUS LÁTVÁNYELEMEK ---
+        function renderNeuralNetwork(isLight) {
+            const maxDist = 135;
+            const maxDistSq = maxDist * maxDist;
+            const [r, g, b] = isLight ? palettes[currentPalette].lineLight : palettes[currentPalette].lineDark;
 
             for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+                const p1 = particles[i];
 
-                    if (dist < maxDist) {
-                        const alpha = 1 - dist / maxDist;
+                // Szinapszis kapcsolat a mutatóhoz is
+                const mdx = pointer.x - p1.x;
+                const mdy = pointer.y - p1.y;
+                const mDistSq = mdx * mdx + mdy * mdy;
+                if (mDistSq < 28000) {
+                    const alpha = (1 - Math.sqrt(mDistSq) / 167) * 0.45;
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(pointer.x, pointer.y);
+                    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                    ctx.lineWidth = 1.2;
+                    ctx.stroke();
+                }
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq < maxDistSq) {
+                        const ratio = 1 - Math.sqrt(distSq) / maxDist;
                         ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = activeColor.replace('0.15', (alpha * 0.25).toString());
-                        ctx.lineWidth = 1;
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${ratio * (isLight ? 0.32 : 0.38)})`;
+                        ctx.lineWidth = ratio * 1.4;
+                        ctx.stroke();
+
+                        // Véletlenszerű szinaptikus fényimpulzus indítása
+                        if (neuralPulses.length < 35 && Math.random() < 0.0012) {
+                            neuralPulses.push({ p1, p2, t: 0, speed: 0.035 + Math.random() * 0.03 });
+                        }
+                    }
+                }
+            }
+
+            // Utazó energiaimpulzusok kirajzolása
+            for (let i = neuralPulses.length - 1; i >= 0; i--) {
+                const pulse = neuralPulses[i];
+                pulse.t += pulse.speed;
+                if (pulse.t >= 1) {
+                    neuralPulses.splice(i, 1);
+                    continue;
+                }
+                const px = pulse.p1.x + (pulse.p2.x - pulse.p1.x) * pulse.t;
+                const py = pulse.p1.y + (pulse.p2.y - pulse.p1.y) * pulse.t;
+                ctx.beginPath();
+                ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+                ctx.fillStyle = isLight ? '#0f172a' : '#ffffff';
+                ctx.fill();
+            }
+        }
+
+        function renderMatrixWaveGrid(isLight) {
+            const spacing = Math.max(36, Math.round(95 - particleCount * 0.25));
+            const cols = Math.ceil(width / spacing) + 1;
+            const rows = Math.ceil(height / spacing) + 1;
+            const colorList = isLight ? palettes[currentPalette].light : palettes[currentPalette].dark;
+            const [r, g, b] = isLight ? palettes[currentPalette].lineLight : palettes[currentPalette].lineDark;
+
+            const grid = [];
+            for (let row = 0; row < rows; row++) {
+                grid[row] = [];
+                for (let col = 0; col < cols; col++) {
+                    const bx = col * spacing;
+                    const by = row * spacing;
+                    const wave = Math.sin(col * 0.35 + time * 0.04) * 10 + Math.cos(row * 0.35 + time * 0.03) * 10;
+
+                    const dx = bx - pointer.x;
+                    const dy = by - pointer.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const influence = Math.max(0, 1 - dist / 220);
+
+                    const px = bx + wave * 0.5 + (dx / (dist || 1)) * influence * 26;
+                    const py = by + wave * 0.5 + (dy / (dist || 1)) * influence * 26;
+                    grid[row][col] = { x: px, y: py, influence };
+                }
+            }
+
+            // Rácsvonalak
+            ctx.lineWidth = 1;
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const pt = grid[row][col];
+                    if (col + 1 < cols) {
+                        const right = grid[row][col + 1];
+                        const alpha = 0.14 + Math.max(pt.influence, right.influence) * 0.55;
+                        ctx.beginPath();
+                        ctx.moveTo(pt.x, pt.y);
+                        ctx.lineTo(right.x, right.y);
+                        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                         ctx.stroke();
                     }
+                    if (row + 1 < rows) {
+                        const down = grid[row + 1][col];
+                        const alpha = 0.14 + Math.max(pt.influence, down.influence) * 0.55;
+                        ctx.beginPath();
+                        ctx.moveTo(pt.x, pt.y);
+                        ctx.lineTo(down.x, down.y);
+                        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                        ctx.stroke();
+                    }
+
+                    // Csomópontok
+                    const nodeRadius = 1.6 + pt.influence * 3.8;
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, nodeRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = colorList[(row + col) % colorList.length];
+                    ctx.globalAlpha = 0.35 + pt.influence * 0.65;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
                 }
             }
         }
 
+        function renderCosmosCore(isLight) {
+            const cx = width / 2;
+            const cy = height / 2;
+            const colorList = isLight ? palettes[currentPalette].light : palettes[currentPalette].dark;
+            const grad = ctx.createRadialGradient(cx, cy, 4, cx, cy, 130);
+            grad.addColorStop(0, colorList[0]);
+            grad.addColorStop(0.45, colorList[1] + '55');
+            grad.addColorStop(1, 'transparent');
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, 130, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
+            ctx.fill();
+        }
+
+        // --- 8. FŐ ANIMÁCIÓS CIKLUS ---
         function animate() {
-            ctx.fillStyle = 'rgba(8, 9, 13, 0.25)'; // Smooth trails effect
+            time += 1;
+            const isLight = htmlEl.getAttribute('data-theme') === 'light';
+
+            // Finom mozgási elmosás (trail effekt) sötét és világos módhoz igazítva
+            ctx.fillStyle = isLight ? 'rgba(238, 242, 246, 0.24)' : 'rgba(9, 11, 16, 0.24)';
             ctx.fillRect(0, 0, width, height);
 
-            if (currentMode === 'neural' || currentMode === 'matrix') {
-                renderConnections();
+            if (currentMode === 'matrix') {
+                renderMatrixWaveGrid(isLight);
+            } else {
+                if (currentMode === 'neural') {
+                    renderNeuralNetwork(isLight);
+                } else if (currentMode === 'pulse') {
+                    renderCosmosCore(isLight);
+                }
+
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw(isLight);
+                }
             }
 
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            // Kattintási lökéshullámok
+            for (let i = shockwaves.length - 1; i >= 0; i--) {
+                shockwaves[i].update();
+                shockwaves[i].draw();
+                if (shockwaves[i].alpha <= 0) {
+                    shockwaves.splice(i, 1);
+                }
+            }
 
             requestAnimationFrame(animate);
         }
 
-        // Controls Logic
-        function setMode(mode) {
+        // --- 9. INTERAKCIÓK ÉS VEZÉRLŐK ---
+        function setMode(mode, btnEl) {
             currentMode = mode;
-            updateActiveButtons(event.target);
+            document.getElementById('mode-indicator').textContent = modeLabels[mode];
+            document.querySelectorAll('#mode-buttons .mode-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            triggerImpulseAt(width / 2, height / 2, false);
         }
 
-        function setPalette(palette) {
+        function setPalette(palette, btnEl) {
             currentPalette = palette;
-            updateActiveButtons(event.target);
-            document.documentElement.style.setProperty('--primary', palettes[palette].primary);
-            document.documentElement.style.setProperty('--secondary', palettes[palette].secondary);
+            document.getElementById('palette-name').textContent = palettes[palette].label;
+            document.querySelectorAll('#palette-buttons .palette-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            triggerImpulseAt(width / 2, height / 2, false);
         }
 
         function updateParticleCount(val) {
             particleCount = parseInt(val);
-            document.getElementById('count-val').innerText = val;
+            document.getElementById('count-val').textContent = val;
             initParticles();
         }
 
-        function updateActiveButtons(target) {
-            const siblings = target.parentElement.children;
-            for (let btn of siblings) {
-                btn.classList.remove('active');
+        function triggerImpulseAt(x, y, withSound = true) {
+            const isLight = htmlEl.getAttribute('data-theme') === 'light';
+            const colorList = isLight ? palettes[currentPalette].light : palettes[currentPalette].dark;
+            const waveColor = colorList[Math.floor(Math.random() * colorList.length)];
+            shockwaves.push(new Shockwave(x, y, waveColor));
+
+            if (withSound) {
+                const noteIndex = Math.floor((1 - y / height) * notes.length);
+                playSynthTone(notes[Math.min(notes.length - 1, Math.max(0, noteIndex))]);
             }
-            target.classList.add('active');
-        }
 
-        // Event Listeners
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        window.addEventListener('click', (e) => {
-            // Trigger audio tone based on Y position
-            const noteIndex = Math.floor((1 - e.clientY / height) * notes.length);
-            playSynthTone(notes[Math.min(notes.length - 1, Math.max(0, noteIndex))]);
-
-            // Shockwave particle boost
             particles.forEach(p => {
-                const dx = e.clientX - p.x;
-                const dy = e.clientY - p.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 200) {
-                    p.vx -= (dx / dist) * 4;
-                    p.vy -= (dy / dist) * 4;
+                const dx = x - p.x;
+                const dy = y - p.y;
+                const dist = Math.max(10, Math.sqrt(dx * dx + dy * dy));
+                if (dist < 280) {
+                    const force = (1 - dist / 280) * 7.5;
+                    p.vx -= (dx / dist) * force;
+                    p.vy -= (dy / dist) * force;
                 }
             });
+        }
+
+        function triggerSupernova() {
+            triggerImpulseAt(width / 2, height / 2, true);
+            setTimeout(() => triggerImpulseAt(width / 2, height / 2, false), 140);
+        }
+
+        // Egér + Érintés követése a vásznon
+        canvas.addEventListener('pointermove', (e) => {
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+        }, { passive: true });
+
+        canvas.addEventListener('pointerdown', (e) => {
+            pointer.x = e.clientX;
+            pointer.y = e.clientY;
+            triggerImpulseAt(e.clientX, e.clientY, true);
         });
 
-        // Initialize App
+        // Indítás
         initParticles();
         animate();
     </script>
