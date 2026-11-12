@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html lang="hu" class="h-full bg-[#0b0f19] transition-colors duration-500">
+<html lang="hu" data-theme="dark" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAgent.ai | Automatikus AI Hírlevél</title>
-    <!-- Tailwind CSS CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#090b10" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>AI Hírlevél | nyirigabor.hu</title>
+    
+    <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        colorRed: '#ef4444',
-                        colorBlue: '#0ea5e9',
-                        colorGreen: '#10b981',
-                        colorMagenta: '#ff0c9d',
-                        colorWhite: '#ffffff',
-                        darkBg: '#0b0f19',
-                        cardBg: 'rgba(17, 24, 39, 0.75)'
+                        magenta: '#FF0C9D',
+                        cyan: '#00FFFF',
+                        purpleGlow: '#8A2BE2',
+                        emeraldGlow: '#10b981',
+                        crimsonGlow: '#ef4444'
                     },
                     fontFamily: {
+                        oswald: ['Oswald', 'sans-serif'],
                         orbitron: ['Orbitron', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        mono: ['Share Tech Mono', 'monospace'],
                         sans: ['Inter', 'sans-serif']
                     }
                 }
@@ -37,286 +38,387 @@
     </script>
 
     <style>
-        .bg-subtle-grid {
+        /* --- FŐOLDALLAL EGYEZŐ TÉMA RENDSZER (DARK & LIGHT) --- */
+        :root {
+            --bg-base: #090b10;
+            --bg-overlay: rgba(9, 11, 16, 0.82);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-primary: #00FFFF;
+            --accent-secondary: #FF0C9D;
+            --card-bg: rgba(13, 18, 28, 0.78);
+            --card-bg-hover: rgba(18, 26, 42, 0.92);
+            --card-inner: rgba(9, 13, 22, 0.65);
+            --card-border: rgba(0, 255, 255, 0.25);
+            --card-border-hover: #00FFFF;
+            --dock-bg: rgba(10, 14, 23, 0.86);
+            --grid-line-1: rgba(0, 255, 255, 0.06);
+            --grid-line-2: rgba(255, 12, 157, 0.05);
+            --shadow-glow: 0 12px 32px -8px rgba(0, 255, 255, 0.2);
+            --input-bg: rgba(9, 13, 22, 0.85);
+        }
+
+        html[data-theme="light"] {
+            --bg-base: #eef2f6;
+            --bg-overlay: rgba(241, 245, 249, 0.88);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --accent-primary: #0284c7;
+            --accent-secondary: #db2777;
+            --card-bg: rgba(255, 255, 255, 0.82);
+            --card-bg-hover: rgba(255, 255, 255, 0.96);
+            --card-inner: rgba(241, 245, 249, 0.85);
+            --card-border: rgba(2, 132, 199, 0.25);
+            --card-border-hover: #0284c7;
+            --dock-bg: rgba(255, 255, 255, 0.88);
+            --grid-line-1: rgba(2, 132, 199, 0.08);
+            --grid-line-2: rgba(219, 39, 119, 0.06);
+            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.16);
+            --input-bg: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            transition: background-color 0.45s ease, color 0.45s ease;
+            min-height: 100dvh;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* --- HÁTTÉR RÁCS & OVERLAY --- */
+        .theme-overlay {
+            background: radial-gradient(circle at 50% 15%, transparent 0%, var(--bg-overlay) 78%), var(--bg-overlay);
+            transition: background 0.45s ease;
+        }
+
+        .bg-cyber-grid {
             background-image: 
-                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 48px 48px;
+                linear-gradient(to right, var(--grid-line-1) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line-2) 1px, transparent 1px);
+            background-size: 36px 36px;
+            animation: gridMove 24s linear infinite;
         }
 
-        .glass-card {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(36px); }
         }
 
-        .glass-card:hover {
-            border-color: rgba(14, 165, 233, 0.4);
-            box-shadow: 0 12px 30px -10px rgba(14, 165, 233, 0.15);
+        /* --- APP KÁRTYÁK & FELÜLETEK --- */
+        .app-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1.5px solid var(--card-border);
+            box-shadow: var(--shadow-glow);
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), 
+                        border-color 0.28s ease, 
+                        background-color 0.28s ease,
+                        box-shadow 0.28s ease;
         }
 
-        #interactive-glow {
-            pointer-events: none;
-            background: radial-gradient(500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(14, 165, 233, 0.04), transparent 70%);
+        .app-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
         }
 
-        /* Light Mode Stílusok */
-        body.light-mode {
-            background-color: #f8fafc !important;
-            color: #0f172a !important;
+        .app-inner-box {
+            background: var(--card-inner);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        body.light-mode .glass-card {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: rgba(226, 232, 240, 0.8);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
+        .app-surface {
+            background: var(--dock-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        body.light-mode .glass-card:hover {
-            border-color: rgba(14, 165, 233, 0.4);
-            box-shadow: 0 15px 35px -5px rgba(14, 165, 233, 0.12);
+        .app-input {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1.5px solid var(--card-border);
+            transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.4s ease;
         }
 
-        body.light-mode h1, body.light-mode h2, body.light-mode h3 {
-            color: #0f172a !important;
+        .app-input::placeholder {
+            color: var(--text-muted);
         }
 
-        body.light-mode p {
-            color: #475569 !important;
+        .app-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.14);
         }
 
-        body.light-mode footer {
-            border-color: rgba(226, 232, 240, 0.8) !important;
-            color: #64748b !important;
+        /* --- GRADIENS CÍMSOR (FŐOLDAL STÍLUS) --- */
+        .accent-gradient-text {
+            background: linear-gradient(120deg, var(--accent-primary) 20%, var(--accent-secondary) 95%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            padding-bottom: 0.08em;
         }
 
-        body.light-mode .bg-subtle-grid {
-            background-image: 
-                linear-gradient(to right, rgba(14, 165, 233, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+        /* --- TELEMETRIA PULZUS --- */
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7);
+            animation: pulseRing 2s infinite;
         }
-
-        body.light-mode input {
-            background-color: #ffffff !important;
-            color: #0f172a !important;
-            border-color: #cbd5e1 !important;
-        }
-
-        body.light-mode input::placeholder {
-            color: #94a3b8 !important;
-        }
-
-        body.light-mode .floating-back-btn {
-            background-color: rgba(255, 255, 255, 0.9) !important;
-            color: #0f172a !important;
-            border-color: #cbd5e1 !important;
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.65); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
         }
     </style>
 </head>
-<body class="h-full text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-colorBlue selection:text-white bg-[#0b0f19] relative transition-colors duration-500">
+<body class="font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white relative flex flex-col justify-between">
 
-    <!-- Floating Back Button -->
-    <a href="index.html" class="floating-back-btn fixed top-6 left-6 z-50 px-4 py-2.5 rounded-xl bg-slate-900/80 text-colorBlue border border-slate-700/60 backdrop-blur-md shadow-lg hover:border-colorBlue transition-all duration-300 flex items-center gap-2.5 font-mono text-xs font-semibold tracking-wider uppercase">
-        <i class="fa-solid fa-arrow-left text-sm"></i>
-        <span>Főoldal</span>
-    </a>
+    <!-- HÁTTÉR RÉTEGEK (FŐOLDAL HARMONIZÁCIÓ) -->
+    <div class="fixed inset-0 theme-overlay z-[1] pointer-events-none"></div>
+    <div id="interactive-glow" class="fixed inset-0 z-[2] pointer-events-none transition-opacity duration-300"></div>
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-[3] opacity-75"></canvas>
+    <div class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none"></div>
 
-    <div id="interactive-glow" class="fixed inset-0 z-0 transition-opacity duration-300"></div>
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-45"></canvas>
-    <div class="fixed inset-0 bg-subtle-grid z-0 opacity-50 pointer-events-none"></div>
+    <!-- AMBIENT GLOW ORBS -->
+    <div class="fixed -top-32 -left-32 w-80 h-80 bg-purpleGlow/20 rounded-full blur-[120px] pointer-events-none z-[2]"></div>
+    <div class="fixed -bottom-32 -right-32 w-80 h-80 bg-magenta/20 rounded-full blur-[120px] pointer-events-none z-[2]"></div>
 
-    <div class="relative z-10 min-h-screen flex flex-col justify-between p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
+    <!-- FELSŐ APP HUD BAR -->
+    <header class="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 flex items-center justify-between gap-3">
+        <!-- Vissza a főoldalra -->
+        <a href="index.html" class="app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-mono font-bold hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-primary);">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>FŐOLDAL</span>
+        </a>
 
-        <!-- Main Content Area -->
-        <main class="my-auto py-12 pt-16 lg:pt-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center max-w-6xl mx-auto">
-                
-                <!-- Left Hero Text -->
-                <div class="lg:col-span-7 text-center lg:text-left space-y-6">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-colorBlue/10 border border-colorBlue/30 text-colorBlue text-xs font-mono tracking-wider font-medium">
-                        <span class="w-2 h-2 rounded-full bg-colorGreen animate-pulse"></span>
-                        Minden munkanap 07:00 • E-mail összefoglaló
-                    </div>
+        <!-- Élő státusz indikátor -->
+        <div class="hidden sm:flex app-surface px-3.5 py-2 rounded-full items-center gap-2.5 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-cyan pulse-dot"></span>
+            <span class="font-mono text-xs tracking-wider uppercase font-semibold" style="color: var(--text-secondary);">
+                MODUL: AI HÍRLEVÉL <span class="opacity-40 mx-1">|</span> <span id="header-clock">00:00</span>
+            </span>
+        </div>
 
-                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-orbitron font-extrabold text-white leading-tight uppercase tracking-tight transition-colors">
-                        A legfontosabb hírek <span class="text-colorBlue">zaj nélkül.</span>
-                    </h1>
+        <!-- Téma váltó -->
+        <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-secondary);">
+            <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
+            <span id="theme-label" class="hidden sm:inline">LIGHT</span>
+        </button>
+    </header>
 
-                    <p class="text-slate-400 text-base sm:text-lg font-normal leading-relaxed max-w-xl mx-auto lg:mx-0 transition-colors">
-                        Mesterséges intelligencia által strukturált, szakmai napi hírösszefoglaló belföldi, külföldi, gazdasági és technológiai területekről. Hatékony tájékozódás felesleges sallangok nélkül.
-                    </p>
-
-                    <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <button onclick="scrollToSubscribe()" class="px-7 py-4 rounded-xl bg-colorBlue text-slate-950 font-sans font-bold tracking-wide hover:bg-sky-400 transition-all duration-300 shadow-lg shadow-colorBlue/20 flex items-center justify-center gap-3 group">
-                            <span>KÉREM A REGGELI ÖSSZEFOGLALÓT</span>
-                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                        </button>
-                    </div>
+    <!-- FŐ TARTALOM -->
+    <main class="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 my-auto py-8 sm:py-12 pb-28 md:pb-14">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            
+            <!-- Bal oldali Hero szöveg -->
+            <div class="lg:col-span-7 text-center lg:text-left space-y-5">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono tracking-wider font-semibold border" style="background: var(--card-bg); border-color: var(--card-border); color: var(--accent-primary);">
+                    <span class="w-2 h-2 rounded-full bg-emeraldGlow animate-pulse"></span>
+                    <span>MINDEN MUNKANAP 07:00 • E-MAIL ÖSSZEFOGLALÓ</span>
                 </div>
 
-                <!-- Right Card Preview -->
-                <div class="lg:col-span-5">
-                    <div class="glass-card rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-                        <div class="flex justify-between items-center mb-6">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-colorBlue/10 border border-colorBlue/30 flex items-center justify-center text-colorBlue font-bold font-orbitron text-sm">
-                                    SA
-                                </div>
-                                <div>
-                                    <h2 class="font-orbitron font-bold text-white text-xs sm:text-sm transition-colors" id="preview-title">SUPERAGENT REGGELI KIADÁS</h2>
-                                    <p class="text-[11px] font-mono text-slate-400" id="preview-time">07:00 &bull; 3 perc olvasás</p>
-                                </div>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-orbitron font-extrabold leading-[1.15] uppercase tracking-tight" style="color: var(--text-primary);">
+                    A legfontosabb hírek <span class="accent-gradient-text">zaj nélkül.</span>
+                </h1>
+
+                <p class="text-sm sm:text-base lg:text-lg font-normal leading-relaxed max-w-xl mx-auto lg:mx-0" style="color: var(--text-secondary);">
+                    Mesterséges intelligencia által strukturált, szakmai napi hírösszefoglaló belföldi, külföldi, gazdasági és technológiai területekről. Hatékony tájékozódás felesleges sallangok nélkül.
+                </p>
+
+                <div class="pt-2 flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start">
+                    <button onclick="scrollToSubscribe()" class="px-7 py-4 rounded-2xl bg-gradient-to-r from-cyan to-sky-400 text-slate-950 font-orbitron text-xs sm:text-sm font-extrabold tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all duration-300 shadow-[0_10px_28px_-6px_rgba(0,255,255,0.45)] flex items-center justify-center gap-3 group cursor-pointer">
+                        <span>Kérem a reggeli összefoglalót</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Jobb oldali Kiadás Előnézet Kártya -->
+            <div class="lg:col-span-5">
+                <div class="app-card rounded-3xl p-5 sm:p-7 relative overflow-hidden">
+                    <div class="flex justify-between items-center mb-5 gap-2">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 shrink-0 rounded-xl bg-cyan/15 border border-cyan/40 flex items-center justify-center text-cyan font-bold font-orbitron text-sm">
+                                SA
                             </div>
-                            <span class="text-[10px] font-mono px-2.5 py-1 rounded-md bg-slate-800 border border-colorMagenta/40 text-colorMagenta font-medium uppercase">
-                                Minta
-                            </span>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="p-4 rounded-xl bg-slate-900/50 border border-slate-800 space-y-2">
-                                <span class="text-[10px] font-mono text-colorGreen uppercase tracking-wider font-semibold">Tech & AI &bull; Kiemelt</span>
-                                <h3 class="font-sans text-sm font-semibold text-white transition-colors" id="newsletter-sample-title">Generatív AI modellek a vállalati hatékonyságban</h3>
-                                <p class="text-xs text-slate-400 font-normal line-clamp-3 transition-colors" id="newsletter-sample-body">
-                                    Az automatizált munkafolyamatok és a személyre szabott asszisztensek áttörést hoznak a hazai kkv szektorban...
-                                </p>
+                            <div class="min-w-0">
+                                <h2 class="font-orbitron font-bold text-xs sm:text-sm truncate" id="preview-title" style="color: var(--text-primary);">SUPERAGENT REGGELI KIADÁS</h2>
+                                <p class="text-[11px] font-mono" id="preview-time" style="color: var(--text-muted);">07:00 &bull; 3 perc olvasás</p>
                             </div>
                         </div>
-
-                        <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-colorGreen"></i> Reklámmentes</span>
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-colorRed"></i> Szűrt tartalom</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Subscription Form Section -->
-            <div id="subscribe-section" class="mt-20 max-w-2xl mx-auto">
-                <div class="glass-card rounded-2xl p-8 sm:p-12 relative overflow-hidden text-center space-y-6">
-
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-slate-300 text-xs font-mono tracking-wider uppercase">
-                        Ingyenes feliratkozás
+                        <span class="shrink-0 text-[10px] font-mono px-2.5 py-1 rounded-full bg-magenta/15 border border-magenta/40 text-magenta font-bold uppercase">
+                            Minta
+                        </span>
                     </div>
 
-                    <h2 class="text-2xl sm:text-4xl font-orbitron font-bold text-white uppercase tracking-tight transition-colors">
-                        Iratkozz fel a <span class="text-colorBlue">reggeli hírekre!</span>
-                    </h2>
-
-                    <p class="text-slate-400 text-sm sm:text-base font-normal max-w-lg mx-auto transition-colors">
-                        Kapj kézhez minden munkanapon egy átlátható, strukturált hírösszefoglalót a legfontosabb eseményekről.
-                    </p>
-
-                    <!-- Google Apps Script Form -->
-                    <form id="subscribeForm" onsubmit="handleSubscribe(event)" class="pt-2 space-y-4 max-w-md mx-auto">
-                        <div class="space-y-3">
-                            <input type="text" id="subscriberName" required placeholder="Teljes neved..." class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-colorBlue focus:outline-none text-white text-sm font-sans placeholder:text-slate-500 transition-colors">
-                            <input type="email" id="subscriberEmail" required placeholder="E-mail címed..." class="w-full px-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 focus:border-colorBlue focus:outline-none text-white text-sm font-sans placeholder:text-slate-500 transition-colors">
+                    <div class="space-y-3.5">
+                        <div class="app-inner-box p-4 rounded-2xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-mono text-emeraldGlow uppercase tracking-wider font-bold">Tech &amp; AI &bull; Kiemelt</span>
+                                <i class="fa-solid fa-bolt text-xs text-cyan/70"></i>
+                            </div>
+                            <h3 class="font-sans text-sm font-semibold" id="newsletter-sample-title" style="color: var(--text-primary);">Generatív AI modellek a vállalati hatékonyságban</h3>
+                            <p class="text-xs font-normal leading-relaxed line-clamp-3" id="newsletter-sample-body" style="color: var(--text-secondary);">
+                                Az automatizált munkafolyamatok és a személyre szabott asszisztensek áttörést hoznak a hazai kkv szektorban...
+                            </p>
                         </div>
+                    </div>
 
-                        <button type="submit" id="submitBtn" class="w-full py-3.5 rounded-xl bg-colorBlue text-slate-950 font-sans font-bold tracking-wide hover:bg-sky-400 transition-all shadow-lg shadow-colorBlue/20 flex items-center justify-center gap-2 uppercase text-sm">
-                            <span>Feliratkozom</span>
-                            <i class="fa-solid fa-paper-plane text-xs"></i>
-                        </button>
-                    </form>
-
-                    <div id="statusMessage" class="hidden font-mono text-xs pt-2"></div>
+                    <div class="mt-5 pt-4 border-t flex items-center justify-between text-[11px] font-mono" style="border-color: var(--card-border); color: var(--text-secondary);">
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emeraldGlow"></i> Reklámmentes</span>
+                        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-magenta"></i> Szűrt tartalom</span>
+                    </div>
                 </div>
             </div>
-        </main>
 
-        <!-- Footer -->
-        <footer class="pt-6 border-t border-slate-800/80 text-xs font-mono text-slate-500 flex flex-col sm:flex-row justify-between items-center gap-4 transition-colors">
-            <div class="flex items-center gap-2.5">
-                <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-colorGreen opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-colorGreen"></span>
-                </span>
-                <span class="tracking-wider uppercase text-slate-400">SYSTEM: ONLINE</span>
+        </div>
+
+        <!-- Feliratkozási Szekció -->
+        <section id="subscribe-section" class="mt-14 sm:mt-20 max-w-2xl mx-auto scroll-mt-24">
+            <div class="app-card rounded-3xl p-6 sm:p-10 relative overflow-hidden text-center space-y-5">
+
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono tracking-wider uppercase border" style="background: var(--card-inner); border-color: var(--card-border); color: var(--accent-primary);">
+                    <i class="fa-solid fa-envelope-open-text text-[11px]"></i>
+                    <span>Ingyenes feliratkozás</span>
+                </div>
+
+                <h2 class="text-2xl sm:text-4xl font-orbitron font-extrabold uppercase tracking-tight leading-tight" style="color: var(--text-primary);">
+                    Iratkozz fel a <span class="accent-gradient-text">reggeli hírekre!</span>
+                </h2>
+
+                <p class="text-sm sm:text-base font-normal max-w-lg mx-auto" style="color: var(--text-secondary);">
+                    Kapj kézhez minden munkanapon egy átlátható, strukturált hírösszefoglalót a legfontosabb eseményekről.
+                </p>
+
+                <!-- Google Apps Script Form -->
+                <form id="subscribeForm" onsubmit="handleSubscribe(event)" class="pt-2 space-y-4 max-w-md mx-auto">
+                    <div class="space-y-3">
+                        <input type="text" id="subscriberName" required placeholder="Teljes neved..." class="app-input w-full px-4 py-3.5 rounded-xl text-sm font-sans">
+                        <input type="email" id="subscriberEmail" required placeholder="E-mail címed..." class="app-input w-full px-4 py-3.5 rounded-xl text-sm font-sans">
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan to-magenta text-slate-950 font-orbitron font-extrabold tracking-wider hover:brightness-110 active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2.5 uppercase text-xs sm:text-sm cursor-pointer">
+                        <span>Feliratkozom</span>
+                        <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+
+                <div id="statusMessage" class="hidden font-mono text-xs pt-2"></div>
             </div>
+        </section>
+    </main>
 
-            <div class="flex items-center gap-6">
-                <div>LATENCY: <span class="text-colorGreen font-semibold">12ms</span></div>
-                <div>CLOCK: <span id="live-clock" class="text-colorBlue font-semibold">00:00:00</span></div>
+    <!-- ASZTALI FOOTER -->
+    <footer class="hidden md:flex relative z-20 w-full max-w-6xl mx-auto px-6 py-5 border-t text-xs font-mono justify-between items-center gap-4" style="border-color: var(--card-border); color: var(--text-muted);">
+        <div class="flex items-center gap-2.5">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emeraldGlow opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-emeraldGlow"></span>
+            </span>
+            <span class="tracking-wider uppercase" style="color: var(--text-secondary);">SYSTEM: ONLINE</span>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div>LATENCY: <span class="text-emeraldGlow font-semibold">12ms</span></div>
+            <div>CLOCK: <span id="footer-clock" class="font-semibold" style="color: var(--accent-primary);">00:00:00</span></div>
+        </div>
+
+        <div>
+            &copy; 2026 SuperAgent.ai &bull; Nyíri Gábor
+        </div>
+    </footer>
+
+    <!-- MOBIL APP BOTTOM NAVIGATION DOCK (FŐOLDALLAL AZONOS) -->
+    <nav aria-label="Mobil alkalmazás navigáció" class="md:hidden fixed bottom-4 left-4 right-4 z-40 app-surface rounded-2xl px-2 py-2 shadow-2xl flex items-center justify-around">
+        <a href="index.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-house text-base mb-1"></i>
+            <span class="text-[10px]">Főoldal</span>
+        </a>
+
+        <button onclick="scrollToSubscribe()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-primary);">
+            <div class="w-10 h-7 rounded-full bg-gradient-to-r from-cyan to-magenta text-slate-950 flex items-center justify-center mb-0.5 shadow-md">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
             </div>
+            <span class="text-[10px] font-bold">Feliratkozás</span>
+        </button>
 
-            <div>
-                &copy; 2026 SuperAgent.ai &bull; Nyíri Gábor
-            </div>
-        </footer>
+        <button onclick="pulseParticles()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-wand-magic-sparkles text-base mb-1"></i>
+            <span class="text-[10px]">Impulzus</span>
+        </button>
 
-    </div>
-
-    <!-- Floating Theme Toggle Button -->
-    <button id="theme-toggle" aria-label="Téma váltása" class="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-slate-900/90 text-colorBlue border border-slate-700/80 backdrop-blur-md shadow-lg hover:scale-105 hover:border-colorBlue transition-all duration-300 flex items-center justify-center">
-        <i id="theme-icon" class="fa-solid fa-sun text-base"></i>
-    </button>
+        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-secondary);">
+            <i id="dock-theme-icon" class="fa-solid fa-sun text-base mb-1"></i>
+            <span class="text-[10px]">Téma</span>
+        </button>
+    </nav>
 
     <script>
         const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL';
 
-        // --- Web Audio API Kattintási Hang Generátor ---
+        // --- 1. HARMONIKUS TÉMA VÁLTÓ (SZINKRONBAN A FŐOLDALLAL) ---
+        const htmlEl = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+        const dockThemeIcon = document.getElementById('dock-theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        const metaTheme = document.getElementById('meta-theme-color');
+
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('ng_theme', theme);
+            const isLight = theme === 'light';
+            themeIcon.className = isLight ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
+            if (dockThemeIcon) dockThemeIcon.className = isLight ? 'fa-solid fa-moon text-base mb-1' : 'fa-solid fa-sun text-base mb-1';
+            if (themeLabel) themeLabel.textContent = isLight ? 'DARK' : 'LIGHT';
+            metaTheme.setAttribute('content', isLight ? '#eef2f6' : '#090b10');
+        }
+
+        function toggleTheme() {
+            const current = htmlEl.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        }
+
+        const savedTheme = localStorage.getItem('ng_theme') || localStorage.getItem('theme') || 'dark';
+        applyTheme(savedTheme);
+
+        // --- 2. WEB AUDIO API KATTINTÁSI HANG ---
         let audioCtx = null;
         function playClickSound() {
             try {
-                if (!audioCtx) {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
-
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(800, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.05);
-
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.05);
             } catch (e) {}
         }
 
         function scrollToSubscribe() {
-            document.getElementById('subscribe-section').scrollIntoView({ behavior: 'smooth' });
+            const section = document.getElementById('subscribe-section');
+            section.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => document.getElementById('subscriberName')?.focus(), 550);
         }
 
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-
-        function applyTheme(isLight) {
-            if (isLight) {
-                document.body.classList.add('light-mode');
-                themeIcon.classList.remove('fa-sun');
-                themeIcon.classList.add('fa-moon');
-                themeToggleBtn.classList.remove('text-colorBlue');
-                themeToggleBtn.classList.add('text-amber-500');
-            } else {
-                document.body.classList.remove('light-mode');
-                themeIcon.classList.remove('fa-moon');
-                themeIcon.classList.add('fa-sun');
-                themeToggleBtn.classList.remove('text-amber-500');
-                themeToggleBtn.classList.add('text-colorBlue');
-            }
-        }
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') applyTheme(true);
-
-        themeToggleBtn.addEventListener('click', () => {
-            const isLight = !document.body.classList.contains('light-mode');
-            applyTheme(isLight);
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        });
-
+        // --- 3. FELIRATKOZÁS & LEGFRISSEBB KIADÁS ---
         async function handleSubscribe(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -326,7 +428,7 @@
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> <span>Küldés...</span>';
-            statusMsg.className = 'font-mono text-xs pt-2 text-colorBlue';
+            statusMsg.className = 'font-mono text-xs pt-2 text-cyan';
             statusMsg.textContent = 'Feldolgozás folyamatban...';
             statusMsg.classList.remove('hidden');
 
@@ -338,11 +440,12 @@
                     body: JSON.stringify({ name: name, email: email })
                 });
 
-                statusMsg.className = 'font-mono text-xs pt-2 text-colorGreen';
+                statusMsg.className = 'font-mono text-xs pt-2 text-emeraldGlow font-bold';
                 statusMsg.textContent = '✓ Sikeres feliratkozás! Köszönjük.';
                 document.getElementById('subscribeForm').reset();
+                pulseParticles();
             } catch (error) {
-                statusMsg.className = 'font-mono text-xs pt-2 text-colorRed';
+                statusMsg.className = 'font-mono text-xs pt-2 text-crimsonGlow font-bold';
                 statusMsg.textContent = '✕ Hiba történt. Kérjük próbáld újra!';
             } finally {
                 submitBtn.disabled = false;
@@ -366,28 +469,38 @@
             } catch (err) {}
         }
 
+        // --- 4. ÉLŐ ÓRA ---
         function updateClock() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const clockEl = document.getElementById('live-clock');
-            if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const headerClock = document.getElementById('header-clock');
+            const footerClock = document.getElementById('footer-clock');
+            if (headerClock) headerClock.textContent = `${h}:${m}`;
+            if (footerClock) footerClock.textContent = `${h}:${m}:${s}`;
         }
         setInterval(updateClock, 1000);
         updateClock();
 
+        // --- 5. EGÉR + ÉRINTÉS REFLEKTOR & RESZECSKE HÁLÓZAT + LÖKÉSHULLÁM ---
         const glowContainer = document.getElementById('interactive-glow');
-        window.addEventListener('mousemove', (e) => {
-            glowContainer.style.setProperty('--mouse-x', `${e.clientX}px`);
-            glowContainer.style.setProperty('--mouse-y', `${e.clientY}px`);
-        });
+        const pointer = { x: -1000, y: -1000 };
 
-        // --- Részecskék & Kattintás Vizuális Effektek (Szigorított Paletta) ---
+        function updatePointer(x, y) {
+            pointer.x = x;
+            pointer.y = y;
+            glowContainer.style.background = `radial-gradient(520px circle at ${x}px ${y}px, rgba(0, 255, 255, 0.12), rgba(255, 12, 157, 0.08), transparent 70%)`;
+        }
+
+        window.addEventListener('mousemove', (e) => updatePointer(e.clientX, e.clientY), { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches[0]) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width, height, particles = [], shockwaves = [];
-        const strictColors = ['#ef4444', '#0ea5e9', '#10b981', '#ff0c9d', '#ffffff'];
 
         function resizeCanvas() {
             width = canvas.width = window.innerWidth;
@@ -401,24 +514,32 @@
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.3;
-                this.vy = (Math.random() - 0.5) * 0.3;
-                this.radius = Math.random() * 1.2 + 0.5;
-                this.color = strictColors[Math.floor(Math.random() * strictColors.length)];
-                this.alpha = Math.random() * 0.4 + 0.15;
+                this.vx = (Math.random() - 0.5) * 0.4;
+                this.vy = (Math.random() - 0.5) * 0.4;
+                this.radius = Math.random() * 1.5 + 0.6;
+                this.isCyan = Math.random() > 0.45;
             }
             update() {
-                this.x += this.vx; this.y += this.vy;
+                this.x += this.vx;
+                this.y += this.vy;
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
+
+                const dx = pointer.x - this.x;
+                const dy = pointer.y - this.y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq < 18000 && distSq > 100) {
+                    this.x += dx * 0.012;
+                    this.y += dy * 0.012;
+                }
             }
-            draw() {
+            draw(isLight) {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.isCyan
+                    ? (isLight ? 'rgba(2, 132, 199, 0.55)' : 'rgba(0, 255, 255, 0.65)')
+                    : (isLight ? 'rgba(219, 39, 119, 0.5)' : 'rgba(255, 12, 157, 0.6)');
                 ctx.fill();
-                ctx.globalAlpha = 1.0;
             }
         }
 
@@ -427,28 +548,39 @@
                 this.x = x;
                 this.y = y;
                 this.radius = 4;
-                this.maxRadius = 45;
-                this.alpha = 0.8;
-                this.color = strictColors[Math.floor(Math.random() * strictColors.length)];
+                this.alpha = 0.75;
+                this.isCyan = Math.random() > 0.5;
             }
             update() {
-                this.radius += 2.2;
-                this.alpha -= 0.035;
+                this.radius += 2.4;
+                this.alpha -= 0.032;
             }
-            draw() {
+            draw(isLight) {
                 if (this.alpha <= 0) return;
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = this.color;
+                ctx.strokeStyle = this.isCyan
+                    ? (isLight ? `rgba(2, 132, 199, ${this.alpha})` : `rgba(0, 255, 255, ${this.alpha})`)
+                    : (isLight ? `rgba(219, 39, 119, ${this.alpha})` : `rgba(255, 12, 157, ${this.alpha})`);
                 ctx.lineWidth = 1.5;
-                ctx.globalAlpha = Math.max(0, this.alpha);
                 ctx.stroke();
-                ctx.globalAlpha = 1.0;
             }
         }
 
-        for (let i = 0; i < Math.min(Math.floor(window.innerWidth / 20), 50); i++) {
-            particles.push(new Particle());
+        const count = Math.min(Math.floor(window.innerWidth / 18), 60);
+        particles = Array.from({ length: count }, () => new Particle());
+        const maxDist = 115;
+        const maxDistSq = maxDist * maxDist;
+
+        function pulseParticles() {
+            particles.forEach(p => {
+                p.vx = (Math.random() - 0.5) * 3.5;
+                p.vy = (Math.random() - 0.5) * 3.5;
+                setTimeout(() => {
+                    p.vx *= 0.2;
+                    p.vy *= 0.2;
+                }, 600);
+            });
         }
 
         window.addEventListener('pointerdown', (e) => {
@@ -458,18 +590,35 @@
 
         function animateParticles() {
             ctx.clearRect(0, 0, width, height);
+            const isLight = htmlEl.getAttribute('data-theme') === 'light';
 
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
+            for (let i = 0; i < count; i++) {
+                const p1 = particles[i];
+                p1.update();
+                p1.draw(isLight);
+
+                for (let j = i + 1; j < count; j++) {
+                    const p2 = particles[j];
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq < maxDistSq) {
+                        const alpha = 0.15 * (1 - Math.sqrt(distSq) / maxDist);
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = isLight ? `rgba(2, 132, 199, ${alpha})` : `rgba(0, 255, 255, ${alpha})`;
+                        ctx.lineWidth = 0.65;
+                        ctx.stroke();
+                    }
+                }
             }
 
             for (let i = shockwaves.length - 1; i >= 0; i--) {
                 shockwaves[i].update();
-                shockwaves[i].draw();
-                if (shockwaves[i].alpha <= 0) {
-                    shockwaves.splice(i, 1);
-                }
+                shockwaves[i].draw(isLight);
+                if (shockwaves[i].alpha <= 0) shockwaves.splice(i, 1);
             }
 
             requestAnimationFrame(animateParticles);
