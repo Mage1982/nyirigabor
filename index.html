@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="hu" class="h-full bg-[#090b10]">
+<html lang="hu" data-theme="dark" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperAgent.ai | Nyíri Gábor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#090b10" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>nyirigabor.hu | SuperAgent.ai</title>
     
     <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&family=Oswald:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -20,7 +23,6 @@
                         magenta: '#FF0C9D',
                         cyan: '#00FFFF',
                         purpleGlow: '#8A2BE2',
-                        darkBg: '#090b10'
                     },
                     fontFamily: {
                         oswald: ['Oswald', 'sans-serif'],
@@ -34,33 +36,60 @@
     </script>
 
     <style>
-        /* --- TÉMA ÉS INVERZIÓ --- */
-        html.inverted {
-            filter: invert(1) hue-rotate(180deg);
-            background-color: #f6f4ef !important;
+        /* --- HARMONIKUS TÉMA RENDSZER (DARK & LIGHT) --- */
+        :root {
+            --bg-base: #090b10;
+            --bg-overlay: rgba(9, 11, 16, 0.78);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-primary: #00FFFF;
+            --accent-secondary: #FF0C9D;
+            --card-bg: rgba(13, 18, 28, 0.76);
+            --card-bg-hover: rgba(18, 26, 42, 0.92);
+            --card-border: rgba(0, 255, 255, 0.25);
+            --card-border-hover: #00FFFF;
+            --dock-bg: rgba(10, 14, 23, 0.85);
+            --grid-line-1: rgba(0, 255, 255, 0.06);
+            --grid-line-2: rgba(255, 12, 157, 0.05);
+            --video-opacity: 0.42;
+            --shadow-glow: 0 12px 32px -8px rgba(0, 255, 255, 0.22);
         }
 
-        html.inverted iframe {
-            filter: invert(1) hue-rotate(180deg);
+        html[data-theme="light"] {
+            --bg-base: #eef2f6;
+            --bg-overlay: rgba(241, 245, 249, 0.84);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --accent-primary: #0284c7;
+            --accent-secondary: #db2777;
+            --card-bg: rgba(255, 255, 255, 0.78);
+            --card-bg-hover: rgba(255, 255, 255, 0.96);
+            --card-border: rgba(2, 132, 199, 0.25);
+            --card-border-hover: #0284c7;
+            --dock-bg: rgba(255, 255, 255, 0.86);
+            --grid-line-1: rgba(2, 132, 199, 0.08);
+            --grid-line-2: rgba(219, 39, 119, 0.06);
+            --video-opacity: 0.16;
+            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.18);
         }
 
-        /* --- HERO & TIPOGRÁFIA --- */
-        .intro-hero {
-            width: 100%;
-            height: 100vh;
-            background-color: #ffffff;
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
-        .brand-title {
-            font-family: 'Oswald', sans-serif;
-            font-weight: 300;
-            font-size: clamp(3.5rem, 12vw, 10rem);
-            color: #000000;
-            letter-spacing: 4px;
-            line-height: 1;
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            transition: background-color 0.45s ease, color 0.45s ease;
+            min-height: 100dvh;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* --- BACKGROUND VIDEO & OVERLAYS --- */
+        /* --- HÁTTÉR VIDEÓ & RÉTEGEK --- */
         .video-background-container {
             position: fixed;
             inset: 0;
@@ -78,220 +107,419 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            opacity: 0.45;
+            opacity: var(--video-opacity);
+            transition: opacity 0.45s ease;
+        }
+
+        .theme-overlay {
+            background: radial-gradient(circle at 50% 20%, transparent 0%, var(--bg-overlay) 75%), var(--bg-overlay);
+            transition: background 0.45s ease;
         }
 
         .bg-cyber-grid {
             background-image: 
-                linear-gradient(to right, rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 12, 157, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 20s linear infinite;
+                linear-gradient(to right, var(--grid-line-1) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line-2) 1px, transparent 1px);
+            background-size: 36px 36px;
+            animation: gridMove 24s linear infinite;
         }
 
         @keyframes gridMove {
             0% { transform: translateY(0); }
-            100% { transform: translateY(40px); }
+            100% { transform: translateY(36px); }
         }
 
-        /* --- GLASSMORPHISM & KÁRTYÁK --- */
-        .glass-card {
-            background: rgba(13, 18, 28, 0.92);
+        /* --- APP KÁRTYÁK (GLASSMORPHISM) --- */
+        .app-card {
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1.5px solid var(--card-border);
+            box-shadow: var(--shadow-glow);
+            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), 
+                        border-color 0.28s ease, 
+                        background-color 0.28s ease,
+                        box-shadow 0.28s ease;
         }
 
-        .glass-card:hover {
-            background: rgba(18, 25, 40, 0.98);
-            border-color: #00FFFF;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.4), inset 0 0 15px rgba(0, 255, 255, 0.15);
-            transform: translateY(-5px);
+        .app-card:hover {
+            background: var(--card-bg-hover);
+            border-color: var(--card-border-hover);
+            transform: translateY(-4px);
         }
 
-        .glass-card-mandelbrot {
-            border-color: rgba(59, 130, 246, 0.4);
+        .app-card:active {
+            transform: scale(0.97);
         }
 
-        .glass-card-mandelbrot:hover {
-            border-color: #3B82F6;
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.15);
+        /* --- APP DOCK & HEADER --- */
+        .app-surface {
+            background: var(--dock-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        /* --- MENÜ MODAL --- */
-        .menu-modal {
+        /* --- EMLÉKEZETES TIPÓ & GLITCH/SHIMMER --- */
+        .brand-hero-title {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 300;
+            font-size: clamp(3.1rem, 11vw, 7.5rem);
+            letter-spacing: 0.08em;
+            line-height: 0.95;
+            background: linear-gradient(120deg, var(--text-primary) 30%, var(--accent-primary) 65%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: textShine 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* --- BOTTOM SHEET / MODAL DRAWER --- */
+        .drawer-backdrop {
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease-in-out;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-
-        .menu-modal.active {
+        .drawer-backdrop.active {
             opacity: 1;
             visibility: visible;
         }
-
-        .menu-modal .menu-content {
-            transform: scale(0.95) translateY(10px);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        .drawer-panel {
+            transform: translateY(100%);
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @media (min-width: 768px) {
+            .drawer-panel {
+                transform: scale(0.94) translateY(16px);
+                opacity: 0;
+                transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+            }
+        }
+        .drawer-backdrop.active .drawer-panel {
+            transform: translateY(0) scale(1);
+            opacity: 1;
         }
 
-        .menu-modal.active .menu-content {
-            transform: scale(1) translateY(0);
+        /* --- TELEMETRIA PULZUS --- */
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7);
+            animation: pulseRing 2s infinite;
+        }
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.65); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
         }
     </style>
 </head>
-<body class="text-slate-100 font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white bg-[#090b10] relative">
+<body class="font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white relative flex flex-col justify-between">
 
-    <!-- MENÜ GOMB (JOBB FELSŐ) -->
-    <div class="fixed top-6 right-6 z-50">
-        <button id="menu-toggle-btn" onclick="toggleMenu()" aria-expanded="false" aria-controls="nav-menu" aria-label="Navigációs menü megnyitása" class="w-14 h-14 rounded-2xl bg-[#080c14]/90 backdrop-blur-md border-2 border-cyan text-cyan flex items-center justify-center text-xl shadow-[0_0_20px_rgba(0,255,255,0.25)] hover:border-magenta hover:text-magenta hover:shadow-[0_0_25px_rgba(255,12,157,0.4)] hover:scale-105 transition-all duration-300 group cursor-pointer">
-            <i id="menu-icon" class="fa-solid fa-bars-staggered group-hover:rotate-12 transition-transform duration-300"></i>
-        </button>
+    <!-- HÁTTÉR VIDEÓ & INTERAKTÍV RÉTEGEK -->
+    <div class="video-background-container">
+        <iframe src="https://www.youtube.com/embed/4a9aXr6eIQM?autoplay=1&mute=1&loop=1&playlist=4a9aXr6eIQM&controls=0&showinfo=0&rel=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
+    <div class="fixed inset-0 theme-overlay z-[1] pointer-events-none"></div>
+    <div id="interactive-glow" class="fixed inset-0 z-[2] pointer-events-none transition-opacity duration-300"></div>
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-[3] opacity-70"></canvas>
+    <div class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none"></div>
 
-    <!-- INVERZ MÓD VÁLTÓ GOMB (JOBB ALSÓ) -->
-    <div class="fixed bottom-6 right-6 z-50">
-        <button id="theme-toggle-btn" onclick="toggleInvert()" aria-label="Inverz színmód váltása" class="w-14 h-14 rounded-2xl bg-[#080c14]/90 backdrop-blur-md border-2 border-magenta text-magenta flex items-center justify-center text-xl shadow-[0_0_20px_rgba(255,12,157,0.25)] hover:border-cyan hover:text-cyan hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] hover:scale-105 transition-all duration-300 group cursor-pointer">
-            <i class="fa-solid fa-circle-half-stroke group-hover:rotate-180 transition-transform duration-500"></i>
-        </button>
-    </div>
+    <!-- AMBIENT GLOW ORBS -->
+    <div class="fixed -top-32 -left-32 w-80 h-80 bg-purpleGlow/20 rounded-full blur-[120px] pointer-events-none z-[2]"></div>
+    <div class="fixed -bottom-32 -right-32 w-80 h-80 bg-magenta/20 rounded-full blur-[120px] pointer-events-none z-[2]"></div>
 
-    <!-- POPUP GLASSMORPHISM MENÜ MODAL -->
-    <div id="nav-menu" aria-hidden="true" class="menu-modal fixed inset-0 z-40 bg-black/90 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-        <div class="menu-content w-full max-w-4xl bg-[#060910]/95 border-2 border-cyan rounded-3xl p-6 sm:p-10 shadow-[0_0_50px_rgba(0,255,255,0.25)] relative my-auto">
-            
-            <!-- Fejléc -->
-            <div class="flex items-center justify-between pb-6 mb-8 border-b-2 border-cyan/30">
-                <div>
-                    <h2 class="font-orbitron text-2xl sm:text-3xl font-black text-white tracking-wider">NAVIGÁCIÓ</h2>
-                    <p class="text-xs font-mono text-cyan font-bold mt-1 tracking-widest">// SUPERAGENT.AI MODULOK</p>
+    <!-- FELSŐ APP STATUS BAR (MINIMAL HUD) -->
+    <header class="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 flex items-center justify-between">
+        <div class="app-surface px-3.5 py-2 rounded-full flex items-center gap-2.5 shadow-sm">
+            <span class="w-2 h-2 rounded-full bg-cyan pulse-dot"></span>
+            <span class="font-mono text-[11px] sm:text-xs tracking-wider uppercase font-semibold" style="color: var(--text-secondary);">
+                SYS.ONLINE <span class="opacity-40 mx-1">|</span> <span id="live-clock">00:00</span>
+            </span>
+        </div>
+
+        <!-- Asztali gyorsvezérlők + Mobil téma váltó -->
+        <div class="flex items-center gap-2.5">
+            <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-primary);">
+                <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
+                <span id="theme-label" class="hidden sm:inline">LIGHT</span>
+            </button>
+
+            <button onclick="toggleDrawer()" aria-label="Modulok megnyitása" class="hidden md:flex app-surface h-10 px-4 rounded-full items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-secondary);">
+                <i class="fa-solid fa-grid-2"></i>
+                <span>MODULOK</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- FŐ TARTALOM: EGYSÉGES HERO + APP KÁRTYA LAUNCHER -->
+    <main class="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 my-auto py-8 sm:py-12 pb-28 md:pb-14 flex flex-col items-center text-center">
+        
+        <!-- Azonosító jelvény -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 text-[11px] font-mono tracking-widest uppercase border" style="border-color: var(--card-border); background: var(--card-bg); color: var(--accent-primary);">
+            <i class="fa-solid fa-microchip text-[10px]"></i>
+            <span>SuperAgent.ai Core</span>
+        </div>
+
+        <!-- Fő márkanév (már nincs elszigetelt fehér falban, hanem a térben lebeg) -->
+        <h1 class="brand-hero-title select-none lowercase mb-3">
+            nyirigabor.hu
+        </h1>
+
+        <!-- Dinamikus alcím (gépelő effekt) -->
+        <p class="font-mono text-xs sm:text-sm md:text-base max-w-xl mb-8 sm:mb-10 min-h-[1.5rem]" style="color: var(--text-secondary);">
+            <span class="opacity-60">&gt; </span><span id="typed-tagline"></span><span class="animate-pulse">_</span>
+        </p>
+
+        <!-- KÖZVETLEN APP LAUNCHER KÁRTYÁK (MOBILON IS AZONNAL ÉRINTHETŐ) -->
+        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5 text-left">
+
+            <!-- MODUL 1 -->
+            <a href="https://nyirigabor.hu/index1.html" class="app-card group rounded-2xl p-4 sm:p-6 flex md:flex-col items-center md:items-start justify-between gap-4 relative overflow-hidden">
+                <div class="flex items-center md:items-start md:flex-col gap-3.5 sm:gap-4 w-full">
+                    <div class="w-12 h-12 shrink-0 rounded-xl bg-cyan/15 border border-cyan/50 flex items-center justify-center text-cyan text-lg group-hover:bg-cyan group-hover:text-slate-950 transition-colors">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <h2 class="font-orbitron text-base sm:text-lg font-bold truncate" style="color: var(--text-primary);">AI Hírlevél</h2>
+                            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-cyan/20 text-cyan font-bold uppercase shrink-0">AI</span>
+                        </div>
+                        <p class="text-xs line-clamp-2 leading-relaxed" style="color: var(--text-secondary);">
+                            Intelligens AI összefoglalók és automatizált trendek.
+                        </p>
+                    </div>
                 </div>
-                <button onclick="toggleMenu()" aria-label="Menü bezárása" class="w-12 h-12 rounded-2xl bg-cyan/10 border-2 border-cyan/50 text-cyan hover:bg-magenta hover:border-magenta hover:text-white transition-all duration-300 flex items-center justify-center text-xl shadow-lg">
-                    <i class="fa-solid fa-xmark"></i>
+                <div class="shrink-0 md:w-full md:mt-4 md:pt-3 md:border-t flex items-center justify-between text-xs font-mono font-bold" style="border-color: var(--card-border); color: var(--accent-primary);">
+                    <span class="hidden md:inline">Indítás</span>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:translate-x-1 transition-transform">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- MODUL 2 -->
+            <a href="https://nyirigabor.hu/index3.html" class="app-card group rounded-2xl p-4 sm:p-6 flex md:flex-col items-center md:items-start justify-between gap-4 relative overflow-hidden">
+                <div class="flex items-center md:items-start md:flex-col gap-3.5 sm:gap-4 w-full">
+                    <div class="w-12 h-12 shrink-0 rounded-xl bg-purple-500/15 border border-purple-400/50 flex items-center justify-center text-purple-400 text-lg group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-atom"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <h2 class="font-orbitron text-base sm:text-lg font-bold truncate" style="color: var(--text-primary);">Kvantum Játszótér</h2>
+                            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-bold uppercase shrink-0">Q-Lab</span>
+                        </div>
+                        <p class="text-xs line-clamp-2 leading-relaxed" style="color: var(--text-secondary);">
+                            Interaktív kvantumszuperpozíció és AI algoritmus szimuláció.
+                        </p>
+                    </div>
+                </div>
+                <div class="shrink-0 md:w-full md:mt-4 md:pt-3 md:border-t flex items-center justify-between text-xs font-mono font-bold text-purple-400" style="border-color: var(--card-border);">
+                    <span class="hidden md:inline">Szimuláció</span>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:translate-x-1 transition-transform">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- MODUL 3 -->
+            <a href="mandelbrot_info.html" class="app-card group rounded-2xl p-4 sm:p-6 flex md:flex-col items-center md:items-start justify-between gap-4 relative overflow-hidden">
+                <div class="flex items-center md:items-start md:flex-col gap-3.5 sm:gap-4 w-full">
+                    <div class="w-12 h-12 shrink-0 rounded-xl bg-magenta/15 border border-magenta/50 flex items-center justify-center text-magenta text-lg group-hover:bg-magenta group-hover:text-white transition-colors">
+                        <i class="fa-solid fa-infinity"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <h2 class="font-orbitron text-base sm:text-lg font-bold truncate" style="color: var(--text-primary);">Mandelbrot Utazás</h2>
+                            <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-magenta/20 text-magenta font-bold uppercase shrink-0">Fractal</span>
+                        </div>
+                        <p class="text-xs line-clamp-2 leading-relaxed" style="color: var(--text-secondary);">
+                            Végtelen matematikai struktúrák és valós idejű fraktál világok.
+                        </p>
+                    </div>
+                </div>
+                <div class="shrink-0 md:w-full md:mt-4 md:pt-3 md:border-t flex items-center justify-between text-xs font-mono font-bold text-magenta" style="border-color: var(--card-border);">
+                    <span class="hidden md:inline">Felfedezés</span>
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:translate-x-1 transition-transform">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- MOBIL APP BOTTOM NAVIGATION DOCK (HÜVELYKUJJ-BARÁT) -->
+    <nav aria-label="Mobil alkalmazás navigáció" class="md:hidden fixed bottom-4 left-4 right-4 z-40 app-surface rounded-2xl px-2 py-2 shadow-2xl flex items-center justify-around">
+        <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-primary);">
+            <i class="fa-solid fa-house text-base mb-1"></i>
+            <span class="text-[10px]">Kezdőlap</span>
+        </a>
+
+        <button onclick="toggleDrawer()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-primary);">
+            <div class="w-10 h-7 rounded-full bg-gradient-to-r from-cyan to-magenta text-slate-950 flex items-center justify-center mb-0.5 shadow-md">
+                <i class="fa-solid fa-layer-group text-sm"></i>
+            </div>
+            <span class="text-[10px] font-bold">Appok</span>
+        </button>
+
+        <button onclick="pulseParticles()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-wand-magic-sparkles text-base mb-1"></i>
+            <span class="text-[10px]">Impulzus</span>
+        </button>
+
+        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-secondary);">
+            <i id="dock-theme-icon" class="fa-solid fa-sun text-base mb-1"></i>
+            <span class="text-[10px]">Téma</span>
+        </button>
+    </nav>
+
+    <!-- APP DRAWER / BOTTOM SHEET MODAL -->
+    <div id="app-drawer" aria-hidden="true" onclick="if(event.target === this) toggleDrawer()" class="drawer-backdrop fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-6">
+        <div class="drawer-panel app-surface w-full max-w-2xl rounded-t-3xl md:rounded-3xl p-6 sm:p-8 shadow-2xl border-t-2 md:border-2" style="border-color: var(--accent-primary);">
+            
+            <!-- Mobil lehúzó sáv indikátor -->
+            <div class="w-12 h-1.5 rounded-full bg-slate-500/40 mx-auto mb-5 md:hidden"></div>
+
+            <div class="flex items-center justify-between pb-4 mb-5 border-b" style="border-color: var(--card-border);">
+                <div>
+                    <h2 class="font-orbitron text-xl sm:text-2xl font-black tracking-wider" style="color: var(--text-primary);">RENDSZER MODULOK</h2>
+                    <p class="text-xs font-mono mt-0.5" style="color: var(--accent-primary);">// GYORSINDÍTÓ &amp; PROJEKTEK</p>
+                </div>
+                <button onclick="toggleDrawer()" aria-label="Bezárás" class="w-10 h-10 rounded-xl flex items-center justify-center border transition-colors cursor-pointer" style="border-color: var(--card-border); color: var(--text-primary);">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <!-- Menü Kártyák Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                <!-- ITEM 1 -->
-                <a href="https://nyirigabor.hu/index1.html" onclick="toggleMenu()" class="glass-card group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-28 h-28 bg-cyan/20 rounded-full blur-2xl group-hover:bg-cyan/35 transition-all"></div>
-                    <div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-cyan border-2 border-cyan flex items-center justify-center text-black text-xl font-bold group-hover:scale-110 group-hover:bg-magenta group-hover:border-magenta group-hover:text-white transition-all duration-300 shadow-md shadow-cyan/30">
-                                <i class="fa-solid fa-robot"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-cyan text-black font-extrabold uppercase shadow-sm">AI Content</span>
+            <div class="space-y-3">
+                <a href="https://nyirigabor.hu/index1.html" class="app-card rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-cyan/20 text-cyan flex items-center justify-center"><i class="fa-solid fa-robot"></i></div>
+                        <div>
+                            <div class="font-orbitron text-sm font-bold" style="color: var(--text-primary);">AI Hírlevél</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">Automatikus AI kuráció</div>
                         </div>
-                        <h3 class="font-orbitron text-xl font-bold text-white group-hover:text-cyan transition-colors mb-2 tracking-wide">AI Hírlevél</h3>
-                        <p class="text-xs text-slate-200 leading-relaxed font-normal">Friss, intelligens AI hírlevelek egyenesen a postaládádba.</p>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-white/20 flex items-center justify-between text-xs font-mono text-cyan font-bold group-hover:text-magenta">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-mug-hot text-sm"></i> Indítás</span>
-                        <i class="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-2 transition-transform"></i>
-                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                 </a>
 
-                <!-- ITEM 2 -->
-                <a href="https://nyirigabor.hu/index3.html" onclick="toggleMenu()" class="glass-card group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-28 h-28 bg-purpleGlow/25 rounded-full blur-2xl group-hover:bg-purpleGlow/40 transition-all"></div>
-                    <div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-purple-500 border-2 border-purple-400 flex items-center justify-center text-white text-xl font-bold group-hover:scale-110 group-hover:bg-magenta group-hover:border-magenta transition-all duration-300 shadow-md shadow-purple-500/30">
-                                <i class="fa-solid fa-atom"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-purple-500 text-white font-extrabold uppercase shadow-sm">Quantum</span>
+                <a href="https://nyirigabor.hu/index3.html" class="app-card rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center"><i class="fa-solid fa-atom"></i></div>
+                        <div>
+                            <div class="font-orbitron text-sm font-bold" style="color: var(--text-primary);">Kvantum Játszótér</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">Szuperpozíció szimulátor</div>
                         </div>
-                        <h3 class="font-orbitron text-xl font-bold text-white group-hover:text-purple-300 transition-colors mb-2 tracking-wide">Kvantum Játszótér</h3>
-                        <p class="text-xs text-slate-200 leading-relaxed font-normal">Interaktív kvantumszuperpozíció és AI algoritmus szimuláció.</p>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-white/20 flex items-center justify-between text-xs font-mono text-purple-300 font-bold group-hover:text-magenta">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-gamepad text-sm"></i> Szimuláció</span>
-                        <i class="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-2 transition-transform"></i>
-                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                 </a>
 
-                <!-- ITEM 3 -->
-                <a href="mandelbrot_info.html" onclick="toggleMenu()" class="glass-card glass-card-mandelbrot group rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-28 h-28 bg-blue-600/25 rounded-full blur-2xl group-hover:bg-blue-500/40 transition-all"></div>
-                    <div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-600 border-2 border-blue-400 flex items-center justify-center text-white text-xl font-bold group-hover:scale-110 group-hover:bg-magenta group-hover:border-magenta transition-all duration-300 shadow-md shadow-blue-500/30">
-                                <i class="fa-solid fa-network-wired"></i>
-                            </div>
-                            <span class="text-[10px] font-mono tracking-widest px-3 py-1 rounded-full bg-blue-600 text-white font-extrabold uppercase shadow-sm">Visuals</span>
+                <a href="mandelbrot_info.html" class="app-card rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-magenta/20 text-magenta flex items-center justify-center"><i class="fa-solid fa-infinity"></i></div>
+                        <div>
+                            <div class="font-orbitron text-sm font-bold" style="color: var(--text-primary);">Mandelbrot Utazás</div>
+                            <div class="text-xs" style="color: var(--text-secondary);">Fraktál univerzum felfedező</div>
                         </div>
-                        <h3 class="font-orbitron text-xl font-bold text-white group-hover:text-blue-300 transition-colors mb-2 tracking-wide">Mandelbrot Utazás</h3>
-                        <p class="text-xs text-slate-200 leading-relaxed font-normal">Végtelen matematikai struktúrák és fraktál világok.</p>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-white/20 flex items-center justify-between text-xs font-mono text-blue-300 font-bold group-hover:text-magenta">
-                        <span class="flex items-center gap-2"><i class="fa-solid fa-compass text-sm"></i> Felfedezés</span>
-                        <i class="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-2 transition-transform"></i>
-                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs opacity-60"></i>
                 </a>
-
             </div>
         </div>
     </div>
 
-    <!-- INTRO SZEKCIÓ -->
-    <section class="intro-hero relative z-30 flex flex-col justify-center items-center p-4">
-        <h1 class="brand-title select-none lowercase">nyirigabor.hu</h1>
-    </section>
-
-    <!-- HASZTALAN/HÁTTÉR ELEMEK -->
-    <div class="video-background-container">
-        <iframe src="https://www.youtube.com/embed/4a9aXr6eIQM?autoplay=1&mute=1&loop=1&playlist=4a9aXr6eIQM&controls=0&showinfo=0&rel=0&enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-    
-    <div class="fixed inset-0 bg-[#090b10]/75 z-1 pointer-events-none"></div>
-    <div id="interactive-glow" class="fixed inset-0 z-10 pointer-events-none transition-opacity duration-300"></div>
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-55"></canvas>
-    <div class="fixed inset-0 bg-cyber-grid z-10 opacity-70 pointer-events-none"></div>
-
-    <!-- AMBIENT GLOW ORBS -->
-    <div class="fixed -top-40 -left-40 w-96 h-96 bg-purpleGlow/25 rounded-full blur-[140px] pointer-events-none z-10"></div>
-    <div class="fixed -bottom-40 -right-40 w-96 h-96 bg-magenta/20 rounded-full blur-[140px] pointer-events-none z-10"></div>
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan/15 rounded-full blur-[180px] pointer-events-none z-10"></div>
-
     <!-- LOGIKA ÉS ANIMÁCIÓK -->
     <script>
-        // --- 1. NAVIGÁCIÓ ÉS INTERAKCIÓK ---
-        const menu = document.getElementById('nav-menu');
-        const menuBtn = document.getElementById('menu-toggle-btn');
-        const menuIcon = document.getElementById('menu-icon');
+        // --- 1. HARMONIKUS TÉMA VÁLTÓ (MENTÉSSEL) ---
+        const htmlEl = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+        const dockThemeIcon = document.getElementById('dock-theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        const metaTheme = document.getElementById('meta-theme-color');
 
-        function toggleMenu() {
-            const isActive = menu.classList.toggle('active');
-            menu.setAttribute('aria-hidden', !isActive);
-            menuBtn.setAttribute('aria-expanded', isActive);
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('ng_theme', theme);
+            const isLight = theme === 'light';
+            themeIcon.className = isLight ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
+            if (dockThemeIcon) dockThemeIcon.className = isLight ? 'fa-solid fa-moon text-base mb-1' : 'fa-solid fa-sun text-base mb-1';
+            if (themeLabel) themeLabel.textContent = isLight ? 'DARK' : 'LIGHT';
+            metaTheme.setAttribute('content', isLight ? '#eef2f6' : '#090b10');
+        }
 
-            menuIcon.className = isActive 
-                ? 'fa-solid fa-xmark group-hover:rotate-90 transition-transform duration-300' 
-                : 'fa-solid fa-bars-staggered group-hover:rotate-12 transition-transform duration-300';
+        function toggleTheme() {
+            const current = htmlEl.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        }
 
+        const savedTheme = localStorage.getItem('ng_theme') || 'dark';
+        applyTheme(savedTheme);
+
+        // --- 2. APP DRAWER VEZÉRLÉS ---
+        const drawer = document.getElementById('app-drawer');
+        function toggleDrawer() {
+            const isActive = drawer.classList.toggle('active');
+            drawer.setAttribute('aria-hidden', !isActive);
             document.body.style.overflow = isActive ? 'hidden' : '';
         }
 
-        function toggleInvert() {
-            document.documentElement.classList.toggle('inverted');
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && drawer.classList.contains('active')) toggleDrawer();
+        });
+
+        // --- 3. ÉLŐ ÓRA & GÉPELŐ EFFEKTEK ---
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').textContent = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        const taglines = [
+            "Digitális architektúra, AI rendszerek és kreatív kód.",
+            "Kvantum kísérletek & interaktív webes élmények.",
+            "Válassz egy modult az indításhoz."
+        ];
+        let tagIdx = 0, charIdx = 0, isDeleting = false;
+        const typedEl = document.getElementById('typed-tagline');
+
+        function typeLoop() {
+            const current = taglines[tagIdx];
+            typedEl.textContent = current.substring(0, charIdx);
+            
+            if (!isDeleting && charIdx < current.length) {
+                charIdx++;
+                setTimeout(typeLoop, 45);
+            } else if (isDeleting && charIdx > 0) {
+                charIdx--;
+                setTimeout(typeLoop, 25);
+            } else {
+                isDeleting = !isDeleting;
+                if (!isDeleting) tagIdx = (tagIdx + 1) % taglines.length;
+                setTimeout(typeLoop, isDeleting ? 2200 : 400);
+            }
+        }
+        typeLoop();
+
+        // --- 4. EGÉR + ÉRINTÉS REFLEKTOR & RESZECSKE HÁLÓZAT ---
+        const glowContainer = document.getElementById('interactive-glow');
+        const pointer = { x: -1000, y: -1000 };
+
+        function updatePointer(x, y) {
+            pointer.x = x;
+            pointer.y = y;
+            glowContainer.style.background = `radial-gradient(520px circle at ${x}px ${y}px, rgba(0, 255, 255, 0.12), rgba(255, 12, 157, 0.08), transparent 70%)`;
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && menu.classList.contains('active')) {
-                toggleMenu();
-            }
-        });
+        window.addEventListener('mousemove', (e) => updatePointer(e.clientX, e.clientY), { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches[0]) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
 
-        // --- 2. EGÉR REFLEKTOR EFFEKT ---
-        const glowContainer = document.getElementById('interactive-glow');
-        window.addEventListener('mousemove', (e) => {
-            glowContainer.style.background = `radial-gradient(650px circle at ${e.clientX}px ${e.clientY}px, rgba(0, 255, 255, 0.1), rgba(255, 12, 157, 0.08), transparent 70%)`;
-        });
-
-        // --- 3. OPTIMALIZÁLT RESZECSKE HÁLÓZAT (CANVAS) ---
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let width = canvas.width = window.innerWidth;
@@ -303,48 +531,64 @@
         });
 
         class Particle {
-            constructor() {
-                this.reset();
-            }
-
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.4;
-                this.vy = (Math.random() - 0.5) * 0.4;
-                this.radius = Math.random() * 1.5 + 0.5;
-                this.color = Math.random() > 0.5 ? 'rgba(0, 255, 255, ' : 'rgba(255, 12, 157, ';
-                this.alpha = Math.random() * 0.5 + 0.3;
+                this.vx = (Math.random() - 0.5) * 0.45;
+                this.vy = (Math.random() - 0.5) * 0.45;
+                this.radius = Math.random() * 1.6 + 0.6;
+                this.isCyan = Math.random() > 0.45;
             }
-
             update() {
                 this.x += this.vx;
                 this.y += this.vy;
-
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
 
-            draw() {
+                // Enyhe mágneses vonzás az ujjhoz / kurzorhoz
+                const dx = pointer.x - this.x;
+                const dy = pointer.y - this.y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq < 18000 && distSq > 100) {
+                    this.x += dx * 0.012;
+                    this.y += dy * 0.012;
+                }
+            }
+            draw(isLight) {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ')';
+                ctx.fillStyle = this.isCyan
+                    ? (isLight ? 'rgba(2, 132, 199, 0.55)' : 'rgba(0, 255, 255, 0.65)')
+                    : (isLight ? 'rgba(219, 39, 119, 0.5)' : 'rgba(255, 12, 157, 0.6)');
                 ctx.fill();
             }
         }
 
-        const count = Math.min(Math.floor(width / 16), 80);
+        const count = Math.min(Math.floor(width / 18), 65);
         const particles = Array.from({ length: count }, () => new Particle());
-        const maxDist = 120;
+        const maxDist = 115;
         const maxDistSq = maxDist * maxDist;
+
+        function pulseParticles() {
+            particles.forEach(p => {
+                p.vx = (Math.random() - 0.5) * 3.5;
+                p.vy = (Math.random() - 0.5) * 3.5;
+                setTimeout(() => {
+                    p.vx *= 0.2;
+                    p.vy *= 0.2;
+                }, 600);
+            });
+        }
 
         function animateParticles() {
             ctx.clearRect(0, 0, width, height);
+            const isLight = htmlEl.getAttribute('data-theme') === 'light';
 
             for (let i = 0; i < count; i++) {
                 const p1 = particles[i];
                 p1.update();
-                p1.draw();
+                p1.draw(isLight);
 
                 for (let j = i + 1; j < count; j++) {
                     const p2 = particles[j];
@@ -352,23 +596,21 @@
                     const dy = p1.y - p2.y;
                     const distSq = dx * dx + dy * dy;
 
-                    // Négyzetes távolságellenőrzés a gyökvonás kikerülésére (teljesítményoptimalizálás)
                     if (distSq < maxDistSq) {
-                        const dist = Math.sqrt(distSq);
+                        const alpha = 0.16 * (1 - Math.sqrt(distSq) / maxDist);
                         ctx.beginPath();
                         ctx.moveTo(p1.x, p1.y);
                         ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(0, 255, 255, ${0.15 * (1 - dist / maxDist)})`;
-                        ctx.lineWidth = 0.6;
+                        ctx.strokeStyle = isLight ? `rgba(2, 132, 199, ${alpha})` : `rgba(0, 255, 255, ${alpha})`;
+                        ctx.lineWidth = 0.65;
                         ctx.stroke();
                     }
                 }
             }
-
             requestAnimationFrame(animateParticles);
         }
 
-        window.onload = animateParticles;
+        animateParticles();
     </script>
 </body>
 </html>
