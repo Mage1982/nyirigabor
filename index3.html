@@ -1,886 +1,547 @@
 <!DOCTYPE html>
-<html lang="hu" data-theme="dark" class="h-full">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#090b10" id="meta-theme-color">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Kvantum Játszótér | nyirigabor.hu</title>
-
-    <!-- Azonnali téma betöltés villanás nélkül -->
-    <script>
-        (function() {
-            const saved = localStorage.getItem('ng_theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', saved);
-            const meta = document.getElementById('meta-theme-color');
-            if (meta) meta.setAttribute('content', saved === 'light' ? '#eef2f6' : '#090b10');
-        })();
-    </script>
-
-    <!-- External Resources -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        magenta: '#FF0C9D',
-                        cyan: '#00FFFF',
-                        purpleGlow: '#8A2BE2',
-                        emeraldGlow: '#10b981'
-                    },
-                    fontFamily: {
-                        oswald: ['Oswald', 'sans-serif'],
-                        orbitron: ['Orbitron', 'sans-serif'],
-                        mono: ['Share Tech Mono', 'monospace'],
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHERIA // Generative Cyber Visualizer</title>
     <style>
-        /* --- NYIRIGABOR-DESIGN-SYSTEM TOKENS --- */
         :root {
-            --bg-base: #090b10;
-            --bg-overlay: rgba(9, 11, 16, 0.82);
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --accent-primary: #00FFFF;
-            --accent-secondary: #FF0C9D;
-            --card-bg: rgba(13, 18, 28, 0.78);
-            --card-bg-hover: rgba(18, 26, 42, 0.92);
-            --card-inner: rgba(9, 13, 22, 0.65);
-            --card-border: rgba(0, 255, 255, 0.25);
-            --card-border-hover: #00FFFF;
-            --dock-bg: rgba(10, 14, 23, 0.86);
-            --grid-line-1: rgba(0, 255, 255, 0.06);
-            --grid-line-2: rgba(255, 12, 157, 0.05);
-            --shadow-glow: 0 12px 32px -8px rgba(0, 255, 255, 0.2);
-            --input-bg: rgba(9, 13, 22, 0.85);
-        }
-
-        html[data-theme="light"] {
-            --bg-base: #eef2f6;
-            --bg-overlay: rgba(241, 245, 249, 0.88);
-            --text-primary: #0f172a;
-            --text-secondary: #334155;
-            --text-muted: #64748b;
-            --accent-primary: #0284c7;
-            --accent-secondary: #db2777;
-            --card-bg: rgba(255, 255, 255, 0.82);
-            --card-bg-hover: rgba(255, 255, 255, 0.96);
-            --card-inner: rgba(241, 245, 249, 0.85);
-            --card-border: rgba(2, 132, 199, 0.25);
-            --card-border-hover: #0284c7;
-            --dock-bg: rgba(255, 255, 255, 0.88);
-            --grid-line-1: rgba(2, 132, 199, 0.08);
-            --grid-line-2: rgba(219, 39, 119, 0.06);
-            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.16);
-            --input-bg: rgba(255, 255, 255, 0.95);
+            --bg-color: #08090d;
+            --panel-bg: rgba(16, 19, 28, 0.65);
+            --panel-border: rgba(0, 240, 255, 0.18);
+            --primary: #00f0ff;
+            --secondary: #7000ff;
+            --accent: #ff0055;
+            --text: #e0e8f0;
+            --text-dim: #7a8b9e;
+            --font-main: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', monospace;
         }
 
         * {
-            -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
         }
 
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-primary);
-            transition: background-color 0.45s ease, color 0.45s ease;
-            min-height: 100dvh;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: var(--font-main);
         }
 
-        /* --- HÁTTÉR RÉTEGEK --- */
-        .theme-overlay {
-            background: radial-gradient(circle at 50% 18%, transparent 0%, var(--bg-overlay) 78%), var(--bg-overlay);
-            transition: background 0.45s ease;
+        /* Fullscreen Canvas */
+        #viewport {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            cursor: crosshair;
         }
 
-        .bg-cyber-grid {
-            background-image: 
-                linear-gradient(to right, var(--grid-line-1) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--grid-line-2) 1px, transparent 1px);
-            background-size: 36px 36px;
-            animation: gridMove 24s linear infinite;
+        /* Glassmorphism UI Overlay */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 24px;
         }
 
-        @keyframes gridMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(36px); }
+        .interactive {
+            pointer-events: auto;
         }
 
-        /* --- APP KÁRTYÁK ÉS HUD ELEMEK --- */
-        .app-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1.5px solid var(--card-border);
-            box-shadow: var(--shadow-glow);
-            transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), 
-                        border-color 0.28s ease, 
-                        background-color 0.28s ease,
-                        box-shadow 0.28s ease;
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .app-card:hover {
-            background: var(--card-bg-hover);
-            border-color: var(--card-border-hover);
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            padding: 10px 18px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
-        .app-inner-box {
-            background: var(--card-inner);
-            border: 1px solid var(--card-border);
-            transition: background-color 0.4s ease, border-color 0.4s ease;
+        .brand-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
         }
 
-        .app-surface {
-            background: var(--dock-bg);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            border: 1px solid var(--card-border);
-            transition: background-color 0.4s ease, border-color 0.4s ease;
+        .brand-title {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: var(--font-mono);
+            color: #fff;
         }
 
-        /* --- GRADIENS CÍMSOR (DESCENDER SAFE) --- */
-        .accent-gradient-text {
-            background: linear-gradient(120deg, var(--accent-primary) 15%, #a855f7 55%, var(--accent-secondary) 95%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-            line-height: 1.25;
-            padding-bottom: 0.14em;
+        .brand-title span {
+            color: var(--primary);
         }
 
-        /* --- KVANTUM KAPU GOMBOK --- */
-        .gate-btn {
-            background: var(--card-inner);
-            border: 1.5px solid var(--card-border);
-            color: var(--text-primary);
-            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+        /* Control Panel */
+        .control-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--panel-border);
+            padding: 20px;
+            border-radius: 16px;
+            width: 320px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
-        .gate-btn:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px -4px rgba(0, 255, 255, 0.28);
+        .panel-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .gate-btn:active {
-            transform: scale(0.95);
+        .panel-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+            display: flex;
+            justify-content: space-between;
         }
 
-        /* --- TELEMETRIA PULZUS --- */
-        .pulse-dot {
-            box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7);
-            animation: pulseRing 2s infinite;
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
-        @keyframes pulseRing {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.65); }
-            70% { box-shadow: 0 0 0 8px rgba(0, 255, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+        }
+
+        .btn.active {
+            background: var(--primary);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 14px;
+            width: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -5px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Footer Info */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 12px;
+            color: var(--text-dim);
+            font-family: var(--font-mono);
+        }
+
+        .instructions {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.4; transform: scale(0.9); }
+        }
+
+        @media (max-width: 768px) {
+            .ui-layer { padding: 12px; }
+            .control-panel { width: 100%; max-width: 280px; }
+            .instructions { display: none; }
         }
     </style>
 </head>
-<body class="font-sans antialiased overflow-x-hidden selection:bg-magenta selection:text-white relative flex flex-col justify-between">
+<body>
 
-    <!-- INTERAKTÍV HÁTTÉR RÉTEGEK -->
-    <div class="fixed inset-0 theme-overlay z-[1] pointer-events-none"></div>
-    <div id="interactive-glow" class="fixed inset-0 z-[2] pointer-events-none transition-opacity duration-300"></div>
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-[3] opacity-75"></canvas>
-    <div class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none"></div>
+    <canvas id="viewport"></canvas>
 
-    <!-- AMBIENT GLOW ORBS -->
-    <div class="fixed -top-32 -left-32 w-80 h-80 bg-purpleGlow/20 rounded-full blur-[120px] pointer-events-none z-[2]"></div>
-    <div class="fixed -bottom-32 -right-32 w-80 h-80 bg-magenta/20 rounded-full blur-[120px] pointer-events-none z-[2]"></div>
-
-    <!-- FELSŐ HUD HEADER -->
-    <header class="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6 flex items-center justify-between gap-3">
-        <a href="index.html" class="app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-mono font-bold hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-primary);">
-            <i class="fa-solid fa-arrow-left"></i>
-            <span>FŐOLDAL</span>
-        </a>
-
-        <div class="app-surface px-3.5 py-2 rounded-full flex items-center gap-2.5 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-cyan pulse-dot"></span>
-            <span class="font-mono text-[11px] sm:text-xs tracking-wider uppercase font-semibold" style="color: var(--text-secondary);">
-                SYS.ONLINE <span class="opacity-40 mx-1">|</span> <span id="live-clock">00:00</span>
-            </span>
-        </div>
-
-        <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-secondary);">
-            <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
-            <span id="theme-label" class="hidden sm:inline">LIGHT</span>
-        </button>
-    </header>
-
-    <!-- FŐ TARTALOM -->
-    <main class="relative z-20 w-full max-w-6xl mx-auto px-4 sm:px-6 my-auto py-6 sm:py-10 pb-28 md:pb-14">
-        
-        <!-- HERO FEJLÉC -->
-        <div class="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full mb-3 text-[11px] font-mono tracking-widest uppercase border" style="border-color: var(--card-border); background: var(--card-bg); color: var(--accent-primary);">
-                <i class="fa-solid fa-atom text-xs"></i>
-                <span>Q-LAB // BLOCH SPHERE SIMULATOR</span>
+    <div class="ui-layer">
+        <header class="interactive">
+            <div class="brand">
+                <div class="brand-dot"></div>
+                <div class="brand-title">Aetheria <span>// Labs</span></div>
             </div>
+        </header>
 
-            <h1 class="text-3xl sm:text-5xl font-orbitron font-extrabold uppercase tracking-tight leading-[1.2]" style="color: var(--text-primary);">
-                Kvantum <span class="accent-gradient-text">Játszótér</span>
-            </h1>
-
-            <p class="text-xs sm:text-sm md:text-base mt-2 max-w-xl mx-auto leading-relaxed" style="color: var(--text-secondary);">
-                Manipuláld a kvantumbitet valós idejű unitér kapukkal, hozd létre a szuperpozíciót, majd figyeld meg a hullámfüggvény összeomlását méréskor.
-            </p>
-        </div>
-
-        <!-- INTERAKTÍV KVANTUM MUNKATÉR -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
-
-            <!-- BAL PANEL: 3D BLOCH-GÖMB VIZUALIZÁCIÓ -->
-            <div class="lg:col-span-6 app-card rounded-3xl p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
-                <div class="flex items-center justify-between gap-2 mb-3">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full bg-purple-400"></span>
-                        <h2 class="font-orbitron text-xs sm:text-sm font-bold tracking-wider uppercase" style="color: var(--text-primary);">
-                            Bloch-gömb Projekció
-                        </h2>
+        <main class="interactive" style="align-self: flex-start; margin-top: auto; margin-bottom: 20px;">
+            <div class="control-panel">
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Szimulációs Mód</span>
                     </div>
-                    <span id="state-badge" class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-cyan/15 border border-cyan/40 text-cyan font-bold uppercase">
-                        ALAPÁLLAPOT |0⟩
-                    </span>
+                    <div class="btn-grid">
+                        <button class="btn active" onclick="setMode('neural')">Neuronháló</button>
+                        <button class="btn" onclick="setMode('quantum')">Kvantumraj</button>
+                        <button class="btn" onclick="setMode('matrix')">Mátrix Rács</button>
+                        <button class="btn" onclick="setMode('pulse')">Kozmosz</button>
+                    </div>
                 </div>
 
-                <!-- Interaktív Bloch Canvas -->
-                <div class="relative w-full aspect-square max-h-[340px] mx-auto my-auto flex items-center justify-center">
-                    <canvas id="bloch-canvas" class="w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Színpaletta</span>
+                    </div>
+                    <div class="btn-grid">
+                        <button class="btn active" onclick="setPalette('cyan')">Cian Négyzet</button>
+                        <button class="btn" onclick="setPalette('neon')">Neo Violet</button>
+                        <button class="btn" onclick="setPalette('amber')">Kiber Arany</button>
+                        <button class="btn" onclick="setPalette('emerald')">Smaragd</button>
+                    </div>
                 </div>
 
-                <!-- Állapotvektor egyenlet -->
-                <div class="app-inner-box rounded-2xl p-3.5 mt-3 text-center">
-                    <div class="text-[10px] font-mono uppercase tracking-widest mb-1" style="color: var(--text-muted);">
-                        Kvantum Állapotvektor |ψ⟩
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Sűrűség</span>
+                        <span id="count-val">100</span>
                     </div>
-                    <div id="state-equation" class="font-mono text-xs sm:text-sm font-bold tracking-wide" style="color: var(--accent-primary);">
-                        |ψ⟩ = 1.000 |0⟩ + 0.000 |1⟩
+                    <input type="range" id="particle-count" min="30" max="250" value="100" oninput="updateParticleCount(this.value)">
+                </div>
+
+                <div class="panel-group">
+                    <div class="panel-label">
+                        <span>Audio Szintetizátor</span>
+                        <span id="audio-status">Ki</span>
                     </div>
+                    <button class="btn" id="audio-btn" onclick="toggleAudio()" style="width: 100%;">Hang Aktiválása</button>
                 </div>
             </div>
+        </main>
 
-            <!-- JOBB PANEL: KVANTUMKAPUK, VALÓSZÍNŰSÉG ÉS MÉRÉS -->
-            <div class="lg:col-span-6 flex flex-col gap-5">
-
-                <!-- 1. Valószínűségi eloszlás & Fázis -->
-                <div class="app-card rounded-3xl p-5 sm:p-6 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="font-orbitron text-xs sm:text-sm font-bold tracking-wider uppercase" style="color: var(--text-primary);">
-                            Mérési Valószínűségek
-                        </h2>
-                        <span id="phase-readout" class="font-mono text-xs" style="color: var(--text-muted);">
-                            Fázis φ: 0°
-                        </span>
-                    </div>
-
-                    <!-- |0> sáv -->
-                    <div class="space-y-1.5">
-                        <div class="flex justify-between text-xs font-mono font-bold">
-                            <span style="color: var(--accent-primary);">|0⟩ Állapot</span>
-                            <span id="prob0-text" style="color: var(--accent-primary);">100.0%</span>
-                        </div>
-                        <div class="w-full h-3 rounded-full overflow-hidden app-inner-box p-0.5">
-                            <div id="prob0-bar" class="h-full rounded-full bg-gradient-to-r from-cyan to-sky-400 transition-all duration-300" style="width: 100%;"></div>
-                        </div>
-                    </div>
-
-                    <!-- |1> sáv -->
-                    <div class="space-y-1.5">
-                        <div class="flex justify-between text-xs font-mono font-bold">
-                            <span style="color: var(--accent-secondary);">|1⟩ Állapot</span>
-                            <span id="prob1-text" style="color: var(--accent-secondary);">0.0%</span>
-                        </div>
-                        <div class="w-full h-3 rounded-full overflow-hidden app-inner-box p-0.5">
-                            <div id="prob1-bar" class="h-full rounded-full bg-gradient-to-r from-purple-500 to-magenta transition-all duration-300" style="width: 0%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. Unitér Kvantumkapuk -->
-                <div class="app-card rounded-3xl p-5 sm:p-6 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h2 class="font-orbitron text-xs sm:text-sm font-bold tracking-wider uppercase" style="color: var(--text-primary);">
-                            Kvantumkapuk Alkalmazása
-                        </h2>
-                        <button onclick="resetQubit()" class="text-[11px] font-mono font-bold uppercase hover:underline cursor-pointer" style="color: var(--accent-secondary);">
-                            <i class="fa-solid fa-rotate-left mr-1"></i>Reset
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-2.5 sm:gap-3">
-                        <button onclick="applyGate('H')" class="gate-btn rounded-2xl p-3 text-left cursor-pointer">
-                            <div class="font-orbitron text-base font-black text-cyan">H</div>
-                            <div class="text-[11px] font-semibold mt-0.5" style="color: var(--text-primary);">Hadamard</div>
-                            <div class="text-[10px] font-mono" style="color: var(--text-muted);">Szuperpozíció</div>
-                        </button>
-
-                        <button onclick="applyGate('X')" class="gate-btn rounded-2xl p-3 text-left cursor-pointer">
-                            <div class="font-orbitron text-base font-black text-magenta">X</div>
-                            <div class="text-[11px] font-semibold mt-0.5" style="color: var(--text-primary);">Pauli-X</div>
-                            <div class="text-[10px] font-mono" style="color: var(--text-muted);">Bit-flip (NOT)</div>
-                        </button>
-
-                        <button onclick="applyGate('Y')" class="gate-btn rounded-2xl p-3 text-left cursor-pointer">
-                            <div class="font-orbitron text-base font-black text-purple-400">Y</div>
-                            <div class="text-[11px] font-semibold mt-0.5" style="color: var(--text-primary);">Pauli-Y</div>
-                            <div class="text-[10px] font-mono" style="color: var(--text-muted);">Bit + Fázis</div>
-                        </button>
-
-                        <button onclick="applyGate('Z')" class="gate-btn rounded-2xl p-3 text-left cursor-pointer">
-                            <div class="font-orbitron text-base font-black text-emeraldGlow">Z</div>
-                            <div class="text-[11px] font-semibold mt-0.5" style="color: var(--text-primary);">Pauli-Z</div>
-                            <div class="text-[10px] font-mono" style="color: var(--text-muted);">Fázis-flip π</div>
-                        </button>
-
-                        <button onclick="applyGate('S')" class="gate-btn rounded-2xl p-3 text-left cursor-pointer">
-                            <div class="font-orbitron text-base font-black text-sky-400">S</div>
-                            <div class="text-[11px] font-semibold mt-0.5" style="color: var(--text-primary);">Phase S</div>
-                            <div class="text-[10px] font-mono" style="color: var(--text-muted);">Forgatás π/2</div>
-                        </button>
-
-                        <button onclick="applyGate('T')" class="gate-btn rounded-2xl p-3 text-left cursor-pointer">
-                            <div class="font-orbitron text-base font-black text-amber-400">T</div>
-                            <div class="text-[11px] font-semibold mt-0.5" style="color: var(--text-primary);">T-kapu</div>
-                            <div class="text-[10px] font-mono" style="color: var(--text-muted);">Forgatás π/4</div>
-                        </button>
-                    </div>
-
-                    <!-- Műveleti gombok: Mérés & 100x Szimuláció -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                        <button onclick="measureQubit()" class="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-cyan to-magenta text-slate-950 font-orbitron text-xs font-extrabold tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-eye"></i>
-                            <span>Mérés (Collapse)</span>
-                        </button>
-
-                        <button onclick="runMultiShot()" class="gate-btn py-3.5 px-4 rounded-2xl font-orbitron text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-chart-column" style="color: var(--accent-primary);"></i>
-                            <span>100× Kísérlet</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 3. Telemetria & Áramkör napló -->
-                <div class="app-card rounded-2xl px-5 py-3.5 flex items-center justify-between gap-3">
-                    <div class="min-w-0">
-                        <div class="text-[10px] font-mono uppercase tracking-wider" style="color: var(--text-muted);">Áramkör Napló</div>
-                        <div id="circuit-log" class="font-mono text-xs truncate font-semibold mt-0.5" style="color: var(--text-primary);">
-                            INIT → |0⟩ kész a műveletekre
-                        </div>
-                    </div>
-                    <span id="shot-result" class="shrink-0 font-mono text-[11px] px-2.5 py-1 rounded-lg app-inner-box font-bold" style="color: var(--accent-primary);">
-                        Q-READY
-                    </span>
-                </div>
-
+        <footer>
+            <div class="instructions">
+                Kattints vagy húzd az egeret az interakcióhoz
             </div>
-        </div>
-    </main>
-
-    <!-- MOBIL APP BOTTOM DOCK -->
-    <nav aria-label="Mobil alkalmazás navigáció" class="md:hidden fixed bottom-4 left-4 right-4 z-40 app-surface rounded-2xl px-2 py-2 shadow-2xl flex items-center justify-around">
-        <a href="index.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
-            <i class="fa-solid fa-house text-base mb-1"></i>
-            <span class="text-[10px]">Főoldal</span>
-        </a>
-
-        <button onclick="measureQubit()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-primary);">
-            <div class="w-10 h-7 rounded-full bg-gradient-to-r from-cyan to-magenta text-slate-950 flex items-center justify-center mb-0.5 shadow-md">
-                <i class="fa-solid fa-eye text-xs"></i>
+            <div style="font-size: 10px; opacity: 0.6;">
+                DESIGNED FOR NYIRIGABOR.HU
             </div>
-            <span class="text-[10px] font-bold">Mérés</span>
-        </button>
-
-        <button onclick="pulseParticles()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
-            <i class="fa-solid fa-wand-magic-sparkles text-base mb-1"></i>
-            <span class="text-[10px]">Impulzus</span>
-        </button>
-
-        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-secondary);">
-            <i id="dock-theme-icon" class="fa-solid fa-sun text-base mb-1"></i>
-            <span class="text-[10px]">Téma</span>
-        </button>
-    </nav>
+        </footer>
+    </div>
 
     <script>
-        // --- 1. TÉMA RENDSZER SZINKRONIZÁCIÓ ---
-        const htmlEl = document.documentElement;
-        const themeIcon = document.getElementById('theme-icon');
-        const dockThemeIcon = document.getElementById('dock-theme-icon');
-        const themeLabel = document.getElementById('theme-label');
-        const metaTheme = document.getElementById('meta-theme-color');
-
-        function applyTheme(theme) {
-            htmlEl.setAttribute('data-theme', theme);
-            localStorage.setItem('ng_theme', theme);
-            const isLight = theme === 'light';
-            themeIcon.className = isLight ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
-            if (dockThemeIcon) dockThemeIcon.className = isLight ? 'fa-solid fa-moon text-base mb-1' : 'fa-solid fa-sun text-base mb-1';
-            if (themeLabel) themeLabel.textContent = isLight ? 'DARK' : 'LIGHT';
-            metaTheme.setAttribute('content', isLight ? '#eef2f6' : '#090b10');
-        }
-
-        function toggleTheme() {
-            const current = htmlEl.getAttribute('data-theme');
-            applyTheme(current === 'dark' ? 'light' : 'dark');
-        }
-
-        applyTheme(localStorage.getItem('ng_theme') || 'dark');
-
-        // --- 2. ÉLŐ ÓRA ---
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('live-clock').textContent = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        // --- 3. KVANTUM ÁLLAPOT MOTOR (KOMPLEX AMPLITÚDÓK: alpha |0> + beta |1>) ---
-        let alpha = { re: 1, im: 0 };
-        let beta = { re: 0, im: 0 };
-        let gateHistory = [];
-
-        // Simított megjelenítési vektor a Bloch-gömbhöz
-        let displayVec = { x: 0, y: 0, z: 1 };
-        let targetVec = { x: 0, y: 0, z: 1 };
-
-        function cAdd(a, b) { return { re: a.re + b.re, im: a.im + b.im }; }
-        function cSub(a, b) { return { re: a.re - b.re, im: a.im - b.im }; }
-        function cMul(a, b) {
-            return {
-                re: a.re * b.re - a.im * b.im,
-                im: a.re * b.im + a.im * b.re
-            };
-        }
-        function cScale(a, s) { return { re: a.re * s, im: a.im * s }; }
-        function cAbsSq(a) { return a.re * a.re + a.im * a.im; }
-
-        function computeBlochVector() {
-            // x = 2 * Re(alpha * conj(beta))
-            // y = 2 * Im(conj(alpha) * beta)
-            // z = |alpha|^2 - |beta|^2
-            const x = 2 * (alpha.re * beta.re + alpha.im * beta.im);
-            const y = 2 * (alpha.re * beta.im - alpha.im * beta.re);
-            const z = cAbsSq(alpha) - cAbsSq(beta);
-            targetVec = { x, y, z };
-        }
-
-        function formatComplex(c) {
-            const mag = Math.sqrt(cAbsSq(c));
-            if (mag < 0.001) return '0.000';
-            if (Math.abs(c.im) < 0.001) return c.re.toFixed(3);
-            if (Math.abs(c.re) < 0.001) return `${c.im >= 0 ? '' : '-'}${Math.abs(c.im).toFixed(3)}i`;
-            const sign = c.im >= 0 ? '+' : '-';
-            return `(${c.re.toFixed(2)}${sign}${Math.abs(c.im).toFixed(2)}i)`;
-        }
-
-        function updateQuantumUI(statusOverride) {
-            computeBlochVector();
-            const p0 = Math.min(1, Math.max(0, cAbsSq(alpha)));
-            const p1 = Math.min(1, Math.max(0, cAbsSq(beta)));
-
-            document.getElementById('prob0-text').textContent = `${(p0 * 100).toFixed(1)}%`;
-            document.getElementById('prob1-text').textContent = `${(p1 * 100).toFixed(1)}%`;
-            document.getElementById('prob0-bar').style.width = `${(p0 * 100).toFixed(1)}%`;
-            document.getElementById('prob1-bar').style.width = `${(p1 * 100).toFixed(1)}%`;
-
-            document.getElementById('state-equation').textContent = `|ψ⟩ = ${formatComplex(alpha)} |0⟩ + ${formatComplex(beta)} |1⟩`;
-
-            // Relatív fázis számítása
-            let phaseDeg = 0;
-            if (p0 > 0.001 && p1 > 0.001) {
-                const angA = Math.atan2(alpha.im, alpha.re);
-                const angB = Math.atan2(beta.im, beta.re);
-                phaseDeg = Math.round(((angB - angA) * 180 / Math.PI + 360) % 360);
-            }
-            document.getElementById('phase-readout').textContent = `Fázis φ: ${phaseDeg}°`;
-
-            // Állapot jelvény
-            const badge = document.getElementById('state-badge');
-            if (statusOverride) {
-                badge.textContent = statusOverride;
-            } else if (p0 > 0.995) {
-                badge.textContent = 'ALAPÁLLAPOT |0⟩';
-            } else if (p1 > 0.995) {
-                badge.textContent = 'GERJESZTETT |1⟩';
-            } else {
-                badge.textContent = 'SZUPERPOZÍCIÓ';
-            }
-
-            const logEl = document.getElementById('circuit-log');
-            logEl.textContent = gateHistory.length
-                ? `|0⟩ → ${gateHistory.slice(-8).join(' → ')}`
-                : 'INIT → |0⟩ kész a műveletekre';
-        }
-
-        function applyGate(gate) {
-            const invSqrt2 = 1 / Math.SQRT2;
-            let nextA = alpha, nextB = beta;
-
-            switch (gate) {
-                case 'H':
-                    nextA = cScale(cAdd(alpha, beta), invSqrt2);
-                    nextB = cScale(cSub(alpha, beta), invSqrt2);
-                    break;
-                case 'X':
-                    nextA = beta;
-                    nextB = alpha;
-                    break;
-                case 'Y':
-                    nextA = cMul({ re: 0, im: -1 }, beta);
-                    nextB = cMul({ re: 0, im: 1 }, alpha);
-                    break;
-                case 'Z':
-                    nextA = alpha;
-                    nextB = cScale(beta, -1);
-                    break;
-                case 'S':
-                    nextA = alpha;
-                    nextB = cMul({ re: 0, im: 1 }, beta);
-                    break;
-                case 'T':
-                    nextA = alpha;
-                    nextB = cMul({ re: invSqrt2, im: invSqrt2 }, beta);
-                    break;
-            }
-
-            alpha = nextA;
-            beta = nextB;
-            gateHistory.push(gate);
-            updateQuantumUI();
-            pulseParticles();
-        }
-
-        function measureQubit() {
-            const p0 = cAbsSq(alpha);
-            const collapsedToZero = Math.random() < p0;
-            if (collapsedToZero) {
-                alpha = { re: 1, im: 0 };
-                beta = { re: 0, im: 0 };
-                gateHistory.push('M[0]');
-                document.getElementById('shot-result').textContent = 'EREDMÉNY: |0⟩';
-                updateQuantumUI('ÖSSZEOMLÁS → |0⟩');
-            } else {
-                alpha = { re: 0, im: 0 };
-                beta = { re: 1, im: 0 };
-                gateHistory.push('M[1]');
-                document.getElementById('shot-result').textContent = 'EREDMÉNY: |1⟩';
-                updateQuantumUI('ÖSSZEOMLÁS → |1⟩');
-            }
-            pulseParticles();
-        }
-
-        function runMultiShot() {
-            const p0 = cAbsSq(alpha);
-            let zeros = 0;
-            for (let i = 0; i < 100; i++) {
-                if (Math.random() < p0) zeros++;
-            }
-            const ones = 100 - zeros;
-            document.getElementById('shot-result').textContent = `100×: ${zeros}% |0⟩ / ${ones}% |1⟩`;
-            pulseParticles();
-        }
-
-        function resetQubit() {
-            alpha = { re: 1, im: 0 };
-            beta = { re: 0, im: 0 };
-            gateHistory = [];
-            document.getElementById('shot-result').textContent = 'Q-READY';
-            updateQuantumUI('ALAPÁLLAPOT |0⟩');
-        }
-
-        // --- 4. 3D BLOCH-GÖMB RENDERER (INTERAKTÍV FORGATÁS) ---
-        const blochCanvas = document.getElementById('bloch-canvas');
-        const bCtx = blochCanvas.getContext('2d');
-        let yaw = 0.55;
-        let pitch = 0.28;
-        let isDragging = false;
-        let lastDrag = { x: 0, y: 0 };
-
-        blochCanvas.addEventListener('pointerdown', (e) => {
-            isDragging = true;
-            lastDrag = { x: e.clientX, y: e.clientY };
-        });
-        window.addEventListener('pointermove', (e) => {
-            if (!isDragging) return;
-            yaw += (e.clientX - lastDrag.x) * 0.01;
-            pitch = Math.max(-1.2, Math.min(1.2, pitch + (e.clientY - lastDrag.y) * 0.01));
-            lastDrag = { x: e.clientX, y: e.clientY };
-        });
-        window.addEventListener('pointerup', () => { isDragging = false; });
-
-        function project3D(x, y, z, radius, cx, cy) {
-            // Kváziklasszikus Bloch koordináták: Z felfelé, X előre-jobbra, Y jobbra
-            const cosY = Math.cos(yaw), sinY = Math.sin(yaw);
-            const x1 = x * cosY - y * sinY;
-            const y1 = x * sinY + y * cosY;
-
-            const cosP = Math.cos(pitch), sinP = Math.sin(pitch);
-            const z2 = z * cosP - y1 * sinP;
-
-            return {
-                px: cx + x1 * radius,
-                py: cy - z2 * radius
-            };
-        }
-
-        function drawBlochSphere() {
-            const dpr = window.devicePixelRatio || 1;
-            const rect = blochCanvas.getBoundingClientRect();
-            if (blochCanvas.width !== Math.round(rect.width * dpr) || blochCanvas.height !== Math.round(rect.height * dpr)) {
-                blochCanvas.width = Math.round(rect.width * dpr);
-                blochCanvas.height = Math.round(rect.height * dpr);
-            }
-
-            const w = blochCanvas.width;
-            const h = blochCanvas.height;
-            bCtx.clearRect(0, 0, w, h);
-
-            if (!isDragging) yaw += 0.0035;
-
-            // Simított vektor közelítés
-            displayVec.x += (targetVec.x - displayVec.x) * 0.14;
-            displayVec.y += (targetVec.y - displayVec.y) * 0.14;
-            displayVec.z += (targetVec.z - displayVec.z) * 0.14;
-
-            const isLight = htmlEl.getAttribute('data-theme') === 'light';
-            const cx = w / 2;
-            const cy = h / 2;
-            const r = Math.min(w, h) * 0.36;
-
-            // Külső gömb körvonal
-            bCtx.beginPath();
-            bCtx.arc(cx, cy, r, 0, Math.PI * 2);
-            bCtx.strokeStyle = isLight ? 'rgba(2, 132, 199, 0.35)' : 'rgba(0, 255, 255, 0.32)';
-            bCtx.lineWidth = 1.6 * dpr;
-            bCtx.stroke();
-
-            // Egyenlítői ellipszis
-            bCtx.beginPath();
-            for (let i = 0; i <= 64; i++) {
-                const a = (i / 64) * Math.PI * 2;
-                const pt = project3D(Math.cos(a), Math.sin(a), 0, r, cx, cy);
-                if (i === 0) bCtx.moveTo(pt.px, pt.py);
-                else bCtx.lineTo(pt.px, pt.py);
-            }
-            bCtx.strokeStyle = isLight ? 'rgba(219, 39, 119, 0.25)' : 'rgba(255, 12, 157, 0.28)';
-            bCtx.lineWidth = 1.2 * dpr;
-            bCtx.stroke();
-
-            // Z tengely (|0> és |1>)
-            const north = project3D(0, 0, 1, r, cx, cy);
-            const south = project3D(0, 0, -1, r, cx, cy);
-            const east = project3D(1, 0, 0, r, cx, cy);
-            const west = project3D(-1, 0, 0, r, cx, cy);
-
-            bCtx.setLineDash([4 * dpr, 4 * dpr]);
-            bCtx.beginPath();
-            bCtx.moveTo(north.px, north.py);
-            bCtx.lineTo(south.px, south.py);
-            bCtx.moveTo(east.px, east.py);
-            bCtx.lineTo(west.px, west.py);
-            bCtx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.2)' : 'rgba(248, 250, 252, 0.18)';
-            bCtx.lineWidth = 1 * dpr;
-            bCtx.stroke();
-            bCtx.setLineDash([]);
-
-            // Pólus feliratok
-            bCtx.font = `700 ${12 * dpr}px "Share Tech Mono", monospace`;
-            bCtx.textAlign = 'center';
-            bCtx.fillStyle = isLight ? '#0284c7' : '#00FFFF';
-            bCtx.fillText('|0⟩', north.px, north.py - 10 * dpr);
-            bCtx.fillStyle = isLight ? '#db2777' : '#FF0C9D';
-            bCtx.fillText('|1⟩', south.px, south.py + 18 * dpr);
-            bCtx.fillStyle = isLight ? '#475569' : '#94a3b8';
-            bCtx.fillText('|+⟩', east.px + 14 * dpr, east.py + 4 * dpr);
-
-            // Kvantum állapotvektor nyíl
-            const tip = project3D(displayVec.x, displayVec.y, displayVec.z, r, cx, cy);
-            const grad = bCtx.createLinearGradient(cx, cy, tip.px, tip.py);
-            grad.addColorStop(0, isLight ? '#0284c7' : '#00FFFF');
-            grad.addColorStop(1, isLight ? '#db2777' : '#FF0C9D');
-
-            bCtx.beginPath();
-            bCtx.moveTo(cx, cy);
-            bCtx.lineTo(tip.px, tip.py);
-            bCtx.strokeStyle = grad;
-            bCtx.lineWidth = 3 * dpr;
-            bCtx.stroke();
-
-            // Vektor végpont ragyogás
-            bCtx.beginPath();
-            bCtx.arc(tip.px, tip.py, 6 * dpr, 0, Math.PI * 2);
-            bCtx.fillStyle = isLight ? '#db2777' : '#FF0C9D';
-            bCtx.fill();
-
-            bCtx.beginPath();
-            bCtx.arc(tip.px, tip.py, 11 * dpr, 0, Math.PI * 2);
-            bCtx.fillStyle = isLight ? 'rgba(219, 39, 119, 0.2)' : 'rgba(255, 12, 157, 0.25)';
-            bCtx.fill();
-
-            requestAnimationFrame(drawBlochSphere);
-        }
-
-        // --- 5. HÁTTÉR REFLEKTOR & RESZECSKE HÁLÓZAT ---
-        const glowContainer = document.getElementById('interactive-glow');
-        const pointer = { x: -1000, y: -1000 };
-
-        function updatePointer(x, y) {
-            pointer.x = x;
-            pointer.y = y;
-            glowContainer.style.background = `radial-gradient(520px circle at ${x}px ${y}px, rgba(0, 255, 255, 0.12), rgba(255, 12, 157, 0.08), transparent 70%)`;
-        }
-
-        window.addEventListener('mousemove', (e) => updatePointer(e.clientX, e.clientY), { passive: true });
-        window.addEventListener('touchmove', (e) => {
-            if (e.touches[0]) updatePointer(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: true });
-
-        const canvas = document.getElementById('particle-canvas');
+        const canvas = document.getElementById('viewport');
         const ctx = canvas.getContext('2d');
+
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
-        let shockwaves = [];
 
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            initParticles();
         });
 
+        // App State
+        let currentMode = 'neural';
+        let currentPalette = 'cyan';
+        let particleCount = 100;
+        let particles = [];
+        let mouse = { x: width / 2, y: height / 2, active: false, radius: 150 };
+        let audioEnabled = false;
+
+        // Color Palettes
+        const palettes = {
+            cyan: { primary: '#00f0ff', secondary: '#7000ff', bgLines: 'rgba(0, 240, 255, 0.15)' },
+            neon: { primary: '#ff007f', secondary: '#7000ff', bgLines: 'rgba(255, 0, 127, 0.15)' },
+            amber: { primary: '#ffb700', secondary: '#ff5500', bgLines: 'rgba(255, 183, 0, 0.15)' },
+            emerald: { primary: '#00ff66', secondary: '#0088ff', bgLines: 'rgba(0, 255, 102, 0.15)' }
+        };
+
+        // Web Audio API Synth Engine
+        let audioCtx = null;
+        const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // C Pentatonic Scale
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSynthTone(freq) {
+            if (!audioEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.5);
+            } catch (e) {}
+        }
+
+        function toggleAudio() {
+            initAudio();
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-btn');
+            const status = document.getElementById('audio-status');
+            if (audioEnabled) {
+                btn.classList.add('active');
+                btn.innerText = "Hang Kikapcsolása";
+                status.innerText = "Be";
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = "Hang Aktiválása";
+                status.innerText = "Ki";
+            }
+        }
+
+        // Particle Class
         class Particle {
-            constructor() { this.reset(); }
+            constructor() {
+                this.reset();
+            }
+
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.45;
-                this.vy = (Math.random() - 0.5) * 0.45;
-                this.radius = Math.random() * 1.6 + 0.6;
-                this.isCyan = Math.random() > 0.45;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.radius = Math.random() * 2 + 1;
+                this.baseRadius = this.radius;
+                this.angle = Math.random() * Math.PI * 2;
+                this.speed = Math.random() * 0.02 + 0.005;
+                this.dist = Math.random() * (width > height ? height : width) * 0.4;
             }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
 
-                const dx = pointer.x - this.x;
-                const dy = pointer.y - this.y;
-                const distSq = dx * dx + dy * dy;
-                if (distSq < 18000 && distSq > 100) {
-                    this.x += dx * 0.012;
-                    this.y += dy * 0.012;
+            update() {
+                if (currentMode === 'neural' || currentMode === 'matrix') {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > width) this.vx *= -1;
+                    if (this.y < 0 || this.y > height) this.vy *= -1;
+                } else if (currentMode === 'quantum') {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist > 10) {
+                        this.vx += (dx / dist) * 0.1;
+                        this.vy += (dy / dist) * 0.1;
+                    }
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
+                    this.x += this.vx;
+                    this.y += this.vy;
+                } else if (currentMode === 'pulse') {
+                    this.angle += this.speed;
+                    const targetX = width / 2 + Math.cos(this.angle) * this.dist;
+                    const targetY = height / 2 + Math.sin(this.angle) * this.dist;
+                    this.x += (targetX - this.x) * 0.05;
+                    this.y += (targetY - this.y) * 0.05;
+                }
+
+                // Mouse interaction distance
+                const dx = mouse.x - this.x;
+                const dy = mouse.y - this.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+
+                if (dist < mouse.radius) {
+                    this.radius = this.baseRadius + (1 - dist / mouse.radius) * 4;
+                } else {
+                    this.radius = this.baseRadius;
                 }
             }
-            draw(isLight) {
+
+            draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.isCyan
-                    ? (isLight ? 'rgba(2, 132, 199, 0.55)' : 'rgba(0, 255, 255, 0.65)')
-                    : (isLight ? 'rgba(219, 39, 119, 0.5)' : 'rgba(255, 12, 157, 0.6)');
+                ctx.fillStyle = palettes[currentPalette].primary;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = palettes[currentPalette].primary;
                 ctx.fill();
+                ctx.shadowBlur = 0;
             }
         }
 
-        class Shockwave {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.radius = 4;
-                this.alpha = 0.7;
-                this.isCyan = Math.random() > 0.5;
-            }
-            update() {
-                this.radius += 2.4;
-                this.alpha -= 0.032;
-            }
-            draw(isLight) {
-                if (this.alpha <= 0) return;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.strokeStyle = this.isCyan
-                    ? (isLight ? `rgba(2, 132, 199, ${this.alpha})` : `rgba(0, 255, 255, ${this.alpha})`)
-                    : (isLight ? `rgba(219, 39, 119, ${this.alpha})` : `rgba(255, 12, 157, ${this.alpha})`);
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
             }
         }
 
-        const count = Math.min(Math.floor(width / 18), 65);
-        const particles = Array.from({ length: count }, () => new Particle());
-        const maxDist = 115;
-        const maxDistSq = maxDist * maxDist;
+        function renderConnections() {
+            const maxDist = 120;
+            const activeColor = palettes[currentPalette].bgLines;
 
-        function pulseParticles() {
-            particles.forEach(p => {
-                p.vx = (Math.random() - 0.5) * 3.5;
-                p.vy = (Math.random() - 0.5) * 3.5;
-                setTimeout(() => {
-                    p.vx *= 0.2;
-                    p.vy *= 0.2;
-                }, 600);
-            });
-        }
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
 
-        window.addEventListener('pointerdown', (e) => {
-            shockwaves.push(new Shockwave(e.clientX, e.clientY));
-        });
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, width, height);
-            const isLight = htmlEl.getAttribute('data-theme') === 'light';
-
-            for (let i = 0; i < count; i++) {
-                const p1 = particles[i];
-                p1.update();
-                p1.draw(isLight);
-
-                for (let j = i + 1; j < count; j++) {
-                    const p2 = particles[j];
-                    const dx = p1.x - p2.x;
-                    const dy = p1.y - p2.y;
-                    const distSq = dx * dx + dy * dy;
-
-                    if (distSq < maxDistSq) {
-                        const alpha = 0.16 * (1 - Math.sqrt(distSq) / maxDist);
+                    if (dist < maxDist) {
+                        const alpha = 1 - dist / maxDist;
                         ctx.beginPath();
-                        ctx.moveTo(p1.x, p1.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = isLight ? `rgba(2, 132, 199, ${alpha})` : `rgba(0, 255, 255, ${alpha})`;
-                        ctx.lineWidth = 0.65;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = activeColor.replace('0.15', (alpha * 0.25).toString());
+                        ctx.lineWidth = 1;
                         ctx.stroke();
                     }
                 }
             }
-
-            for (let i = shockwaves.length - 1; i >= 0; i--) {
-                shockwaves[i].update();
-                shockwaves[i].draw(isLight);
-                if (shockwaves[i].alpha <= 0) shockwaves.splice(i, 1);
-            }
-
-            requestAnimationFrame(animateParticles);
         }
 
-        updateQuantumUI();
-        drawBlochSphere();
-        animateParticles();
+        function animate() {
+            ctx.fillStyle = 'rgba(8, 9, 13, 0.25)'; // Smooth trails effect
+            ctx.fillRect(0, 0, width, height);
+
+            if (currentMode === 'neural' || currentMode === 'matrix') {
+                renderConnections();
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        // Controls Logic
+        function setMode(mode) {
+            currentMode = mode;
+            updateActiveButtons(event.target);
+        }
+
+        function setPalette(palette) {
+            currentPalette = palette;
+            updateActiveButtons(event.target);
+            document.documentElement.style.setProperty('--primary', palettes[palette].primary);
+            document.documentElement.style.setProperty('--secondary', palettes[palette].secondary);
+        }
+
+        function updateParticleCount(val) {
+            particleCount = parseInt(val);
+            document.getElementById('count-val').innerText = val;
+            initParticles();
+        }
+
+        function updateActiveButtons(target) {
+            const siblings = target.parentElement.children;
+            for (let btn of siblings) {
+                btn.classList.remove('active');
+            }
+            target.classList.add('active');
+        }
+
+        // Event Listeners
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('click', (e) => {
+            // Trigger audio tone based on Y position
+            const noteIndex = Math.floor((1 - e.clientY / height) * notes.length);
+            playSynthTone(notes[Math.min(notes.length - 1, Math.max(0, noteIndex))]);
+
+            // Shockwave particle boost
+            particles.forEach(p => {
+                const dx = e.clientX - p.x;
+                const dy = e.clientY - p.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < 200) {
+                    p.vx -= (dx / dist) * 4;
+                    p.vy -= (dy / dist) * 4;
+                }
+            });
+        });
+
+        // Initialize App
+        initParticles();
+        animate();
     </script>
 </body>
 </html>
