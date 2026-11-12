@@ -161,13 +161,15 @@
             transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        /* --- EMLÉKEZETES TIPÓ & GLITCH/SHIMMER --- */
+        /* --- EMLÉKEZETES TIPÓ & GLITCH/SHIMMER (JAVÍTOTT ALSÓ SZÁR VÁGÁS) --- */
         .brand-hero-title {
             font-family: 'Oswald', sans-serif;
             font-weight: 300;
             font-size: clamp(3.1rem, 11vw, 7.5rem);
             letter-spacing: 0.08em;
-            line-height: 0.95;
+            line-height: 1.25;
+            padding-bottom: 0.15em;
+            display: inline-block;
             background: linear-gradient(120deg, var(--text-primary) 30%, var(--accent-primary) 65%, var(--accent-secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -260,13 +262,13 @@
     <main class="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 my-auto py-8 sm:py-12 pb-28 md:pb-14 flex flex-col items-center text-center">
         
         <!-- Azonosító jelvény -->
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-4 text-[11px] font-mono tracking-widest uppercase border" style="border-color: var(--card-border); background: var(--card-bg); color: var(--accent-primary);">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-3 text-[11px] font-mono tracking-widest uppercase border" style="border-color: var(--card-border); background: var(--card-bg); color: var(--accent-primary);">
             <i class="fa-solid fa-microchip text-[10px]"></i>
             <span>SuperAgent.ai Core</span>
         </div>
 
-        <!-- Fő márkanév (már nincs elszigetelt fehér falban, hanem a térben lebeg) -->
-        <h1 class="brand-hero-title select-none lowercase mb-3">
+        <!-- Fő márkanév -->
+        <h1 class="brand-hero-title select-none lowercase mb-1">
             nyirigabor.hu
         </h1>
 
@@ -275,7 +277,7 @@
             <span class="opacity-60">&gt; </span><span id="typed-tagline"></span><span class="animate-pulse">_</span>
         </p>
 
-        <!-- KÖZVETLEN APP LAUNCHER KÁRTYÁK (MOBILON IS AZONNAL ÉRINTHETŐ) -->
+        <!-- KÖZVETLEN APP LAUNCHER KÁRTYÁK -->
         <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5 text-left">
 
             <!-- MODUL 1 -->
@@ -353,7 +355,7 @@
         </div>
     </main>
 
-    <!-- MOBIL APP BOTTOM NAVIGATION DOCK (HÜVELYKUJJ-BARÁT) -->
+    <!-- MOBIL APP BOTTOM NAVIGATION DOCK -->
     <nav aria-label="Mobil alkalmazás navigáció" class="md:hidden fixed bottom-4 left-4 right-4 z-40 app-surface rounded-2xl px-2 py-2 shadow-2xl flex items-center justify-around">
         <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-primary);">
             <i class="fa-solid fa-house text-base mb-1"></i>
@@ -382,7 +384,6 @@
     <div id="app-drawer" aria-hidden="true" onclick="if(event.target === this) toggleDrawer()" class="drawer-backdrop fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-end md:items-center justify-center p-0 md:p-6">
         <div class="drawer-panel app-surface w-full max-w-2xl rounded-t-3xl md:rounded-3xl p-6 sm:p-8 shadow-2xl border-t-2 md:border-2" style="border-color: var(--accent-primary);">
             
-            <!-- Mobil lehúzó sáv indikátor -->
             <div class="w-12 h-1.5 rounded-full bg-slate-500/40 mx-auto mb-5 md:hidden"></div>
 
             <div class="flex items-center justify-between pb-4 mb-5 border-b" style="border-color: var(--card-border);">
@@ -434,7 +435,7 @@
 
     <!-- LOGIKA ÉS ANIMÁCIÓK -->
     <script>
-        // --- 1. HARMONIKUS TÉMA VÁLTÓ (MENTÉSSEL) ---
+        // --- 1. HARMONIKUS TÉMA VÁLTÓ ---
         const htmlEl = document.documentElement;
         const themeIcon = document.getElementById('theme-icon');
         const dockThemeIcon = document.getElementById('dock-theme-icon');
@@ -546,7 +547,6 @@
                 if (this.x < 0 || this.x > width) this.vx *= -1;
                 if (this.y < 0 || this.y > height) this.vy *= -1;
 
-                // Enyhe mágneses vonzás az ujjhoz / kurzorhoz
                 const dx = pointer.x - this.x;
                 const dy = pointer.y - this.y;
                 const distSq = dx * dx + dy * dy;
