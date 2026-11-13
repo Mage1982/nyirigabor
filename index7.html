@@ -481,8 +481,8 @@
                 Érintsd meg vagy húzd a vásznat a részecskék vonzásához és pentaton hangokhoz.
             </div>
             <div class="text-[10px] font-mono" style="color: var(--text-muted);">
-                <i class="fa-solid fa-expand mr-1" style="color: var(--accent-secondary);"></i>
-                Görgő / kétujjas csippentés: 2.5D Zoom • Dupla katt / <span class="font-bold">0</span>: Reset
+                <i class="fa-solid fa-magnifying-glass-plus mr-1" style="color: var(--accent-secondary);"></i>
+                Görgő / kétujjas csippentés: Belenagyítás • Dupla katt / <span class="font-bold">0</span>: 1.0x
             </div>
         </div>
     </aside>
@@ -576,7 +576,7 @@
             hidePanel();
         }
 
-        // --- 4. VÁSZON, KAMERA (ZOOM-TO-CURSOR + 2.5D PARALLAX) ÉS SZÍNPALETTÁK ---
+        // --- 4. VÁSZON, KAMERA (CSAK BEFELÉ ZOOM 1.0x - 3.2x + 2.5D PARALLAX) ---
         const canvas = document.getElementById('viewport');
         const ctx = canvas.getContext('2d');
         const cyberGrid = document.getElementById('cyber-grid');
@@ -585,8 +585,8 @@
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
-        // Kamera állapot (simított LERP interpolációval)
-        const MIN_ZOOM = 0.55;
+        // A MIN_ZOOM szigorúan 1.0: a teljes képernyőből nem lehet kifelé zoomolni
+        const MIN_ZOOM = 1.0;
         const MAX_ZOOM = 3.2;
         let targetZoom = 1.0;
         let currentZoom = 1.0;
@@ -603,6 +603,14 @@
             };
         }
 
+        // Garantálja, hogy a vászon mindig kitöltse a teljes képernyőt, és 1.0x-nél pontosan (0,0)-ba térjen vissza
+        function clampOffsets() {
+            const minX = width * (1 - targetZoom);
+            const minY = height * (1 - targetZoom);
+            targetOffsetX = Math.min(0, Math.max(minX, targetOffsetX));
+            targetOffsetY = Math.min(0, Math.max(minY, targetOffsetY));
+        }
+
         function applyZoomAtPoint(nextZoom, screenX, screenY) {
             const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom));
             const worldX = (screenX - targetOffsetX) / targetZoom;
@@ -612,11 +620,13 @@
             targetOffsetX = screenX - worldX * targetZoom;
             targetOffsetY = screenY - worldY * targetZoom;
 
-            // 1.0x közelében lágy mágneses visszapattanás középre
-            if (Math.abs(targetZoom - 1.0) < 0.035) {
+            // 1.0x közelében tiszta visszatérés teljes képernyőre
+            if (targetZoom <= 1.025) {
                 targetZoom = 1.0;
                 targetOffsetX = 0;
                 targetOffsetY = 0;
+            } else {
+                clampOffsets();
             }
         }
 
@@ -635,19 +645,17 @@
             currentOffsetX += (targetOffsetX - currentOffsetX) * ease;
             currentOffsetY += (targetOffsetY - currentOffsetY) * ease;
 
-            // Pontos beállás a lebegőpontos maradék elkerülésére
             if (Math.abs(targetZoom - currentZoom) < 0.0005) currentZoom = targetZoom;
             if (Math.abs(targetOffsetX - currentOffsetX) < 0.05) currentOffsetX = targetOffsetX;
             if (Math.abs(targetOffsetY - currentOffsetY) < 0.05) currentOffsetY = targetOffsetY;
 
-            // HUD zoom érték frissítése csak változáskor
             const label = currentZoom.toFixed(1) + 'x';
             if (label !== lastDisplayedZoom && zoomIndicator) {
                 zoomIndicator.textContent = label;
                 lastDisplayedZoom = label;
             }
 
-            // 2.5D Parallax háttérrács (a részecskék sebességének 45%-ával mozog/skálázódik)
+            // 2.5D Parallax háttérrács
             if (cyberGrid) {
                 const parallaxScale = 1 + (currentZoom - 1) * 0.45;
                 const gridSize = 36 * parallaxScale;
@@ -681,11 +689,9 @@
         let neuralPulses = [];
         let time = 0;
 
-        // A pointer világ-koordinátákat tárol a pontos kurzor-kölcsönhatáshoz bármilyen zoomnál
         let pointer = { x: width / 2, y: height / 2, screenX: width / 2, screenY: height / 2, active: false, radius: 180 };
         let audioEnabled = false;
 
-        // Látványos, sötét és világos háttéren egyaránt ragyogó paletták
         const palettes = {
             cyan: {
                 label: 'Cyber Cyan',
@@ -851,7 +857,6 @@
                     this.y += (targetY - this.y) * 0.06;
                 }
 
-                // Kurzor/ujj közelségi pulzálás (világ-koordinátában)
                 const dx = pointer.x - this.x;
                 const dy = pointer.y - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -921,7 +926,6 @@
             for (let i = 0; i < particles.length; i++) {
                 const p1 = particles[i];
 
-                // Szinapszis kapcsolat a mutatóhoz is
                 const mdx = pointer.x - p1.x;
                 const mdy = pointer.y - p1.y;
                 const mDistSq = mdx * mdx + mdy * mdy;
@@ -957,7 +961,6 @@
                 }
             }
 
-            // Utazó energiaimpulzusok kirajzolása
             for (let i = neuralPulses.length - 1; i >= 0; i--) {
                 const pulse = neuralPulses[i];
                 pulse.t += pulse.speed;
@@ -976,19 +979,15 @@
 
         function renderMatrixWaveGrid(isLight) {
             const spacing = Math.max(36, Math.round(95 - particleCount * 0.25));
-            // Kicsinyítésnél (zoom < 1) kiterjesztjük a rácsot, hogy kitöltse a széleket is
-            const margin = currentZoom < 1 ? Math.ceil((1 / currentZoom - 1) * Math.max(width, height) * 0.6) : 0;
-            const startCol = Math.floor(-margin / spacing);
-            const endCol = Math.ceil((width + margin) / spacing) + 1;
-            const startRow = Math.floor(-margin / spacing);
-            const endRow = Math.ceil((height + margin) / spacing) + 1;
-
+            const cols = Math.ceil(width / spacing) + 1;
+            const rows = Math.ceil(height / spacing) + 1;
             const colorList = isLight ? palettes[currentPalette].light : palettes[currentPalette].dark;
             const [r, g, b] = isLight ? palettes[currentPalette].lineLight : palettes[currentPalette].lineDark;
 
-            const grid = new Map();
-            for (let row = startRow; row < endRow; row++) {
-                for (let col = startCol; col < endCol; col++) {
+            const grid = [];
+            for (let row = 0; row < rows; row++) {
+                grid[row] = [];
+                for (let col = 0; col < cols; col++) {
                     const bx = col * spacing;
                     const by = row * spacing;
                     const wave = Math.sin(col * 0.35 + time * 0.04) * 10 + Math.cos(row * 0.35 + time * 0.03) * 10;
@@ -1000,16 +999,16 @@
 
                     const px = bx + wave * 0.5 + (dx / (dist || 1)) * influence * 26;
                     const py = by + wave * 0.5 + (dy / (dist || 1)) * influence * 26;
-                    grid.set(`${row},${col}`, { x: px, y: py, influence });
+                    grid[row][col] = { x: px, y: py, influence };
                 }
             }
 
             ctx.lineWidth = 1 / Math.sqrt(currentZoom);
-            for (let row = startRow; row < endRow; row++) {
-                for (let col = startCol; col < endCol; col++) {
-                    const pt = grid.get(`${row},${col}`);
-                    const right = grid.get(`${row},${col + 1}`);
-                    if (right) {
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const pt = grid[row][col];
+                    if (col + 1 < cols) {
+                        const right = grid[row][col + 1];
                         const alpha = 0.14 + Math.max(pt.influence, right.influence) * 0.55;
                         ctx.beginPath();
                         ctx.moveTo(pt.x, pt.y);
@@ -1017,8 +1016,8 @@
                         ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
                         ctx.stroke();
                     }
-                    const down = grid.get(`${row + 1},${col}`);
-                    if (down) {
+                    if (row + 1 < rows) {
+                        const down = grid[row + 1][col];
                         const alpha = 0.14 + Math.max(pt.influence, down.influence) * 0.55;
                         ctx.beginPath();
                         ctx.moveTo(pt.x, pt.y);
@@ -1028,10 +1027,9 @@
                     }
 
                     const nodeRadius = 1.6 + pt.influence * 3.8;
-                    const colorIdx = Math.abs(row + col) % colorList.length;
                     ctx.beginPath();
                     ctx.arc(pt.x, pt.y, nodeRadius, 0, Math.PI * 2);
-                    ctx.fillStyle = colorList[colorIdx];
+                    ctx.fillStyle = colorList[(row + col) % colorList.length];
                     ctx.globalAlpha = 0.35 + pt.influence * 0.65;
                     ctx.fill();
                     ctx.globalAlpha = 1.0;
@@ -1061,16 +1059,13 @@
 
             updateCameraAndParallax();
 
-            // Képernyő-térben történő mozgási elmosás (trail effekt)
             ctx.fillStyle = isLight ? 'rgba(238, 242, 246, 0.24)' : 'rgba(9, 11, 16, 0.24)';
             ctx.fillRect(0, 0, width, height);
 
-            // Világ-tér transzformáció (Zoom + Pan) alkalmazása
             ctx.save();
             ctx.translate(currentOffsetX, currentOffsetY);
             ctx.scale(currentZoom, currentZoom);
 
-            // A mutató világ-koordinátáinak folyamatos szinkronizálása zoom közben is
             const wPtr = screenToWorld(pointer.screenX, pointer.screenY);
             pointer.x = wPtr.x;
             pointer.y = wPtr.y;
@@ -1090,7 +1085,6 @@
                 }
             }
 
-            // Kattintási lökéshullámok
             for (let i = shockwaves.length - 1; i >= 0; i--) {
                 shockwaves[i].update();
                 shockwaves[i].draw();
@@ -1156,13 +1150,12 @@
             setTimeout(() => triggerImpulseAt(center.x, center.y, false), 140);
         }
 
-        // Egérgörgős Zoom-to-Cursor
+        // Egérgörgős Zoom-to-Cursor (csak 1.0x és 3.2x között)
         canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
             pointer.screenX = e.clientX;
             pointer.screenY = e.clientY;
 
-            // Touchpad (pinch-wheel) és hagyományos egérgörgő normalizálása
             const delta = Math.abs(e.deltaY) < 40 ? e.deltaY * 2.2 : e.deltaY;
             const zoomFactor = delta < 0 ? 1.13 : 0.885;
             applyZoomAtPoint(targetZoom * zoomFactor, e.clientX, e.clientY);
@@ -1218,7 +1211,6 @@
                 const scaleRatio = stats.dist / initialPinchDist;
                 const nextZoom = initialPinchZoom * scaleRatio;
 
-                // Kétujjas eltolás (pan) + nagyítás a két ujj középpontjára
                 if (lastPinchMid) {
                     targetOffsetX += stats.midX - lastPinchMid.x;
                     targetOffsetY += stats.midY - lastPinchMid.y;
