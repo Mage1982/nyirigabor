@@ -6,7 +6,17 @@
     <meta name="theme-color" content="#090b10" id="meta-theme-color">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Julia Halmaz | nyirigabor.hu</title>
+    <title>AETHERIA // Julia Halmaz | nyirigabor.hu</title>
+
+    <!-- Azonnali téma betöltés villanás nélkül -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('ng_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+            const meta = document.getElementById('meta-theme-color');
+            if (meta) meta.setAttribute('content', saved === 'light' ? '#eef2f6' : '#090b10');
+        })();
+    </script>
 
     <!-- External Resources -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,6 +33,7 @@
                         magenta: '#FF0C9D',
                         cyan: '#00FFFF',
                         purpleGlow: '#8A2BE2',
+                        emeraldGlow: '#10b981'
                     },
                     fontFamily: {
                         oswald: ['Oswald', 'sans-serif'],
@@ -36,113 +47,111 @@
     </script>
 
     <style>
-        /* --- HARMONIKUS TÉMA RENDSZER (DARK & LIGHT) --- */
+        /* --- NYIRIGABOR-DESIGN-SYSTEM TOKENS --- */
         :root {
             --bg-base: #090b10;
-            --bg-overlay: rgba(9, 11, 16, 0.78);
+            --bg-overlay: rgba(9, 11, 16, 0.82);
             --text-primary: #f8fafc;
             --text-secondary: #cbd5e1;
             --text-muted: #64748b;
             --accent-primary: #00FFFF;
             --accent-secondary: #FF0C9D;
             --card-bg: rgba(13, 18, 28, 0.78);
-            --card-bg-hover: rgba(18, 26, 42, 0.92);
-            --card-inner: rgba(9, 13, 22, 0.72);
+            --card-bg-hover: rgba(18, 26, 42, 0.94);
+            --card-inner: rgba(9, 13, 22, 0.68);
             --card-border: rgba(0, 255, 255, 0.25);
             --card-border-hover: #00FFFF;
             --dock-bg: rgba(10, 14, 23, 0.86);
+            --grid-line-1: rgba(0, 255, 255, 0.06);
+            --grid-line-2: rgba(255, 12, 157, 0.05);
             --shadow-glow: 0 12px 32px -8px rgba(0, 255, 255, 0.22);
+            --input-bg: rgba(9, 13, 22, 0.85);
         }
 
         html[data-theme="light"] {
             --bg-base: #eef2f6;
-            --bg-overlay: rgba(241, 245, 249, 0.86);
+            --bg-overlay: rgba(241, 245, 249, 0.88);
             --text-primary: #0f172a;
             --text-secondary: #334155;
             --text-muted: #64748b;
             --accent-primary: #0284c7;
             --accent-secondary: #db2777;
-            --card-bg: rgba(255, 255, 255, 0.82);
-            --card-bg-hover: rgba(255, 255, 255, 0.96);
+            --card-bg: rgba(255, 255, 255, 0.84);
+            --card-bg-hover: rgba(255, 255, 255, 0.98);
             --card-inner: rgba(241, 245, 249, 0.88);
             --card-border: rgba(2, 132, 199, 0.25);
             --card-border-hover: #0284c7;
             --dock-bg: rgba(255, 255, 255, 0.88);
-            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.18);
+            --grid-line-1: rgba(2, 132, 199, 0.08);
+            --grid-line-2: rgba(219, 39, 119, 0.06);
+            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.16);
+            --input-bg: rgba(255, 255, 255, 0.95);
         }
 
         * {
-            -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        body, html {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
             background-color: var(--bg-base);
             color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
             transition: background-color 0.45s ease, color 0.45s ease;
-            min-height: 100dvh;
-            overflow: hidden;
-            user-select: none;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        .app-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            border: 1.5px solid var(--card-border);
-            box-shadow: var(--shadow-glow);
-            transition: border-color 0.28s ease, background-color 0.28s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        /* Fullscreen Canvas */
+        #viewport {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            cursor: grab;
+            touch-action: none;
         }
 
+        #viewport:active {
+            cursor: grabbing;
+        }
+
+        .bg-cyber-grid {
+            background-image: 
+                linear-gradient(to right, var(--grid-line-1) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line-2) 1px, transparent 1px);
+            background-size: 36px 36px;
+            will-change: background-size, background-position;
+        }
+
+        /* --- HUD & APP SURFACE --- */
         .app-surface {
             background: var(--dock-bg);
             backdrop-filter: blur(22px);
             -webkit-backdrop-filter: blur(22px);
             border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-glow);
+            transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.2s ease;
+        }
+
+        .app-inner-box {
+            background: var(--card-inner);
+            border: 1px solid var(--card-border);
             transition: background-color 0.4s ease, border-color 0.4s ease;
         }
 
-        /* Egyedi csúszkák */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 999px;
-            background: rgba(148, 163, 184, 0.25);
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: var(--accent-primary);
-            border: 2px solid var(--bg-base);
-            cursor: pointer;
-            box-shadow: 0 0 10px var(--accent-primary);
-        }
-
-        .palette-chip.active {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 2px var(--accent-primary);
-            transform: scale(1.03);
-        }
-
-        .preset-btn.active {
-            border-color: var(--accent-secondary);
-            background: rgba(255, 12, 157, 0.16);
-            color: var(--text-primary);
-        }
-
-        .panel-hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(16px) scale(0.98);
+        .accent-gradient-text {
+            background: linear-gradient(120deg, var(--accent-primary) 15%, var(--accent-secondary) 95%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            line-height: 1.25;
+            padding-bottom: 0.1em;
         }
 
         .pulse-dot {
@@ -154,137 +163,349 @@
             70% { box-shadow: 0 0 0 8px rgba(0, 255, 255, 0); }
             100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
         }
+
+        /* --- CONTROL PANEL (DESKTOP SIDEBAR / MOBILE DRAWER) --- */
+        #panel-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 25;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #panel-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #control-panel {
+            position: fixed;
+            top: calc(env(safe-area-inset-top) + 74px);
+            right: 20px;
+            bottom: 20px;
+            width: 350px;
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1.5px solid var(--card-border);
+            border-radius: 24px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 30;
+            box-shadow: var(--shadow-glow);
+            overflow-y: auto;
+            transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        #control-panel.collapsed {
+            transform: translateX(calc(100% + 32px));
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            #control-panel {
+                top: auto;
+                left: 12px;
+                right: 12px;
+                bottom: calc(env(safe-area-inset-bottom) + 84px);
+                width: auto;
+                max-height: 72dvh;
+                border-radius: 26px;
+                padding: 18px;
+            }
+
+            #control-panel.collapsed {
+                transform: translateY(calc(100% + 110px));
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* --- GOMBOK ÉS PALETTA VÁLASZTÓ --- */
+        .mode-btn {
+            background: var(--card-inner);
+            border: 1.5px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: #090b10;
+            border-color: transparent;
+            box-shadow: 0 6px 18px -4px rgba(0, 255, 255, 0.4);
+        }
+
+        .palette-btn {
+            background: var(--card-inner);
+            border: 1.5px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 8px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'Share Tech Mono', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .palette-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-1px);
+        }
+
+        .palette-btn.active {
+            border-color: var(--accent-primary);
+            background: var(--card-bg-hover);
+            box-shadow: 0 0 14px rgba(0, 255, 255, 0.25);
+        }
+
+        .swatch-dots {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .swatch-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .swatch-dots span + span {
+            margin-left: -4px;
+        }
+
+        /* Range Slider */
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-primary);
+            height: 6px;
+            cursor: pointer;
+        }
     </style>
 </head>
-<body class="font-sans antialiased relative">
+<body class="antialiased selection:bg-magenta selection:text-white">
 
-    <!-- TELJES KÉPERNYŐS WEBGL JULIA VÁSZON -->
-    <canvas id="julia-canvas" class="fixed inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing touch-none"></canvas>
+    <!-- WebGL Julia Halmaz Vászon + Finom 2.5D Parallax rács -->
+    <canvas id="viewport"></canvas>
+    <div id="cyber-grid" class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none opacity-35"></div>
 
-    <!-- TRANSPARENT FELSŐ HUD FEJLÉC -->
-    <header class="fixed top-0 left-0 right-0 z-30 w-full pointer-events-none">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+    <!-- FELSŐ HUD HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-20 pointer-events-none" style="padding-top: calc(env(safe-area-inset-top) + 14px);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-2">
             
-            <!-- Bal oldal: FŐOLDAL GOMB + Julia státusz -->
-            <div class="flex items-center gap-2.5 pointer-events-auto">
-                <a href="index.html" class="app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-orbitron font-bold tracking-wider uppercase hover:scale-105 active:scale-95 transition-transform shadow-md" style="border-color: var(--accent-primary); color: var(--text-primary);">
-                    <i class="fa-solid fa-house text-xs" style="color: var(--accent-primary);"></i>
-                    <span>Főoldal</span>
-                </a>
+            <!-- Főoldal gomb -->
+            <a href="index.html" class="pointer-events-auto app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-mono font-bold hover:scale-105 active:scale-95" style="border-color: var(--accent-primary); color: var(--accent-primary);">
+                <i class="fa-solid fa-house"></i>
+                <span>FŐOLDAL</span>
+            </a>
 
-                <div class="hidden sm:flex app-surface h-10 px-3.5 rounded-full items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-magenta pulse-dot"></span>
-                    <span class="font-mono text-xs tracking-wider uppercase" style="color: var(--text-secondary);">
-                        JULIA.GL <span class="opacity-40 mx-1">|</span> <span id="hud-formula">z² + c</span>
-                    </span>
-                </div>
+            <!-- Élő Státusz + Julia Képlet + Zoom + Óra -->
+            <div class="pointer-events-auto app-surface px-3.5 py-2 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan pulse-dot"></span>
+                <span class="font-mono text-[11px] sm:text-xs tracking-wider uppercase font-semibold flex items-center gap-1.5" style="color: var(--text-secondary);">
+                    <span class="hidden sm:inline">SYS.ONLINE</span>
+                    <span class="hidden sm:inline opacity-40">|</span>
+                    <span style="color: var(--accent-primary);">JULIA (z² + c)</span>
+                    <span class="opacity-40">|</span>
+                    <button onclick="resetCamera(true)" title="Zoom alaphelyzetbe (1.0x)" class="cursor-pointer hover:opacity-80 transition-opacity font-bold px-1 rounded" style="color: var(--accent-secondary);">
+                        <i class="fa-solid fa-magnifying-glass text-[10px] mr-0.5"></i><span id="zoom-indicator">1.0x</span>
+                    </button>
+                    <span class="hidden md:inline opacity-40">|</span>
+                    <span id="live-clock" class="hidden md:inline">00:00</span>
+                </span>
             </div>
 
-            <!-- Jobb oldal: Vezérlőpanel kapcsoló + Téma váltó -->
-            <div class="flex items-center gap-2.5 pointer-events-auto">
-                <button onclick="togglePanel()" id="panel-toggle-btn" class="app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--text-primary);">
-                    <i class="fa-solid fa-sliders" style="color: var(--accent-secondary);"></i>
-                    <span class="hidden sm:inline">VEZÉRLŐK</span>
-                </button>
-
-                <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-primary);">
+            <!-- Jobb oldali vezérlők: Sötét/Világos téma + Panel -->
+            <div class="pointer-events-auto flex items-center gap-2">
+                <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95" style="color: var(--accent-secondary);">
                     <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
-                    <span id="theme-label" class="hidden sm:inline">LIGHT</span>
+                    <span id="theme-label" class="hidden md:inline">LIGHT</span>
+                </button>
+
+                <button onclick="togglePanel()" aria-label="Vezérlőpult megnyitása" class="hidden md:flex app-surface h-10 px-4 rounded-full items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95" style="color: var(--accent-primary);">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>VEZÉRLŐK</span>
                 </button>
             </div>
+
         </div>
     </header>
 
-    <!-- LEBEGŐ HUD VEZÉRLŐPANEL (1. HELYEN A SZÍNVÁLASZTÁS) -->
-    <aside id="control-panel" class="app-card fixed z-20 left-4 right-4 sm:left-auto sm:right-6 top-20 sm:top-24 sm:w-[370px] max-h-[calc(100dvh-11rem)] sm:max-h-[calc(100dvh-7.5rem)] overflow-y-auto rounded-3xl p-5 space-y-5">
-        
-        <!-- Fejléc -->
+    <!-- Mobil háttér sötétítés nyitott panelnél -->
+    <div id="panel-overlay" onclick="hidePanel()"></div>
+
+    <!-- VEZÉRLŐPULT (1. HELYEN A SZÍNVÁLASZTÁS) -->
+    <aside id="control-panel" aria-label="Julia Halmaz vezérlőpult">
+        <!-- Mobil lehúzó sáv -->
+        <div class="w-12 h-1.5 rounded-full bg-slate-500/40 mx-auto -mt-1 mb-0.5 md:hidden"></div>
+
+        <!-- Panel Fejléc -->
         <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--card-border);">
-            <div>
-                <div class="font-mono text-[10px] tracking-widest uppercase" style="color: var(--accent-secondary);">// FRAKTÁL GENERÁTOR</div>
-                <h1 class="font-orbitron text-lg font-extrabold tracking-wide" style="color: var(--text-primary);">Julia Halmaz</h1>
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan to-magenta flex items-center justify-center text-slate-950 font-orbitron font-black text-xs shadow-md">
+                    JL
+                </div>
+                <div>
+                    <h1 class="font-orbitron text-sm font-extrabold uppercase tracking-wider accent-gradient-text">
+                        Julia Halmaz
+                    </h1>
+                    <p class="text-[10px] font-mono" style="color: var(--text-muted);">// WEBGL FRACTAL EXPLORER</p>
+                </div>
             </div>
-            <div class="text-right font-mono text-[11px]" style="color: var(--text-secondary);">
-                <div>ZOOM: <span id="zoom-readout" class="font-bold" style="color: var(--accent-primary);">1.0x</span></div>
-            </div>
+
+            <button onclick="hidePanel()" aria-label="Panel bezárása" class="w-8 h-8 rounded-xl flex items-center justify-center border transition-colors cursor-pointer" style="border-color: var(--card-border); color: var(--text-secondary);">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
 
-        <!-- 1. ELSŐ LÉPÉS: SZÍNVILÁG VÁLASZTÁSA -->
-        <div class="space-y-2.5">
-            <div class="flex items-center justify-between">
-                <label class="font-orbitron text-xs font-bold uppercase tracking-wider flex items-center gap-2" style="color: var(--accent-primary);">
-                    <span class="px-1.5 py-0.5 rounded bg-cyan/15 text-[10px] font-mono">01</span>
-                    <span>Színvilág választása</span>
-                </label>
-                <span id="palette-name" class="font-mono text-[11px]" style="color: var(--text-secondary);">Cyber Neon</span>
-            </div>
-
-            <div class="grid grid-cols-5 gap-2" id="palette-grid">
-                <button type="button" onclick="setPalette(0, 'Cyber Neon', this)" class="palette-chip active h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #090b10 10%, #00FFFF 55%, #FF0C9D 95%);" title="Cyber Neon"></button>
-                <button type="button" onclick="setPalette(1, 'Kvantum Ibolya', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #0f0722 10%, #8A2BE2 55%, #38bdf8 95%);" title="Kvantum Ibolya"></button>
-                <button type="button" onclick="setPalette(2, 'Napkitörés', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #180804 10%, #f97316 55%, #fde047 95%);" title="Napkitörés"></button>
-                <button type="button" onclick="setPalette(3, 'Mélytengeri Aura', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #02131d 10%, #10b981 55%, #67e8f9 95%);" title="Mélytengeri Aura"></button>
-                <button type="button" onclick="setPalette(4, 'Kozmikus Mátrix', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #050505 15%, #e2e8f0 60%, #FF0C9D 95%);" title="Kozmikus Mátrix"></button>
-            </div>
-        </div>
-
-        <!-- 2. MÁSODIK LÉPÉS: JULIA KONSTANS (c = Re + Im·i) & ALAKZATOK -->
-        <div class="space-y-3 pt-2 border-t" style="border-color: var(--card-border);">
-            <div class="flex items-center justify-between">
-                <span class="font-orbitron text-xs font-bold uppercase tracking-wider flex items-center gap-2" style="color: var(--text-primary);">
-                    <span class="px-1.5 py-0.5 rounded bg-magenta/15 text-magenta text-[10px] font-mono">02</span>
-                    <span>Julia alakzatok (c)</span>
+        <!-- 1. ELSŐ LÉPÉS: SZÍNPALETTA VÁLASZTÁS -->
+        <div class="space-y-2">
+            <div class="text-[11px] font-mono uppercase tracking-wider font-bold flex justify-between items-center" style="color: var(--text-secondary);">
+                <span class="flex items-center gap-1.5">
+                    <span class="px-1.5 py-0.5 rounded bg-cyan/15 text-[10px]" style="color: var(--accent-primary);">01</span>
+                    <span>Színpaletta</span>
                 </span>
-                <button type="button" onclick="toggleMorph()" id="morph-btn" class="px-2.5 py-1 rounded-lg border font-mono text-[10px] font-bold uppercase cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--accent-secondary);">
+                <span id="palette-name" style="color: var(--accent-primary);">Cyber Cyan</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2" id="palette-buttons">
+                <button class="palette-btn active" data-palette="0" onclick="setPalette(0, 'Cyber Cyan', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#00FFFF"></span>
+                        <span style="background:#8A2BE2"></span>
+                    </span>
+                    <span>Cyber Cyan</span>
+                </button>
+                <button class="palette-btn" data-palette="1" onclick="setPalette(1, 'Super Neon', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#FF0C9D"></span>
+                        <span style="background:#00FFFF"></span>
+                    </span>
+                    <span>Super Neon</span>
+                </button>
+                <button class="palette-btn" data-palette="2" onclick="setPalette(2, 'Kiber Arany', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#FFB700"></span>
+                        <span style="background:#FF2E63"></span>
+                    </span>
+                    <span>Kiber Arany</span>
+                </button>
+                <button class="palette-btn" data-palette="3" onclick="setPalette(3, 'Smaragd', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#00FF88"></span>
+                        <span style="background:#0EA5E9"></span>
+                    </span>
+                    <span>Smaragd</span>
+                </button>
+                <button class="palette-btn col-span-2 justify-center" data-palette="4" onclick="setPalette(4, 'Prizma Spektrum', this)">
+                    <span class="swatch-dots">
+                        <span style="background:#00FFFF"></span>
+                        <span style="background:#FF0C9D"></span>
+                        <span style="background:#FFB700"></span>
+                    </span>
+                    <span>Prizma Spektrum (Multi-Color)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. JULIA KONSTANS (c = Re + Im·i) & ALAKZATOK -->
+        <div class="space-y-2 pt-2 border-t" style="border-color: var(--card-border);">
+            <div class="text-[11px] font-mono uppercase tracking-wider font-bold flex justify-between items-center" style="color: var(--text-secondary);">
+                <span class="flex items-center gap-1.5">
+                    <span class="px-1.5 py-0.5 rounded bg-magenta/15 text-[10px]" style="color: var(--accent-secondary);">02</span>
+                    <span>Julia Alakzatok (c)</span>
+                </span>
+                <button id="morph-btn" onclick="toggleMorph()" class="px-2 py-0.5 rounded-md border text-[10px] cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--accent-secondary);">
                     <i class="fa-solid fa-play mr-1"></i>Morf
                 </button>
             </div>
 
-            <!-- Előre beállított Julia koordináták -->
-            <div class="grid grid-cols-2 gap-1.5 text-xs font-mono">
-                <button type="button" onclick="applyPreset(-0.7269, 0.1889, this)" class="preset-btn active px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Spirál Galaxis</button>
-                <button type="button" onclick="applyPreset(-0.8, 0.156, this)" class="preset-btn px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Kvantum Villám</button>
-                <button type="button" onclick="applyPreset(-0.123, 0.745, this)" class="preset-btn px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Douady Nyúl</button>
-                <button type="button" onclick="applyPreset(0.285, 0.01, this)" class="preset-btn px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Arany Korona</button>
+            <div class="grid grid-cols-2 gap-1.5" id="preset-buttons">
+                <button class="mode-btn active" onclick="applyPreset(-0.7269, 0.1889, this)">Spirál Galaxis</button>
+                <button class="mode-btn" onclick="applyPreset(-0.8, 0.156, this)">Kvantum Villám</button>
+                <button class="mode-btn" onclick="applyPreset(-0.123, 0.745, this)">Douady Nyúl</button>
+                <button class="mode-btn" onclick="applyPreset(0.285, 0.01, this)">Arany Korona</button>
             </div>
 
-            <!-- Valós és Képzetes rész csúszkák -->
-            <div class="space-y-2.5 rounded-2xl p-3 border" style="background: var(--card-inner); border-color: var(--card-border);">
+            <div class="app-inner-box rounded-xl p-2.5 space-y-2 mt-1">
                 <div>
-                    <div class="flex justify-between font-mono text-[11px] mb-1">
-                        <span style="color: var(--text-secondary);">Re(c) valós rész</span>
+                    <div class="text-[10px] font-mono flex justify-between" style="color: var(--text-secondary);">
+                        <span>Re(c) valós rész</span>
                         <span id="cre-val" class="font-bold" style="color: var(--accent-primary);">-0.7269</span>
                     </div>
-                    <input type="range" id="cre-slider" min="-1.2" max="1.2" step="0.0005" value="-0.7269">
+                    <input type="range" id="cre-slider" min="-1.2" max="1.2" step="0.0005" value="-0.7269" oninput="setCReal(this.value)">
                 </div>
                 <div>
-                    <div class="flex justify-between font-mono text-[11px] mb-1">
-                        <span style="color: var(--text-secondary);">Im(c) képzetes rész</span>
+                    <div class="text-[10px] font-mono flex justify-between" style="color: var(--text-secondary);">
+                        <span>Im(c) képzetes rész</span>
                         <span id="cim-val" class="font-bold" style="color: var(--accent-secondary);">0.1889</span>
                     </div>
-                    <input type="range" id="cim-slider" min="-1.2" max="1.2" step="0.0005" value="0.1889">
+                    <input type="range" id="cim-slider" min="-1.2" max="1.2" step="0.0005" value="0.1889" oninput="setCImag(this.value)">
                 </div>
             </div>
         </div>
 
-        <!-- 3. RÉSZLETESSÉG & ALAPHELYZET -->
-        <div class="space-y-3 pt-2 border-t" style="border-color: var(--card-border);">
-            <div>
-                <div class="flex justify-between font-mono text-[11px] mb-1">
-                    <span style="color: var(--text-secondary);">Iterációs mélység</span>
-                    <span id="iter-val" class="font-bold" style="color: var(--text-primary);">220</span>
-                </div>
-                <input type="range" id="iter-slider" min="60" max="600" step="10" value="220">
+        <!-- 3. Iterációs Mélység -->
+        <div class="space-y-1.5">
+            <div class="text-[11px] font-mono uppercase tracking-wider font-bold flex justify-between items-center" style="color: var(--text-secondary);">
+                <span>Iterációs Mélység</span>
+                <span id="iter-val" class="font-mono text-xs px-2 py-0.5 rounded-md app-inner-box font-bold" style="color: var(--accent-primary);">220</span>
             </div>
+            <input type="range" id="iter-slider" min="60" max="600" step="10" value="220" oninput="updateIterations(this.value)">
+        </div>
 
-            <div class="flex items-center gap-2 pt-1">
-                <button type="button" onclick="resetView()" class="flex-1 py-2.5 px-3 rounded-xl border font-mono text-xs font-bold uppercase cursor-pointer hover:opacity-85 transition-opacity" style="border-color: var(--card-border); color: var(--text-primary);">
-                    <i class="fa-solid fa-rotate-left mr-1.5"></i>Alapnézet
-                </button>
-                <a href="index.html" class="py-2.5 px-3.5 rounded-xl font-orbitron text-xs font-bold uppercase inline-flex items-center justify-center gap-1.5 hover:brightness-110 transition-all" style="background: var(--accent-primary); color: #090b10;">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Főoldal</span>
-                </a>
+        <!-- 4. Audio Szintetizátor, Alaphelyzet & Főoldal -->
+        <div class="grid grid-cols-2 gap-2 pt-1">
+            <button id="audio-btn" onclick="toggleAudio()" class="mode-btn py-2.5">
+                <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+                <span id="audio-label">Hang: Ki</span>
+            </button>
+
+            <button onclick="resetCamera(true)" class="mode-btn py-2.5">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Alapnézet</span>
+            </button>
+
+            <a href="index.html" class="col-span-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-cyan to-magenta text-slate-950 font-orbitron text-[11px] font-extrabold tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all shadow-md flex items-center justify-center gap-2">
+                <i class="fa-solid fa-house"></i>
+                <span>Vissza a Főoldalra</span>
+            </a>
+        </div>
+
+        <!-- Rövid tipp -->
+        <div class="app-inner-box rounded-xl p-2.5 text-[10px] leading-relaxed mt-auto space-y-1" style="color: var(--text-secondary);">
+            <div>
+                <i class="fa-solid fa-magnifying-glass-plus mr-1" style="color: var(--accent-primary);"></i>
+                Görgő / kétujjas csippentés: Belenagyítás • Húzás: Eltolás • Dupla katt / <span class="font-bold">0</span>: 1.0x
             </div>
         </div>
     </aside>
@@ -296,27 +517,26 @@
             <span class="text-[10px] font-bold">Főoldal</span>
         </a>
 
-        <button onclick="togglePanel()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors cursor-pointer" style="color: var(--text-primary);">
+        <button onclick="togglePanel()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-primary);">
             <div class="w-10 h-7 rounded-full bg-gradient-to-r from-cyan to-magenta text-slate-950 flex items-center justify-center mb-0.5 shadow-md">
-                <i class="fa-solid fa-palette text-sm"></i>
+                <i class="fa-solid fa-palette text-xs"></i>
             </div>
             <span class="text-[10px] font-bold">Szín &amp; c</span>
         </button>
 
-        <button onclick="toggleMorph()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors cursor-pointer" style="color: var(--text-secondary);">
+        <button onclick="toggleMorph()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--text-secondary);">
             <i class="fa-solid fa-wand-magic-sparkles text-base mb-1"></i>
             <span class="text-[10px]">Morf</span>
         </button>
 
-        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors cursor-pointer" style="color: var(--accent-secondary);">
+        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-secondary);">
             <i id="dock-theme-icon" class="fa-solid fa-sun text-base mb-1"></i>
             <span class="text-[10px]">Téma</span>
         </button>
     </nav>
 
-    <!-- WEBGL SHADER ÉS INTERAKCIÓS LOGIKA -->
     <script>
-        // --- 1. HARMONIKUS TÉMA VÁLTÓ (SZINKRONIZÁLVA A FŐOLDALLAL) ---
+        // --- 1. TÉMA RENDSZER SZINKRONIZÁCIÓ (NG_THEME) ---
         const htmlEl = document.documentElement;
         const themeIcon = document.getElementById('theme-icon');
         const dockThemeIcon = document.getElementById('dock-theme-icon');
@@ -342,15 +562,109 @@
 
         applyTheme(localStorage.getItem('ng_theme') || 'dark');
 
-        // --- 2. VEZÉRLŐPANEL KAPCSOLÓ ---
+        // --- 2. ÉLŐ ÓRA ---
+        function updateClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('live-clock');
+            if (clockEl) {
+                clockEl.textContent = now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- 3. PANEL VEZÉRLÉS ---
         const controlPanel = document.getElementById('control-panel');
-        function togglePanel() {
-            controlPanel.classList.toggle('panel-hidden');
+        const panelOverlay = document.getElementById('panel-overlay');
+
+        function hidePanel() {
+            controlPanel.classList.add('collapsed');
+            panelOverlay.classList.remove('active');
         }
 
-        // --- 3. WEBGL JULIA HALMAZ RENDERER ---
-        const canvas = document.getElementById('julia-canvas');
+        function showPanel() {
+            controlPanel.classList.remove('collapsed');
+            if (window.innerWidth <= 768) {
+                panelOverlay.classList.add('active');
+            }
+        }
+
+        function togglePanel() {
+            if (controlPanel.classList.contains('collapsed')) {
+                showPanel();
+            } else {
+                hidePanel();
+            }
+        }
+
+        if (window.innerWidth <= 768) {
+            hidePanel();
+        }
+
+        // --- 4. WEB AUDIO API PENTATON SZINTETIZÁTOR ---
+        let audioEnabled = false;
+        let audioCtx = null;
+        const notes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSynthTone(freq) {
+            if (!audioEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const osc2 = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc2.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc2.frequency.setValueAtTime(freq * 1.5, audioCtx.currentTime);
+
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.65);
+
+                osc.connect(gain);
+                osc2.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc2.start();
+                osc.stop(audioCtx.currentTime + 0.65);
+                osc2.stop(audioCtx.currentTime + 0.65);
+            } catch (e) {}
+        }
+
+        function toggleAudio() {
+            initAudio();
+            audioEnabled = !audioEnabled;
+            const btn = document.getElementById('audio-btn');
+            const icon = document.getElementById('audio-icon');
+            const label = document.getElementById('audio-label');
+
+            if (audioEnabled) {
+                btn.classList.add('active');
+                icon.className = 'fa-solid fa-volume-high';
+                label.textContent = 'Hang: Be';
+                playSynthTone(523.25);
+            } else {
+                btn.classList.remove('active');
+                icon.className = 'fa-solid fa-volume-xmark';
+                label.textContent = 'Hang: Ki';
+            }
+        }
+
+        // --- 5. WEBGL JULIA HALMAZ ENGINE ---
+        const canvas = document.getElementById('viewport');
         const gl = canvas.getContext('webgl', { antialias: false, preserveDrawingBuffer: false });
+        const cyberGrid = document.getElementById('cyber-grid');
+        const zoomIndicator = document.getElementById('zoom-indicator');
 
         const vsSource = `
             attribute vec2 a_pos;
@@ -372,37 +686,40 @@
             vec3 getPalette(float t, int pal) {
                 t = fract(t);
                 if (pal == 0) {
-                    // Cyber Neon (Cyan -> Purple -> Magenta)
-                    vec3 a = vec3(0.05, 0.12, 0.22);
-                    vec3 b = vec3(0.45, 0.45, 0.55);
+                    // Cyber Cyan (#00FFFF -> #38BDF8 -> #8A2BE2)
+                    vec3 a = vec3(0.05, 0.14, 0.25);
+                    vec3 b = vec3(0.42, 0.45, 0.55);
                     vec3 c = vec3(1.0, 1.0, 1.0);
-                    vec3 d = vec3(0.50, 0.15, 0.85);
+                    vec3 d = vec3(0.52, 0.20, 0.78);
                     return a + b * cos(6.28318 * (c * t + d));
                 } else if (pal == 1) {
-                    // Kvantum Ibolya
-                    vec3 a = vec3(0.18, 0.08, 0.35);
-                    vec3 b = vec3(0.45, 0.42, 0.55);
+                    // Super Neon (#FF0C9D -> #00FFFF -> #A855F7)
+                    vec3 a = vec3(0.16, 0.08, 0.24);
+                    vec3 b = vec3(0.48, 0.45, 0.52);
                     vec3 c = vec3(1.0, 1.0, 1.0);
-                    vec3 d = vec3(0.65, 0.35, 0.10);
+                    vec3 d = vec3(0.85, 0.35, 0.15);
                     return a + b * cos(6.28318 * (c * t + d));
                 } else if (pal == 2) {
-                    // Napkitörés (Solar Gold & Orange)
-                    vec3 a = vec3(0.45, 0.18, 0.05);
-                    vec3 b = vec3(0.52, 0.42, 0.25);
+                    // Kiber Arany (#FFB700 -> #FF5500 -> #FF0C9D)
+                    vec3 a = vec3(0.45, 0.18, 0.06);
+                    vec3 b = vec3(0.50, 0.40, 0.28);
                     vec3 c = vec3(1.0, 1.0, 0.8);
-                    vec3 d = vec3(0.00, 0.12, 0.35);
+                    vec3 d = vec3(0.00, 0.14, 0.42);
                     return a + b * cos(6.28318 * (c * t + d));
                 } else if (pal == 3) {
-                    // Mélytengeri Aura (Emerald & Aqua)
-                    vec3 a = vec3(0.04, 0.32, 0.38);
-                    vec3 b = vec3(0.25, 0.55, 0.50);
+                    // Smaragd (#00FF88 -> #00FFFF -> #10B981)
+                    vec3 a = vec3(0.04, 0.32, 0.36);
+                    vec3 b = vec3(0.28, 0.55, 0.48);
                     vec3 c = vec3(1.0, 1.0, 1.0);
-                    vec3 d = vec3(0.30, 0.10, 0.20);
+                    vec3 d = vec3(0.32, 0.10, 0.22);
                     return a + b * cos(6.28318 * (c * t + d));
                 } else {
-                    // Kozmikus Mátrix (Monokróm + Magenta él)
-                    float v = 0.5 + 0.5 * cos(6.28318 * t);
-                    return mix(vec3(0.06, 0.08, 0.14), vec3(0.95, 0.96, 1.0), v) + vec3(0.35, 0.0, 0.22) * pow(v, 4.0);
+                    // Prizma Spektrum (Multi-Color)
+                    vec3 a = vec3(0.5, 0.5, 0.5);
+                    vec3 b = vec3(0.5, 0.5, 0.5);
+                    vec3 c = vec3(1.0, 1.0, 1.0);
+                    vec3 d = vec3(0.00, 0.33, 0.67);
+                    return a + b * cos(6.28318 * (c * t + d));
                 }
             }
 
@@ -426,13 +743,13 @@
                 }
 
                 if (escaped < 0.5) {
-                    vec3 coreColor = u_isLight > 0.5 ? vec3(0.92, 0.95, 0.98) : vec3(0.035, 0.043, 0.063);
+                    vec3 coreColor = u_isLight > 0.5 ? vec3(0.93, 0.95, 0.98) : vec3(0.035, 0.043, 0.063);
                     gl_FragColor = vec4(coreColor, 1.0);
                 } else {
                     float smoothIter = iter - log2(log2(dot(z, z))) + 4.0;
                     vec3 col = getPalette(smoothIter * 0.022, u_palette);
                     if (u_isLight > 0.5) {
-                        col = mix(col, vec3(1.0), 0.12);
+                        col = mix(col, vec3(1.0), 0.1);
                     }
                     gl_FragColor = vec4(col, 1.0);
                 }
@@ -468,11 +785,16 @@
         const uPalette = gl.getUniformLocation(program, 'u_palette');
         const uIsLight = gl.getUniformLocation(program, 'u_isLight');
 
-        // Állapot változók
+        // Julia állapot & Kamera
+        const MIN_ZOOM = 1.0;
+        const MAX_ZOOM = 250000.0;
         let state = {
             centerX: 0.0,
             centerY: 0.0,
+            targetCenterX: 0.0,
+            targetCenterY: 0.0,
             zoom: 1.0,
+            targetZoom: 1.0,
             cRe: -0.7269,
             cIm: 0.1889,
             maxIter: 220,
@@ -482,14 +804,13 @@
         let isMorphing = false;
         let morphAngle = 0;
         let needsRender = true;
+        let lastDisplayedZoom = '1.0x';
 
         const creSlider = document.getElementById('cre-slider');
         const cimSlider = document.getElementById('cim-slider');
-        const iterSlider = document.getElementById('iter-slider');
         const creVal = document.getElementById('cre-val');
         const cimVal = document.getElementById('cim-val');
         const iterVal = document.getElementById('iter-val');
-        const zoomReadout = document.getElementById('zoom-readout');
 
         function updateUIReadouts() {
             creSlider.value = state.cRe;
@@ -497,15 +818,12 @@
             creVal.textContent = state.cRe.toFixed(4);
             cimVal.textContent = state.cIm.toFixed(4);
             iterVal.textContent = state.maxIter;
-            zoomReadout.textContent = state.zoom >= 1000
-                ? state.zoom.toExponential(1) + 'x'
-                : state.zoom.toFixed(1) + 'x';
         }
 
-        function setPalette(idx, name, btnEl) {
-            state.palette = idx;
-            document.getElementById('palette-name').textContent = name;
-            document.querySelectorAll('.palette-chip').forEach(c => c.classList.remove('active'));
+        function setPalette(paletteIdx, label, btnEl) {
+            state.palette = paletteIdx;
+            document.getElementById('palette-name').textContent = label;
+            document.querySelectorAll('#palette-buttons .palette-btn').forEach(b => b.classList.remove('active'));
             if (btnEl) btnEl.classList.add('active');
             needsRender = true;
         }
@@ -515,19 +833,33 @@
             updateMorphBtn();
             state.cRe = re;
             state.cIm = im;
-            state.centerX = 0.0;
-            state.centerY = 0.0;
-            state.zoom = 1.0;
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            state.targetCenterX = 0.0;
+            state.targetCenterY = 0.0;
+            state.targetZoom = 1.0;
+            document.querySelectorAll('#preset-buttons .mode-btn').forEach(b => b.classList.remove('active'));
             if (btnEl) btnEl.classList.add('active');
             updateUIReadouts();
             needsRender = true;
         }
 
-        function resetView() {
-            state.centerX = 0.0;
-            state.centerY = 0.0;
-            state.zoom = 1.0;
+        function setCReal(val) {
+            isMorphing = false;
+            updateMorphBtn();
+            state.cRe = parseFloat(val);
+            updateUIReadouts();
+            needsRender = true;
+        }
+
+        function setCImag(val) {
+            isMorphing = false;
+            updateMorphBtn();
+            state.cIm = parseFloat(val);
+            updateUIReadouts();
+            needsRender = true;
+        }
+
+        function updateIterations(val) {
+            state.maxIter = parseInt(val, 10);
             updateUIReadouts();
             needsRender = true;
         }
@@ -545,101 +877,109 @@
                 : '<i class="fa-solid fa-play mr-1"></i>Morf';
         }
 
-        creSlider.addEventListener('input', (e) => {
-            isMorphing = false;
-            updateMorphBtn();
-            state.cRe = parseFloat(e.target.value);
-            updateUIReadouts();
+        function resetCamera(withSound = false) {
+            state.targetZoom = 1.0;
+            state.targetCenterX = 0.0;
+            state.targetCenterY = 0.0;
             needsRender = true;
-        });
+            if (withSound) playSynthTone(523.25);
+        }
 
-        cimSlider.addEventListener('input', (e) => {
-            isMorphing = false;
-            updateMorphBtn();
-            state.cIm = parseFloat(e.target.value);
-            updateUIReadouts();
+        function applyZoomAtPoint(nextZoom, clientX, clientY) {
+            const clamped = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom));
+            const minDim = Math.min(window.innerWidth, window.innerHeight);
+            const uvX = (clientX - 0.5 * window.innerWidth) / minDim;
+            const uvY = (0.5 * window.innerHeight - clientY) / minDim;
+
+            const worldX = state.targetCenterX + uvX * (2.6 / state.targetZoom);
+            const worldY = state.targetCenterY + uvY * (2.6 / state.targetZoom);
+
+            state.targetZoom = clamped;
+            if (state.targetZoom <= 1.02) {
+                state.targetZoom = 1.0;
+                state.targetCenterX = 0.0;
+                state.targetCenterY = 0.0;
+            } else {
+                state.targetCenterX = worldX - uvX * (2.6 / state.targetZoom);
+                state.targetCenterY = worldY - uvY * (2.6 / state.targetZoom);
+            }
             needsRender = true;
-        });
+        }
 
-        iterSlider.addEventListener('input', (e) => {
-            state.maxIter = parseInt(e.target.value, 10);
-            updateUIReadouts();
-            needsRender = true;
-        });
-
-        // --- EGÉR ÉS ÉRINTÉS ZOOM / MOZGATÁS ---
-        let isDragging = false;
-        let lastX = 0, lastY = 0;
-
-        canvas.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            lastX = e.clientX;
-            lastY = e.clientY;
-        });
-
-        window.addEventListener('mouseup', () => { isDragging = false; });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            const scale = 2.6 / (Math.min(canvas.width, canvas.height) * state.zoom);
-            state.centerX -= (e.clientX - lastX) * scale * (window.devicePixelRatio || 1);
-            state.centerY += (e.clientY - lastY) * scale * (window.devicePixelRatio || 1);
-            lastX = e.clientX;
-            lastY = e.clientY;
-            needsRender = true;
-        });
-
+        // --- EGÉR ÉS ÉRINTÉS INTERAKCIÓK ---
         canvas.addEventListener('wheel', (e) => {
             e.preventDefault();
-            const factor = e.deltaY < 0 ? 1.18 : 0.85;
-            state.zoom = Math.max(0.4, Math.min(state.zoom * factor, 250000));
-            updateUIReadouts();
-            needsRender = true;
+            const delta = Math.abs(e.deltaY) < 40 ? e.deltaY * 2.2 : e.deltaY;
+            const factor = delta < 0 ? 1.18 : 0.85;
+            applyZoomAtPoint(state.targetZoom * factor, e.clientX, e.clientY);
         }, { passive: false });
 
-        // Touch támogatás (1 ujj: mozgatás, 2 ujj: csippentéses zoom)
-        let lastPinchDist = 0;
-        canvas.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-            } else if (e.touches.length === 2) {
-                isDragging = false;
-                lastPinchDist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
+        canvas.addEventListener('dblclick', () => {
+            resetCamera(true);
+        });
+
+        const activePointers = new Map();
+        let initialPinchDist = 0;
+        let initialPinchZoom = 1.0;
+        let lastDragX = 0;
+        let lastDragY = 0;
+        let dragMoved = false;
+
+        canvas.addEventListener('pointerdown', (e) => {
+            activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (activePointers.size === 1) {
+                lastDragX = e.clientX;
+                lastDragY = e.clientY;
+                dragMoved = false;
+            } else if (activePointers.size === 2) {
+                const pts = Array.from(activePointers.values());
+                initialPinchDist = Math.max(10, Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y));
+                initialPinchZoom = state.targetZoom;
+            }
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (!activePointers.has(e.pointerId)) return;
+            activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+            if (activePointers.size === 2) {
+                const pts = Array.from(activePointers.values());
+                const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+                const midX = (pts[0].x + pts[1].x) / 2;
+                const midY = (pts[0].y + pts[1].y) / 2;
+                applyZoomAtPoint(initialPinchZoom * (dist / initialPinchDist), midX, midY);
+            } else if (activePointers.size === 1) {
+                const dx = e.clientX - lastDragX;
+                const dy = e.clientY - lastDragY;
+                if (Math.hypot(dx, dy) > 3) dragMoved = true;
+
+                const scale = 2.6 / (Math.min(window.innerWidth, window.innerHeight) * state.targetZoom);
+                state.targetCenterX -= dx * scale;
+                state.targetCenterY += dy * scale;
+                lastDragX = e.clientX;
+                lastDragY = e.clientY;
+                needsRender = true;
             }
         }, { passive: true });
 
-        canvas.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            const dpr = window.devicePixelRatio || 1;
-            if (e.touches.length === 1 && isDragging) {
-                const scale = 2.6 / (Math.min(canvas.width, canvas.height) * state.zoom);
-                state.centerX -= (e.touches[0].clientX - lastX) * scale * dpr;
-                state.centerY += (e.touches[0].clientY - lastY) * scale * dpr;
-                lastX = e.touches[0].clientX;
-                lastY = e.touches[0].clientY;
-                needsRender = true;
-            } else if (e.touches.length === 2) {
-                const dist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                if (lastPinchDist > 0) {
-                    state.zoom = Math.max(0.4, Math.min(state.zoom * (dist / lastPinchDist), 250000));
-                    updateUIReadouts();
-                    needsRender = true;
-                }
-                lastPinchDist = dist;
+        function handlePointerEnd(e) {
+            if (activePointers.size === 1 && !dragMoved) {
+                const normY = Math.min(1, Math.max(0, e.clientY / window.innerHeight));
+                const noteIndex = Math.floor((1 - normY) * notes.length);
+                playSynthTone(notes[Math.min(notes.length - 1, Math.max(0, noteIndex))]);
             }
-        }, { passive: false });
+            activePointers.delete(e.pointerId);
+        }
 
-        canvas.addEventListener('touchend', () => {
-            isDragging = false;
-            lastPinchDist = 0;
+        canvas.addEventListener('pointerup', handlePointerEnd);
+        canvas.addEventListener('pointercancel', handlePointerEnd);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'h' || e.key === 'H' || (e.key === 'Escape' && !controlPanel.classList.contains('collapsed'))) {
+                togglePanel();
+            } else if (e.key === '0') {
+                resetCamera(true);
+            }
         });
 
         function resizeCanvas() {
@@ -660,6 +1000,30 @@
                 state.cIm = 0.7885 * Math.sin(morphAngle);
                 updateUIReadouts();
                 needsRender = true;
+            }
+
+            const zoomDiff = Math.abs(state.targetZoom - state.zoom);
+            const cxDiff = Math.abs(state.targetCenterX - state.centerX);
+            const cyDiff = Math.abs(state.targetCenterY - state.centerY);
+
+            if (zoomDiff > 0.0001 || cxDiff > 0.000001 || cyDiff > 0.000001) {
+                state.zoom += (state.targetZoom - state.zoom) * 0.16;
+                state.centerX += (state.targetCenterX - state.centerX) * 0.16;
+                state.centerY += (state.targetCenterY - state.centerY) * 0.16;
+                needsRender = true;
+
+                const label = state.zoom >= 1000
+                    ? state.zoom.toExponential(1) + 'x'
+                    : state.zoom.toFixed(1) + 'x';
+                if (label !== lastDisplayedZoom && zoomIndicator) {
+                    zoomIndicator.textContent = label;
+                    lastDisplayedZoom = label;
+                }
+
+                if (cyberGrid) {
+                    const gridSize = 36 + (Math.log2(state.zoom) % 1) * 18;
+                    cyberGrid.style.backgroundSize = `${gridSize.toFixed(1)}px ${gridSize.toFixed(1)}px`;
+                }
             }
 
             if (needsRender) {
