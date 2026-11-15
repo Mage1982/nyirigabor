@@ -1,0 +1,243 @@
+<section id="daily-news-digest" class="ng-news-section">
+  <div class="ng-news-header">
+    <div>
+      <span class="ng-hud-badge">NAPI HÍRÖSSZEFOGLALÓ</span>
+      <h2 class="ng-news-title">Napi Brief – 4 Fókuszterület</h2>
+    </div>
+    <div id="news-date-stamp" class="ng-date-pill">Betöltés...</div>
+  </div>
+
+  <div id="ng-news-grid" class="ng-news-grid"></div>
+</section>
+
+<style>
+  :root {
+    --bg-base: #090b10;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #64748b;
+    --accent-primary: #00FFFF;
+    --accent-secondary: #FF0C9D;
+    --card-bg: rgba(13, 18, 28, 0.78);
+    --card-border: rgba(0, 255, 255, 0.25);
+  }
+
+  html[data-theme="light"] {
+    --bg-base: #eef2f6;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --accent-primary: #0284c7;
+    --accent-secondary: #db2777;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-border: rgba(2, 132, 199, 0.25);
+  }
+
+  .ng-news-section {
+    max-width: 1200px;
+    margin: 2.5rem auto;
+    padding: 0 1.25rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--text-primary);
+  }
+
+  .ng-news-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .ng-hud-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    color: var(--accent-primary);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .ng-news-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    line-height: 1.25;
+    padding-bottom: 0.12em;
+    margin: 0;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+
+  .ng-date-pill {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-secondary);
+  }
+
+  .ng-news-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .ng-news-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .ng-news-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid var(--card-border);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .ng-news-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent-primary);
+  }
+
+  .ng-card-cover {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .ng-card-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .ng-cat-tag {
+    position: absolute;
+    top: 0.85rem;
+    left: 0.85rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(9, 11, 16, 0.82);
+    color: #00FFFF;
+    border: 1px solid rgba(0, 255, 255, 0.4);
+  }
+
+  .ng-card-body {
+    padding: 1.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ng-card-lead {
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .ng-bullet-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .ng-bullet-list li::marker {
+    color: var(--accent-secondary);
+  }
+</style>
+
+<script>
+  const NEWS_DATA = {
+    date: new Date().toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric' }),
+    categories: [
+      {
+        id: "belfold",
+        label: "Belföld",
+        image: "https://images.unsplash.com/photo-1541343672885-9be56236302a?auto=format&fit=crop&w=900&q=80",
+        lead: "Kiemelt hazai fejlemények és közérdekű döntések",
+        items: [
+          "Ide kerül az első belföldi összefoglaló pont tömör, tényszerű formában.",
+          "Második lényeges hazai hír vagy szabályozási változás kivonata.",
+          "Harmadik rövid hírblokk a legfontosabb napi eseményről."
+        ]
+      },
+      {
+        id: "kulfold",
+        label: "Külföld",
+        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=900&q=80",
+        lead: "Nemzetközi diplomácia és globális események",
+        items: [
+          "Európai uniós és nemzetközi politikai folyamatok rövid összegzése.",
+          "Kiemelt külpolitikai bejelentések és globális trendek.",
+          "Fontosabb nemzetközi események egy mondatban."
+        ]
+      },
+      {
+        id: "gazdasag",
+        label: "Gazdaság",
+        image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=900&q=80",
+        lead: "Piacok, árfolyamok és üzleti környezet",
+        items: [
+          "Forintárfolyam, kamatkörnyezet és makrogazdasági mutatók alakulása.",
+          "Vállalati, energiaipari és kereskedelmi hírek röviden.",
+          "Digitális gazdaságot és e-kereskedelmet érintő változások."
+        ]
+      },
+      {
+        id: "tech",
+        label: "Tech / Tudomány",
+        image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=900&q=80",
+        lead: "Mesterséges intelligencia, űrkutatás és innováció",
+        items: [
+          "Új AI-modellek, fejlesztői eszközök és szoftveres áttörések.",
+          "Tudományos kutatási eredmények és technológiai mérföldkövek.",
+          "Kiberbiztonsági és hardveres újdonságok."
+        ]
+      }
+    ]
+  };
+
+  function renderNewsDigest(data) {
+    document.getElementById('news-date-stamp').textContent = data.date;
+    const grid = document.getElementById('ng-news-grid');
+    grid.innerHTML = data.categories.map(cat => `
+      <article class="ng-news-card">
+        <div class="ng-card-cover">
+          <img src="${cat.image}" alt="${cat.label} illusztráció" loading="lazy">
+          <span class="ng-cat-tag">${cat.label}</span>
+        </div>
+        <div class="ng-card-body">
+          <h3 class="ng-card-lead">${cat.lead}</h3>
+          <ul class="ng-bullet-list">
+            ${cat.items.map(point => `<li>${point}</li>`).join('')}
+          </ul>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  renderNewsDigest(NEWS_DATA);
+</script>
