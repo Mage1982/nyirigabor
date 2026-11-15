@@ -312,7 +312,7 @@
 <body class="antialiased selection:bg-magenta selection:text-white">
 
     <!-- Háttér finom rács + Fő Generatív Vászon -->
-    <div class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none opacity-60"></div>
+    <div id="cyber-grid" class="fixed inset-0 bg-cyber-grid z-[2] pointer-events-none opacity-60"></div>
     <canvas id="viewport"></canvas>
 
     <!-- FELSŐ HUD HEADER -->
@@ -325,11 +325,19 @@
                 <span>FŐOLDAL</span>
             </a>
 
-            <!-- Élő Státusz + Óra -->
+            <!-- Élő Státusz + Zoom + Óra -->
             <div class="pointer-events-auto app-surface px-3.5 py-2 rounded-full flex items-center gap-2.5">
                 <span class="w-2 h-2 rounded-full bg-cyan pulse-dot"></span>
-                <span class="font-mono text-[11px] sm:text-xs tracking-wider uppercase font-semibold" style="color: var(--text-secondary);">
-                    SYS.ONLINE <span class="opacity-40 mx-1">|</span> <span id="mode-indicator" style="color: var(--accent-primary);">NEURONHÁLÓ</span> <span class="hidden sm:inline opacity-40 mx-1">|</span> <span id="live-clock" class="hidden sm:inline">00:00</span>
+                <span class="font-mono text-[11px] sm:text-xs tracking-wider uppercase font-semibold flex items-center gap-1.5" style="color: var(--text-secondary);">
+                    <span class="hidden sm:inline">SYS.ONLINE</span>
+                    <span class="hidden sm:inline opacity-40">|</span>
+                    <span id="mode-indicator" style="color: var(--accent-primary);">NEURONHÁLÓ</span>
+                    <span class="opacity-40">|</span>
+                    <button onclick="resetCamera(true)" title="Vissza normál nézetbe (1.0x)" class="cursor-pointer hover:opacity-80 transition-opacity font-bold px-1 rounded" style="color: var(--accent-secondary);">
+                        <i class="fa-solid fa-magnifying-glass text-[10px] mr-0.5"></i><span id="zoom-indicator">1.0x</span>
+                    </button>
+                    <span class="hidden sm:inline opacity-40">|</span>
+                    <span id="live-clock" class="hidden sm:inline">00:00</span>
                 </span>
             </div>
 
@@ -452,14 +460,19 @@
             <input type="range" id="particle-count" min="40" max="240" value="110" oninput="updateParticleCount(this.value)">
         </div>
 
-        <!-- 4. Audio Szintetizátor & Impulzus -->
+        <!-- 4. Audio Szintetizátor & Impulzus & Normál Nézet -->
         <div class="grid grid-cols-2 gap-2 pt-1">
-            <button id="audio-btn" onclick="toggleAudio()" class="mode-btn py-3">
+            <button id="audio-btn" onclick="toggleAudio()" class="mode-btn py-2.5">
                 <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
                 <span id="audio-label">Hang: Ki</span>
             </button>
 
-            <button onclick="triggerSupernova()" class="py-3 px-3 rounded-xl bg-gradient-to-r from-cyan to-magenta text-slate-950 font-orbitron text-[11px] font-extrabold tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
+            <button onclick="resetCamera(true)" class="mode-btn py-2.5">
+                <i class="fa-solid fa-compress"></i>
+                <span>Normál (1.0x)</span>
+            </button>
+
+            <button onclick="triggerSupernova()" class="col-span-2 py-3 px-3 rounded-xl bg-gradient-to-r from-cyan to-magenta text-slate-950 font-orbitron text-[11px] font-extrabold tracking-wider uppercase hover:brightness-110 active:scale-95 transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer">
                 <i class="fa-solid fa-burst"></i>
                 <span>Impulzus</span>
             </button>
@@ -468,7 +481,7 @@
         <!-- Rövid tipp -->
         <div class="app-inner-box rounded-xl p-3 text-[11px] leading-relaxed mt-auto" style="color: var(--text-secondary);">
             <i class="fa-solid fa-wand-magic-sparkles mr-1" style="color: var(--accent-primary);"></i>
-            Érintsd meg vagy húzd a vásznat a részecskék vonzásához, lökéshullámhoz és pentaton hangokhoz.
+            Görgővel nagyíthatsz befelé és vissza normál nézet felé (1.0x). Kattints vagy húzd a vásznat az interakcióhoz.
         </div>
     </aside>
 
@@ -564,19 +577,90 @@
         window.addEventListener('keydown', (e) => {
             if (e.key === 'h' || e.key === 'H' || (e.key === 'Escape' && !controlPanel.classList.contains('collapsed'))) {
                 togglePanel();
+            } else if (e.key === '0') {
+                resetCamera(true);
             }
         });
 
-        // --- 4. VÁSZON ÉS GAZDAG SZÍNPALETTÁK ---
+        // --- 4. VÁSZON, KAMERA (GÖRGŐS ZOOM) ÉS GAZDAG SZÍNPALETTÁK ---
         const canvas = document.getElementById('viewport');
         const ctx = canvas.getContext('2d');
+        const cyberGrid = document.getElementById('cyber-grid');
+        const zoomIndicator = document.getElementById('zoom-indicator');
 
         let width = canvas.width = window.innerWidth;
         let height = canvas.height = window.innerHeight;
 
+        // Kamera állapot: csak befelé (1.0x -> 16.0x) és vissza normál nézet (1.0x) felé
+        const MIN_ZOOM = 1.0;
+        const MAX_ZOOM = 16.0;
+        let camera = {
+            zoom: 1.0,
+            targetZoom: 1.0,
+            panX: 0,
+            panY: 0,
+            targetPanX: 0,
+            targetPanY: 0
+        };
+        let lastDisplayedZoom = '1.0x';
+
+        function screenToWorld(sx, sy) {
+            return {
+                x: (sx - width / 2 - camera.panX) / camera.zoom + width / 2,
+                y: (sy - height / 2 - camera.panY) / camera.zoom + height / 2
+            };
+        }
+
+        function clampCameraPan() {
+            if (camera.targetZoom <= 1.001) {
+                camera.targetZoom = 1.0;
+                camera.targetPanX = 0;
+                camera.targetPanY = 0;
+                return;
+            }
+            const maxPanX = (width * (camera.targetZoom - 1)) / 2;
+            const maxPanY = (height * (camera.targetZoom - 1)) / 2;
+            camera.targetPanX = Math.max(-maxPanX, Math.min(maxPanX, camera.targetPanX));
+            camera.targetPanY = Math.max(-maxPanY, Math.min(maxPanY, camera.targetPanY));
+        }
+
+        function applyZoomAtPoint(nextZoom, screenX, screenY) {
+            const clampedZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, nextZoom));
+            const cx = width / 2;
+            const cy = height / 2;
+
+            // Világkoordináta a kurzor alatt a jelenlegi célállapotban
+            const worldX = (screenX - cx - camera.targetPanX) / camera.targetZoom + cx;
+            const worldY = (screenY - cy - camera.targetPanY) / camera.targetZoom + cy;
+
+            camera.targetZoom = clampedZoom;
+
+            if (camera.targetZoom <= 1.01) {
+                camera.targetZoom = 1.0;
+                camera.targetPanX = 0;
+                camera.targetPanY = 0;
+            } else {
+                camera.targetPanX = screenX - cx - (worldX - cx) * camera.targetZoom;
+                camera.targetPanY = screenY - cy - (worldY - cy) * camera.targetZoom;
+                clampCameraPan();
+            }
+
+            const worldPt = screenToWorld(screenX, screenY);
+            pointer.x = worldPt.x;
+            pointer.y = worldPt.y;
+        }
+
+        function resetCamera(withSound = false) {
+            camera.targetZoom = 1.0;
+            camera.targetPanX = 0;
+            camera.targetPanY = 0;
+            if (withSound) playSynthTone(523.25);
+        }
+
         window.addEventListener('resize', () => {
             width = canvas.width = window.innerWidth;
             height = canvas.height = window.innerHeight;
+            clampCameraPan();
             initParticles();
         });
 
@@ -963,14 +1047,38 @@
             ctx.fill();
         }
 
-        // --- 8. FŐ ANIMÁCIÓS CIKLUS ---
+        // --- 8. FŐ ANIMÁCIÓS CIKLUS (KAMERA TRANSZFORMÁCIÓVAL) ---
         function animate() {
             time += 1;
             const isLight = htmlEl.getAttribute('data-theme') === 'light';
 
-            // Finom mozgási elmosás (trail effekt) sötét és világos módhoz igazítva
+            // Sima interpoláció a cél zoom és eltolás felé
+            camera.zoom += (camera.targetZoom - camera.zoom) * 0.18;
+            camera.panX += (camera.targetPanX - camera.panX) * 0.18;
+            camera.panY += (camera.targetPanY - camera.panY) * 0.18;
+
+            const zoomText = camera.zoom.toFixed(1) + 'x';
+            if (zoomText !== lastDisplayedZoom && zoomIndicator) {
+                zoomIndicator.textContent = zoomText;
+                lastDisplayedZoom = zoomText;
+            }
+
+            if (cyberGrid) {
+                const scaledGrid = (36 * camera.zoom).toFixed(1);
+                cyberGrid.style.backgroundSize = `${scaledGrid}px ${scaledGrid}px`;
+                cyberGrid.style.backgroundPosition = `${camera.panX.toFixed(1)}px ${camera.panY.toFixed(1)}px`;
+            }
+
+            // Teljes képernyős trail réteg
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.fillStyle = isLight ? 'rgba(238, 242, 246, 0.24)' : 'rgba(9, 11, 16, 0.24)';
             ctx.fillRect(0, 0, width, height);
+
+            // Kamera transzformáció alkalmazása a világ térre
+            ctx.save();
+            ctx.translate(width / 2 + camera.panX, height / 2 + camera.panY);
+            ctx.scale(camera.zoom, camera.zoom);
+            ctx.translate(-width / 2, -height / 2);
 
             if (currentMode === 'matrix') {
                 renderMatrixWaveGrid(isLight);
@@ -995,6 +1103,8 @@
                     shockwaves.splice(i, 1);
                 }
             }
+
+            ctx.restore();
 
             requestAnimationFrame(animate);
         }
@@ -1050,17 +1160,81 @@
             setTimeout(() => triggerImpulseAt(width / 2, height / 2, false), 140);
         }
 
-        // Egér + Érintés követése a vásznon
-        canvas.addEventListener('pointermove', (e) => {
-            pointer.x = e.clientX;
-            pointer.y = e.clientY;
-        }, { passive: true });
+        // Egérgörgős zoom: csak befelé (1.0x -> 16.0x) és vissza normál nézet (1.0x) felé
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = Math.abs(e.deltaY) < 40 ? e.deltaY * 2.2 : e.deltaY;
+            const factor = delta < 0 ? 1.15 : 0.87;
+            applyZoomAtPoint(camera.targetZoom * factor, e.clientX, e.clientY);
+        }, { passive: false });
+
+        // Dupla kattintás visszaállítja a normál nézetet (1.0x)
+        canvas.addEventListener('dblclick', () => {
+            resetCamera(true);
+        });
+
+        // Egér + Érintés + Kétujjas nagyítás és nagyított nézet mozgatása
+        const activePointers = new Map();
+        let initialPinchDist = 0;
+        let initialPinchZoom = 1.0;
+        let lastDragX = 0;
+        let lastDragY = 0;
+        let dragMoved = false;
 
         canvas.addEventListener('pointerdown', (e) => {
-            pointer.x = e.clientX;
-            pointer.y = e.clientY;
-            triggerImpulseAt(e.clientX, e.clientY, true);
+            activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            const worldPt = screenToWorld(e.clientX, e.clientY);
+            pointer.x = worldPt.x;
+            pointer.y = worldPt.y;
+
+            if (activePointers.size === 1) {
+                lastDragX = e.clientX;
+                lastDragY = e.clientY;
+                dragMoved = false;
+                triggerImpulseAt(worldPt.x, worldPt.y, true);
+            } else if (activePointers.size === 2) {
+                const pts = Array.from(activePointers.values());
+                initialPinchDist = Math.max(10, Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y));
+                initialPinchZoom = camera.targetZoom;
+            }
         });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (activePointers.has(e.pointerId)) {
+                activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            }
+
+            if (activePointers.size === 2) {
+                const pts = Array.from(activePointers.values());
+                const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+                const midX = (pts[0].x + pts[1].x) / 2;
+                const midY = (pts[0].y + pts[1].y) / 2;
+                applyZoomAtPoint(initialPinchZoom * (dist / initialPinchDist), midX, midY);
+                return;
+            }
+
+            if (activePointers.size === 1 && camera.targetZoom > 1.01) {
+                const dx = e.clientX - lastDragX;
+                const dy = e.clientY - lastDragY;
+                if (Math.hypot(dx, dy) > 3) dragMoved = true;
+                camera.targetPanX += dx;
+                camera.targetPanY += dy;
+                clampCameraPan();
+                lastDragX = e.clientX;
+                lastDragY = e.clientY;
+            }
+
+            const worldPt = screenToWorld(e.clientX, e.clientY);
+            pointer.x = worldPt.x;
+            pointer.y = worldPt.y;
+        }, { passive: true });
+
+        function handlePointerEnd(e) {
+            activePointers.delete(e.pointerId);
+        }
+
+        canvas.addEventListener('pointerup', handlePointerEnd);
+        canvas.addEventListener('pointercancel', handlePointerEnd);
 
         // Indítás
         initParticles();
