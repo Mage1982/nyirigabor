@@ -1,759 +1,684 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" data-theme="dark" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>WebGL GPU Fractal Explorer Pro</title>
-  <style>
-    :root {
-      --bg-color: #090b10;
-      --card-bg: rgba(15, 20, 32, 0.78);
-      --accent: #00ffff;
-      --accent-magenta: #ff0c9d;
-      --accent-glow: rgba(0, 255, 255, 0.35);
-      --text: #e2e8f0;
-      --text-dim: #94a3b8;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#090b10" id="meta-theme-color">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Julia Halmaz | nyirigabor.hu</title>
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Oswald:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text);
-      display: flex;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      position: relative;
-    }
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        magenta: '#FF0C9D',
+                        cyan: '#00FFFF',
+                        purpleGlow: '#8A2BE2',
+                    },
+                    fontFamily: {
+                        oswald: ['Oswald', 'sans-serif'],
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
 
-    #canvas-container {
-      flex: 1;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #000;
-      width: 100%;
-      height: 100%;
-    }
+    <style>
+        /* --- HARMONIKUS TÉMA RENDSZER (DARK & LIGHT) --- */
+        :root {
+            --bg-base: #090b10;
+            --bg-overlay: rgba(9, 11, 16, 0.78);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --accent-primary: #00FFFF;
+            --accent-secondary: #FF0C9D;
+            --card-bg: rgba(13, 18, 28, 0.78);
+            --card-bg-hover: rgba(18, 26, 42, 0.92);
+            --card-inner: rgba(9, 13, 22, 0.72);
+            --card-border: rgba(0, 255, 255, 0.25);
+            --card-border-hover: #00FFFF;
+            --dock-bg: rgba(10, 14, 23, 0.86);
+            --shadow-glow: 0 12px 32px -8px rgba(0, 255, 255, 0.22);
+        }
 
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: grab;
-      touch-action: none;
-    }
+        html[data-theme="light"] {
+            --bg-base: #eef2f6;
+            --bg-overlay: rgba(241, 245, 249, 0.86);
+            --text-primary: #0f172a;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --accent-primary: #0284c7;
+            --accent-secondary: #db2777;
+            --card-bg: rgba(255, 255, 255, 0.82);
+            --card-bg-hover: rgba(255, 255, 255, 0.96);
+            --card-inner: rgba(241, 245, 249, 0.88);
+            --card-border: rgba(2, 132, 199, 0.25);
+            --card-border-hover: #0284c7;
+            --dock-bg: rgba(255, 255, 255, 0.88);
+            --shadow-glow: 0 12px 32px -8px rgba(2, 132, 199, 0.18);
+        }
 
-    canvas:active {
-      cursor: grabbing;
-    }
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
 
-    /* Top Floating Status Bar */
-    #top-status-bar {
-      position: absolute;
-      top: 16px;
-      left: 20px;
-      z-index: 20;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(15, 20, 32, 0.75);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 8px 16px;
-      border-radius: 20px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-      font-family: monospace;
-      font-size: 0.75rem;
-      pointer-events: none;
-    }
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            transition: background-color 0.45s ease, color 0.45s ease;
+            min-height: 100dvh;
+            overflow: hidden;
+            user-select: none;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #00ff87;
-      box-shadow: 0 0 10px #00ff87;
-      animation: pulse 2s infinite;
-    }
+        .app-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1.5px solid var(--card-border);
+            box-shadow: var(--shadow-glow);
+            transition: border-color 0.28s ease, background-color 0.28s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+        }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
+        .app-surface {
+            background: var(--dock-bg);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid var(--card-border);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
 
-    /* Floating Open Button (When Sidebar is Hidden) */
-    #sidebar-toggle-open {
-      position: absolute;
-      top: 16px;
-      right: 20px;
-      z-index: 20;
-      background: rgba(15, 20, 32, 0.85);
-      border: 1px solid rgba(0, 255, 255, 0.4);
-      color: var(--accent);
-      padding: 10px 18px;
-      border-radius: 30px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 15px var(--accent-glow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-10px);
-    }
+        /* Egyedi csúszkák */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.25);
+            outline: none;
+        }
 
-    #sidebar-toggle-open.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            border: 2px solid var(--bg-base);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
 
-    #sidebar-toggle-open:hover {
-      background: var(--accent);
-      color: #090b10;
-      border-color: var(--accent);
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
+        .palette-chip.active {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 2px var(--accent-primary);
+            transform: scale(1.03);
+        }
 
-    /* Off-Canvas Overlay for Mobile */
-    #sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 25;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
+        .preset-btn.active {
+            border-color: var(--accent-secondary);
+            background: rgba(255, 12, 157, 0.16);
+            color: var(--text-primary);
+        }
 
-    #sidebar-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
+        .panel-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(16px) scale(0.98);
+        }
 
-    /* Modern Glassmorphism Sidebar */
-    #sidebar {
-      position: fixed;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 340px;
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-left: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      z-index: 30;
-      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.8), inset 1px 0 0 rgba(255, 255, 255, 0.05);
-      overflow-y: auto;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    #sidebar.collapsed {
-      transform: translateX(100%);
-    }
-
-    /* Sidebar Header */
-    .sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .title-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .title-badge {
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-magenta));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      color: #000;
-      font-weight: bold;
-    }
-
-    h1 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #00ffff 0%, #ffffff 50%, #ff0c9d 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hide-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-dim);
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      transition: all 0.2s ease;
-    }
-
-    .hide-btn:hover {
-      background: rgba(0, 255, 255, 0.15);
-      color: var(--accent);
-      border-color: var(--accent);
-    }
-
-    /* Control Groups */
-    .control-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 700;
-      color: var(--text-dim);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .val-tag {
-      color: var(--accent);
-      font-family: monospace;
-      font-size: 0.85rem;
-      background: rgba(0, 255, 255, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      border: 1px solid rgba(0, 255, 255, 0.2);
-    }
-
-    select, input[type="range"] {
-      width: 100%;
-      background: rgba(10, 15, 26, 0.8);
-      color: #fff;
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      padding: 10px 12px;
-      border-radius: 10px;
-      outline: none;
-      font-size: 0.85rem;
-      transition: all 0.2s ease;
-    }
-
-    select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
-
-    input[type="range"] {
-      accent-color: var(--accent);
-      height: 6px;
-      padding: 0;
-      cursor: pointer;
-    }
-
-    /* Action Buttons */
-    .btn-group {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 4px;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 255, 255, 0.05));
-      color: var(--accent);
-      border: 1px solid rgba(0, 255, 255, 0.4);
-      padding: 12px;
-      border-radius: 10px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn:hover {
-      background: var(--accent);
-      color: #090b10;
-      box-shadow: 0 0 20px var(--accent-glow);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.03);
-      border-color: rgba(255, 255, 255, 0.15);
-      color: var(--text-dim);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      box-shadow: none;
-    }
-
-    /* Info Card */
-    .info-box {
-      font-size: 0.78rem;
-      line-height: 1.6;
-      color: var(--text-dim);
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: auto;
-    }
-
-    .info-box strong {
-      color: var(--accent);
-    }
-
-    /* Mobile Responsive Adjustments */
-    @media (max-width: 768px) {
-      #top-status-bar {
-        display: none;
-      }
-
-      #sidebar-overlay {
-        display: block;
-      }
-
-      #sidebar {
-        width: 85vw;
-        max-width: 320px;
-      }
-    }
-  </style>
+        .pulse-dot {
+            box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7);
+            animation: pulseRing 2s infinite;
+        }
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.65); }
+            70% { box-shadow: 0 0 0 8px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+        }
+    </style>
 </head>
-<body>
+<body class="font-sans antialiased relative">
 
-  <!-- Top Floating Status Bar -->
-  <div id="top-status-bar">
-    <div class="status-dot"></div>
-    <span>GPU GLSL ENGINE // ONLINE</span>
-  </div>
+    <!-- TELJES KÉPERNYŐS WEBGL JULIA VÁSZON -->
+    <canvas id="julia-canvas" class="fixed inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing touch-none"></canvas>
 
-  <!-- Floating Open Button (Visible when sidebar is collapsed) -->
-  <button id="sidebar-toggle-open" title="Menü Megnyitása (H)">
-    <span>⚙️</span>
-    <span>Vezérlőpult</span>
-  </button>
+    <!-- TRANSPARENT FELSŐ HUD FEJLÉC -->
+    <header class="fixed top-0 left-0 right-0 z-30 w-full pointer-events-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            
+            <!-- Bal oldal: FŐOLDAL GOMB + Julia státusz -->
+            <div class="flex items-center gap-2.5 pointer-events-auto">
+                <a href="index.html" class="app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-orbitron font-bold tracking-wider uppercase hover:scale-105 active:scale-95 transition-transform shadow-md" style="border-color: var(--accent-primary); color: var(--text-primary);">
+                    <i class="fa-solid fa-house text-xs" style="color: var(--accent-primary);"></i>
+                    <span>Főoldal</span>
+                </a>
 
-  <!-- Mobile Off-Canvas Backdrop -->
-  <div id="sidebar-overlay"></div>
+                <div class="hidden sm:flex app-surface h-10 px-3.5 rounded-full items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-magenta pulse-dot"></span>
+                    <span class="font-mono text-xs tracking-wider uppercase" style="color: var(--text-secondary);">
+                        JULIA.GL <span class="opacity-40 mx-1">|</span> <span id="hud-formula">z² + c</span>
+                    </span>
+                </div>
+            </div>
 
-  <!-- WebGL Canvas Container -->
-  <div id="canvas-container">
-    <canvas id="glCanvas"></canvas>
-  </div>
+            <!-- Jobb oldal: Vezérlőpanel kapcsoló + Téma váltó -->
+            <div class="flex items-center gap-2.5 pointer-events-auto">
+                <button onclick="togglePanel()" id="panel-toggle-btn" class="app-surface h-10 px-4 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--text-primary);">
+                    <i class="fa-solid fa-sliders" style="color: var(--accent-secondary);"></i>
+                    <span class="hidden sm:inline">VEZÉRLŐK</span>
+                </button>
 
-  <!-- Modern Glassmorphism Sidebar -->
-  <div id="sidebar">
-    <div class="sidebar-header">
-      <div class="title-area">
-        <div class="title-badge">FX</div>
-        <h1>Fractal Explorer</h1>
-      </div>
-      <button class="hide-btn" id="sidebar-hide-btn" title="Elrejtés (H)">➔</button>
-    </div>
+                <button onclick="toggleTheme()" aria-label="Világos / Sötét mód váltása" class="app-surface h-10 px-3.5 rounded-full flex items-center gap-2 text-xs font-mono font-bold cursor-pointer hover:scale-105 active:scale-95 transition-transform" style="color: var(--accent-primary);">
+                    <i id="theme-icon" class="fa-solid fa-sun text-sm"></i>
+                    <span id="theme-label" class="hidden sm:inline">LIGHT</span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <div class="control-group">
-      <label for="fractalType">Fraktál Típus</label>
-      <select id="fractalType">
-        <option value="0">Mandelbrot-halmaz</option>
-        <option value="1">Julia-halmaz</option>
-        <option value="2">Burning Ship (Lángoló Hajó)</option>
-        <option value="3">Tricorn (Mandelbar)</option>
-        <option value="4">Mandelbrot z³ (Cubic)</option>
-      </select>
-    </div>
+    <!-- LEBEGŐ HUD VEZÉRLŐPANEL (1. HELYEN A SZÍNVÁLASZTÁS) -->
+    <aside id="control-panel" class="app-card fixed z-20 left-4 right-4 sm:left-auto sm:right-6 top-20 sm:top-24 sm:w-[370px] max-h-[calc(100dvh-11rem)] sm:max-h-[calc(100dvh-7.5rem)] overflow-y-auto rounded-3xl p-5 space-y-5">
+        
+        <!-- Fejléc -->
+        <div class="flex items-center justify-between pb-3 border-b" style="border-color: var(--card-border);">
+            <div>
+                <div class="font-mono text-[10px] tracking-widest uppercase" style="color: var(--accent-secondary);">// FRAKTÁL GENERÁTOR</div>
+                <h1 class="font-orbitron text-lg font-extrabold tracking-wide" style="color: var(--text-primary);">Julia Halmaz</h1>
+            </div>
+            <div class="text-right font-mono text-[11px]" style="color: var(--text-secondary);">
+                <div>ZOOM: <span id="zoom-readout" class="font-bold" style="color: var(--accent-primary);">1.0x</span></div>
+            </div>
+        </div>
 
-    <div class="control-group">
-      <label for="iterations">
-        <span>Részletesség</span>
-        <span class="val-tag" id="iterVal">350</span>
-      </label>
-      <input type="range" id="iterations" min="50" max="1000" value="350">
-    </div>
+        <!-- 1. ELSŐ LÉPÉS: SZÍNVILÁG VÁLASZTÁSA -->
+        <div class="space-y-2.5">
+            <div class="flex items-center justify-between">
+                <label class="font-orbitron text-xs font-bold uppercase tracking-wider flex items-center gap-2" style="color: var(--accent-primary);">
+                    <span class="px-1.5 py-0.5 rounded bg-cyan/15 text-[10px] font-mono">01</span>
+                    <span>Színvilág választása</span>
+                </label>
+                <span id="palette-name" class="font-mono text-[11px]" style="color: var(--text-secondary);">Cyber Neon</span>
+            </div>
 
-    <div class="control-group">
-      <label for="colorPalette">Színséma</label>
-      <select id="colorPalette">
-        <option value="0">Electric Neon</option>
-        <option value="1">Inferno Fire</option>
-        <option value="2">Deep Ocean</option>
-        <option value="3">Psychedelic</option>
-        <option value="4">Cyberpunk Pink</option>
-        <option value="5">Emerald Matrix</option>
-        <option value="6">Deep Space</option>
-      </select>
-    </div>
+            <div class="grid grid-cols-5 gap-2" id="palette-grid">
+                <button type="button" onclick="setPalette(0, 'Cyber Neon', this)" class="palette-chip active h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #090b10 10%, #00FFFF 55%, #FF0C9D 95%);" title="Cyber Neon"></button>
+                <button type="button" onclick="setPalette(1, 'Kvantum Ibolya', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #0f0722 10%, #8A2BE2 55%, #38bdf8 95%);" title="Kvantum Ibolya"></button>
+                <button type="button" onclick="setPalette(2, 'Napkitörés', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #180804 10%, #f97316 55%, #fde047 95%);" title="Napkitörés"></button>
+                <button type="button" onclick="setPalette(3, 'Mélytengeri Aura', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #02131d 10%, #10b981 55%, #67e8f9 95%);" title="Mélytengeri Aura"></button>
+                <button type="button" onclick="setPalette(4, 'Kozmikus Mátrix', this)" class="palette-chip h-9 rounded-xl border border-white/20 cursor-pointer transition-all" style="background: linear-gradient(135deg, #050505 15%, #e2e8f0 60%, #FF0C9D 95%);" title="Kozmikus Mátrix"></button>
+            </div>
+        </div>
 
-    <div class="btn-group">
-      <button class="btn" id="saveBtn">📸 HD Kép Mentése</button>
-      <button class="btn btn-secondary" id="resetBtn">↺ Nézet Alaphelyzetbe</button>
-    </div>
+        <!-- 2. MÁSODIK LÉPÉS: JULIA KONSTANS (c = Re + Im·i) & ALAKZATOK -->
+        <div class="space-y-3 pt-2 border-t" style="border-color: var(--card-border);">
+            <div class="flex items-center justify-between">
+                <span class="font-orbitron text-xs font-bold uppercase tracking-wider flex items-center gap-2" style="color: var(--text-primary);">
+                    <span class="px-1.5 py-0.5 rounded bg-magenta/15 text-magenta text-[10px] font-mono">02</span>
+                    <span>Julia alakzatok (c)</span>
+                </span>
+                <button type="button" onclick="toggleMorph()" id="morph-btn" class="px-2.5 py-1 rounded-lg border font-mono text-[10px] font-bold uppercase cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--accent-secondary);">
+                    <i class="fa-solid fa-play mr-1"></i>Morf
+                </button>
+            </div>
 
-    <div class="info-box">
-      <strong>GPU Gyorsított Vezérlés:</strong><br>
-      • <strong>Görgetés / 2 Ujj:</strong> Zoomolás<br>
-      • <strong>Húzás (Egér/Érintés):</strong> Mozgatás<br>
-      • <strong>Julia mód:</strong> Mozgasd az egeret a mintához!<br>
-      • <strong>Gomb parancs:</strong> 'H' billentyű a menü elrejtéséhez.
-    </div>
-  </div>
+            <!-- Előre beállított Julia koordináták -->
+            <div class="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                <button type="button" onclick="applyPreset(-0.7269, 0.1889, this)" class="preset-btn active px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Spirál Galaxis</button>
+                <button type="button" onclick="applyPreset(-0.8, 0.156, this)" class="preset-btn px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Kvantum Villám</button>
+                <button type="button" onclick="applyPreset(-0.123, 0.745, this)" class="preset-btn px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Douady Nyúl</button>
+                <button type="button" onclick="applyPreset(0.285, 0.01, this)" class="preset-btn px-2.5 py-2 rounded-xl border text-left truncate cursor-pointer transition-colors" style="border-color: var(--card-border); color: var(--text-secondary);">Arany Korona</button>
+            </div>
 
-  <script>
-    const canvas = document.getElementById('glCanvas');
-    const gl = canvas.getContext('webgl', { preserveDrawingBuffer: true });
+            <!-- Valós és Képzetes rész csúszkák -->
+            <div class="space-y-2.5 rounded-2xl p-3 border" style="background: var(--card-inner); border-color: var(--card-border);">
+                <div>
+                    <div class="flex justify-between font-mono text-[11px] mb-1">
+                        <span style="color: var(--text-secondary);">Re(c) valós rész</span>
+                        <span id="cre-val" class="font-bold" style="color: var(--accent-primary);">-0.7269</span>
+                    </div>
+                    <input type="range" id="cre-slider" min="-1.2" max="1.2" step="0.0005" value="-0.7269">
+                </div>
+                <div>
+                    <div class="flex justify-between font-mono text-[11px] mb-1">
+                        <span style="color: var(--text-secondary);">Im(c) képzetes rész</span>
+                        <span id="cim-val" class="font-bold" style="color: var(--accent-secondary);">0.1889</span>
+                    </div>
+                    <input type="range" id="cim-slider" min="-1.2" max="1.2" step="0.0005" value="0.1889">
+                </div>
+            </div>
+        </div>
 
-    if (!gl) {
-      alert('A böngésződ nem támogatja a WebGL-t!');
-    }
+        <!-- 3. RÉSZLETESSÉG & ALAPHELYZET -->
+        <div class="space-y-3 pt-2 border-t" style="border-color: var(--card-border);">
+            <div>
+                <div class="flex justify-between font-mono text-[11px] mb-1">
+                    <span style="color: var(--text-secondary);">Iterációs mélység</span>
+                    <span id="iter-val" class="font-bold" style="color: var(--text-primary);">220</span>
+                </div>
+                <input type="range" id="iter-slider" min="60" max="600" step="10" value="220">
+            </div>
 
-    const vsSource = `
-      attribute vec2 a_position;
-      void main() {
-        gl_Position = vec4(a_position, 0.0, 1.0);
-      }
-    `;
+            <div class="flex items-center gap-2 pt-1">
+                <button type="button" onclick="resetView()" class="flex-1 py-2.5 px-3 rounded-xl border font-mono text-xs font-bold uppercase cursor-pointer hover:opacity-85 transition-opacity" style="border-color: var(--card-border); color: var(--text-primary);">
+                    <i class="fa-solid fa-rotate-left mr-1.5"></i>Alapnézet
+                </button>
+                <a href="index.html" class="py-2.5 px-3.5 rounded-xl font-orbitron text-xs font-bold uppercase inline-flex items-center justify-center gap-1.5 hover:brightness-110 transition-all" style="background: var(--accent-primary); color: #090b10;">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Főoldal</span>
+                </a>
+            </div>
+        </div>
+    </aside>
 
-    const fsSource = `
-      precision highp float;
+    <!-- MOBIL APP BOTTOM NAVIGATION DOCK -->
+    <nav aria-label="Mobil alkalmazás navigáció" class="md:hidden fixed bottom-4 left-4 right-4 z-40 app-surface rounded-2xl px-2 py-2 shadow-2xl flex items-center justify-around">
+        <a href="index.html" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors" style="color: var(--accent-primary);">
+            <i class="fa-solid fa-house text-base mb-1"></i>
+            <span class="text-[10px] font-bold">Főoldal</span>
+        </a>
 
-      uniform vec2 u_resolution;
-      uniform vec2 u_offset;
-      uniform float u_zoom;
-      uniform int u_max_iterations;
-      uniform int u_type;
-      uniform int u_palette;
-      uniform vec2 u_julia_c;
+        <button onclick="togglePanel()" class="flex flex-col items-center justify-center py-1 px-4 rounded-xl text-xs font-mono transition-colors cursor-pointer" style="color: var(--text-primary);">
+            <div class="w-10 h-7 rounded-full bg-gradient-to-r from-cyan to-magenta text-slate-950 flex items-center justify-center mb-0.5 shadow-md">
+                <i class="fa-solid fa-palette text-sm"></i>
+            </div>
+            <span class="text-[10px] font-bold">Szín &amp; c</span>
+        </button>
 
-      vec3 getColor(float iter, float maxIter) {
-        if (iter >= maxIter) return vec3(0.0);
-        float t = iter / maxIter;
+        <button onclick="toggleMorph()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors cursor-pointer" style="color: var(--text-secondary);">
+            <i class="fa-solid fa-wand-magic-sparkles text-base mb-1"></i>
+            <span class="text-[10px]">Morf</span>
+        </button>
 
-        if (u_palette == 0) {
-          return vec3(sin(t * 10.0) * 0.5 + 0.5, cos(t * 15.0) * 0.5 + 0.5, t);
-        } else if (u_palette == 1) {
-          return vec3(min(1.0, t * 5.0), min(1.0, t * 2.5), min(1.0, t * 0.5));
-        } else if (u_palette == 2) {
-          return vec3(sin(t * 5.0) * 0.2, sin(t * 10.0) * 0.4 + 0.4, sin(t * 20.0) * 0.5 + 0.5);
-        } else if (u_palette == 3) {
-          return vec3(sin(t * 50.0) * 0.5 + 0.5, cos(t * 30.0) * 0.5 + 0.5, sin(t * 80.0) * 0.5 + 0.5);
-        } else if (u_palette == 4) {
-          return vec3(sin(t * 12.0) * 0.5 + 0.5, sin(t * 3.0) * 0.2, cos(t * 10.0) * 0.5 + 0.5);
-        } else if (u_palette == 5) {
-          return vec3(sin(t * 4.0) * 0.1, sin(t * 12.0) * 0.5 + 0.5, sin(t * 8.0) * 0.3 + 0.2);
-        } else {
-          return vec3(sin(t * 8.0) * 0.4 + 0.2, sin(t * 10.0) * 0.3 + 0.1, cos(t * 6.0) * 0.5 + 0.5);
+        <button onclick="toggleTheme()" class="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-xs font-mono transition-colors cursor-pointer" style="color: var(--accent-secondary);">
+            <i id="dock-theme-icon" class="fa-solid fa-sun text-base mb-1"></i>
+            <span class="text-[10px]">Téma</span>
+        </button>
+    </nav>
+
+    <!-- WEBGL SHADER ÉS INTERAKCIÓS LOGIKA -->
+    <script>
+        // --- 1. HARMONIKUS TÉMA VÁLTÓ (SZINKRONIZÁLVA A FŐOLDALLAL) ---
+        const htmlEl = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+        const dockThemeIcon = document.getElementById('dock-theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        const metaTheme = document.getElementById('meta-theme-color');
+        let isLightMode = false;
+
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            localStorage.setItem('ng_theme', theme);
+            isLightMode = theme === 'light';
+            themeIcon.className = isLightMode ? 'fa-solid fa-moon text-sm' : 'fa-solid fa-sun text-sm';
+            if (dockThemeIcon) dockThemeIcon.className = isLightMode ? 'fa-solid fa-moon text-base mb-1' : 'fa-solid fa-sun text-base mb-1';
+            if (themeLabel) themeLabel.textContent = isLightMode ? 'DARK' : 'LIGHT';
+            metaTheme.setAttribute('content', isLightMode ? '#eef2f6' : '#090b10');
+            needsRender = true;
         }
-      }
 
-      void main() {
-        vec2 st = (gl_FragCoord.xy - u_resolution * 0.5) / min(u_resolution.x, u_resolution.y);
-        vec2 z = st * 3.0 / u_zoom - u_offset;
-        vec2 c = (u_type == 1) ? u_julia_c : z;
-
-        if (u_type != 1) {
-          if (u_type == 2) z = abs(z);
-          else if (u_type == 0 || u_type == 3 || u_type == 4) z = vec2(0.0);
+        function toggleTheme() {
+            const current = htmlEl.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
         }
 
-        float n = 0.0;
-        float maxI = float(u_max_iterations);
+        applyTheme(localStorage.getItem('ng_theme') || 'dark');
 
-        for (int i = 0; i < 1000; i++) {
-          if (float(i) >= maxI) break;
-          if (dot(z, z) > 4.0) break;
-
-          if (u_type == 0 || u_type == 1) {
-            z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
-          } else if (u_type == 2) {
-            z = vec2(abs(z.x), abs(z.y));
-            z = vec2(z.x * z.x - z.y * z.y, -2.0 * z.x * z.y) + c;
-          } else if (u_type == 3) {
-            z = vec2(z.x * z.x - z.y * z.y, -2.0 * z.x * z.y) + c;
-          } else if (u_type == 4) {
-            float x2 = z.x * z.x;
-            float y2 = z.y * z.y;
-            z = vec2(z.x * (x2 - 3.0 * y2), z.y * (3.0 * x2 - y2)) + c;
-          }
-
-          n += 1.0;
+        // --- 2. VEZÉRLŐPANEL KAPCSOLÓ ---
+        const controlPanel = document.getElementById('control-panel');
+        function togglePanel() {
+            controlPanel.classList.toggle('panel-hidden');
         }
 
-        if (n < maxI) {
-          float log_zn = log(dot(z, z)) / 2.0;
-          float nu = log(log_zn / log(2.0)) / log(2.0);
-          n = n + 1.0 - nu;
+        // --- 3. WEBGL JULIA HALMAZ RENDERER ---
+        const canvas = document.getElementById('julia-canvas');
+        const gl = canvas.getContext('webgl', { antialias: false, preserveDrawingBuffer: false });
+
+        const vsSource = `
+            attribute vec2 a_pos;
+            void main() {
+                gl_Position = vec4(a_pos, 0.0, 1.0);
+            }
+        `;
+
+        const fsSource = `
+            precision highp float;
+            uniform vec2 u_res;
+            uniform vec2 u_center;
+            uniform float u_zoom;
+            uniform vec2 u_c;
+            uniform int u_maxIter;
+            uniform int u_palette;
+            uniform float u_isLight;
+
+            vec3 getPalette(float t, int pal) {
+                t = fract(t);
+                if (pal == 0) {
+                    // Cyber Neon (Cyan -> Purple -> Magenta)
+                    vec3 a = vec3(0.05, 0.12, 0.22);
+                    vec3 b = vec3(0.45, 0.45, 0.55);
+                    vec3 c = vec3(1.0, 1.0, 1.0);
+                    vec3 d = vec3(0.50, 0.15, 0.85);
+                    return a + b * cos(6.28318 * (c * t + d));
+                } else if (pal == 1) {
+                    // Kvantum Ibolya
+                    vec3 a = vec3(0.18, 0.08, 0.35);
+                    vec3 b = vec3(0.45, 0.42, 0.55);
+                    vec3 c = vec3(1.0, 1.0, 1.0);
+                    vec3 d = vec3(0.65, 0.35, 0.10);
+                    return a + b * cos(6.28318 * (c * t + d));
+                } else if (pal == 2) {
+                    // Napkitörés (Solar Gold & Orange)
+                    vec3 a = vec3(0.45, 0.18, 0.05);
+                    vec3 b = vec3(0.52, 0.42, 0.25);
+                    vec3 c = vec3(1.0, 1.0, 0.8);
+                    vec3 d = vec3(0.00, 0.12, 0.35);
+                    return a + b * cos(6.28318 * (c * t + d));
+                } else if (pal == 3) {
+                    // Mélytengeri Aura (Emerald & Aqua)
+                    vec3 a = vec3(0.04, 0.32, 0.38);
+                    vec3 b = vec3(0.25, 0.55, 0.50);
+                    vec3 c = vec3(1.0, 1.0, 1.0);
+                    vec3 d = vec3(0.30, 0.10, 0.20);
+                    return a + b * cos(6.28318 * (c * t + d));
+                } else {
+                    // Kozmikus Mátrix (Monokróm + Magenta él)
+                    float v = 0.5 + 0.5 * cos(6.28318 * t);
+                    return mix(vec3(0.06, 0.08, 0.14), vec3(0.95, 0.96, 1.0), v) + vec3(0.35, 0.0, 0.22) * pow(v, 4.0);
+                }
+            }
+
+            void main() {
+                vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / min(u_res.x, u_res.y);
+                vec2 z = u_center + uv * (2.6 / u_zoom);
+
+                float iter = 0.0;
+                float escaped = 0.0;
+
+                for (int i = 0; i < 600; i++) {
+                    if (i >= u_maxIter) break;
+                    float x = (z.x * z.x - z.y * z.y) + u_c.x;
+                    float y = (2.0 * z.x * z.y) + u_c.y;
+                    z = vec2(x, y);
+                    if (dot(z, z) > 16.0) {
+                        escaped = 1.0;
+                        break;
+                    }
+                    iter += 1.0;
+                }
+
+                if (escaped < 0.5) {
+                    vec3 coreColor = u_isLight > 0.5 ? vec3(0.92, 0.95, 0.98) : vec3(0.035, 0.043, 0.063);
+                    gl_FragColor = vec4(coreColor, 1.0);
+                } else {
+                    float smoothIter = iter - log2(log2(dot(z, z))) + 4.0;
+                    vec3 col = getPalette(smoothIter * 0.022, u_palette);
+                    if (u_isLight > 0.5) {
+                        col = mix(col, vec3(1.0), 0.12);
+                    }
+                    gl_FragColor = vec4(col, 1.0);
+                }
+            }
+        `;
+
+        function compileShader(type, source) {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
         }
 
-        gl_FragColor = vec4(getColor(n, maxI), 1.0);
-      }
-    `;
+        const program = gl.createProgram();
+        gl.attachShader(program, compileShader(gl.VERTEX_SHADER, vsSource));
+        gl.attachShader(program, compileShader(gl.FRAGMENT_SHADER, fsSource));
+        gl.linkProgram(program);
+        gl.useProgram(program);
 
-    function createShader(gl, type, source) {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
-      return shader;
-    }
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
 
-    const program = gl.createProgram();
-    gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-    gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
-    gl.linkProgram(program);
-    gl.useProgram(program);
+        const aPos = gl.getAttribLocation(program, 'a_pos');
+        gl.enableVertexAttribArray(aPos);
+        gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-      -1, -1, 1, -1, -1, 1,
-      -1,  1, 1, -1,  1, 1,
-    ]), gl.STATIC_DRAW);
+        const uRes = gl.getUniformLocation(program, 'u_res');
+        const uCenter = gl.getUniformLocation(program, 'u_center');
+        const uZoom = gl.getUniformLocation(program, 'u_zoom');
+        const uC = gl.getUniformLocation(program, 'u_c');
+        const uMaxIter = gl.getUniformLocation(program, 'u_maxIter');
+        const uPalette = gl.getUniformLocation(program, 'u_palette');
+        const uIsLight = gl.getUniformLocation(program, 'u_isLight');
 
-    const positionLocation = gl.getAttribLocation(program, 'a_position');
-    gl.enableVertexAttribArray(positionLocation);
-    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+        // Állapot változók
+        let state = {
+            centerX: 0.0,
+            centerY: 0.0,
+            zoom: 1.0,
+            cRe: -0.7269,
+            cIm: 0.1889,
+            maxIter: 220,
+            palette: 0
+        };
 
-    const locations = {
-      resolution: gl.getUniformLocation(program, 'u_resolution'),
-      offset: gl.getUniformLocation(program, 'u_offset'),
-      zoom: gl.getUniformLocation(program, 'u_zoom'),
-      maxIterations: gl.getUniformLocation(program, 'u_max_iterations'),
-      type: gl.getUniformLocation(program, 'u_type'),
-      palette: gl.getUniformLocation(program, 'u_palette'),
-      juliaC: gl.getUniformLocation(program, 'u_julia_c')
-    };
+        let isMorphing = false;
+        let morphAngle = 0;
+        let needsRender = true;
 
-    let zoom = 1.0, targetZoom = 1.0;
-    let offsetX = 0.0, targetOffsetX = 0.0;
-    let offsetY = 0.0, targetOffsetY = 0.0;
-    let maxIter = 350;
-    let fractalType = 0;
-    let palette = 0;
-    let juliaCx = -0.7, juliaCy = 0.27015;
+        const creSlider = document.getElementById('cre-slider');
+        const cimSlider = document.getElementById('cim-slider');
+        const iterSlider = document.getElementById('iter-slider');
+        const creVal = document.getElementById('cre-val');
+        const cimVal = document.getElementById('cim-val');
+        const iterVal = document.getElementById('iter-val');
+        const zoomReadout = document.getElementById('zoom-readout');
 
-    function render() {
-      zoom += (targetZoom - zoom) * 0.12;
-      offsetX += (targetOffsetX - offsetX) * 0.12;
-      offsetY += (targetOffsetY - offsetY) * 0.12;
-
-      if (canvas.width !== canvas.parentElement.clientWidth || canvas.height !== canvas.parentElement.clientHeight) {
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
-        gl.viewport(0, 0, canvas.width, canvas.height);
-      }
-
-      gl.uniform2f(locations.resolution, canvas.width, canvas.height);
-      gl.uniform2f(locations.offset, offsetX, offsetY);
-      gl.uniform1f(locations.zoom, zoom);
-      gl.uniform1i(locations.maxIterations, maxIter);
-      gl.uniform1i(locations.type, fractalType);
-      gl.uniform1i(locations.palette, palette);
-      gl.uniform2f(locations.juliaC, juliaCx, juliaCy);
-
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
-    }
-
-    /* UI Controls & Event Listeners */
-    document.getElementById('iterations').addEventListener('input', (e) => {
-      maxIter = parseInt(e.target.value);
-      document.getElementById('iterVal').innerText = maxIter;
-    });
-
-    document.getElementById('fractalType').addEventListener('change', (e) => {
-      fractalType = parseInt(e.target.value);
-    });
-
-    document.getElementById('colorPalette').addEventListener('change', (e) => {
-      palette = parseInt(e.target.value);
-    });
-
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      targetZoom = 1.0;
-      targetOffsetX = 0.0;
-      targetOffsetY = 0.0;
-    });
-
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      const link = document.createElement('a');
-      link.download = `fractal_${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    });
-
-    /* Sidebar Hide / Show Toggle Logic */
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    const hideBtn = document.getElementById('sidebar-hide-btn');
-    const openBtn = document.getElementById('sidebar-toggle-open');
-
-    function hideSidebar() {
-      sidebar.classList.add('collapsed');
-      overlay.classList.remove('active');
-      openBtn.classList.add('visible');
-    }
-
-    function showSidebar() {
-      sidebar.classList.remove('collapsed');
-      if (window.innerWidth <= 768) {
-        overlay.classList.add('active');
-      }
-      openBtn.classList.remove('visible');
-    }
-
-    hideBtn.addEventListener('click', hideSidebar);
-    openBtn.addEventListener('click', showSidebar);
-    overlay.addEventListener('click', hideSidebar);
-
-    // Keyboard Shortcut 'H' to Hide/Show Sidebar
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'h' || e.key === 'H') {
-        if (sidebar.classList.contains('collapsed')) {
-          showSidebar();
-        } else {
-          hideSidebar();
+        function updateUIReadouts() {
+            creSlider.value = state.cRe;
+            cimSlider.value = state.cIm;
+            creVal.textContent = state.cRe.toFixed(4);
+            cimVal.textContent = state.cIm.toFixed(4);
+            iterVal.textContent = state.maxIter;
+            zoomReadout.textContent = state.zoom >= 1000
+                ? state.zoom.toExponential(1) + 'x'
+                : state.zoom.toFixed(1) + 'x';
         }
-      }
-    });
 
-    /* Mouse Controls */
-    canvas.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const zoomFactor = e.deltaY < 0 ? 1.25 : 0.8;
-      targetZoom *= zoomFactor;
-    }, { passive: false });
-
-    let isDragging = false;
-    let startX, startY;
-
-    canvas.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        const dx = e.clientX - startX;
-        const dy = -(e.clientY - startY);
-        const scale = 3.0 / (zoom * Math.min(canvas.width, canvas.height));
-        targetOffsetX += dx * scale;
-        targetOffsetY += dy * scale;
-        startX = e.clientX;
-        startY = e.clientY;
-      } else if (fractalType === 1) {
-        juliaCx = (e.clientX / canvas.width) * 2.0 - 1.0;
-        juliaCy = -((e.clientY / canvas.height) * 2.0 - 1.0);
-      }
-    });
-
-    window.addEventListener('mouseup', () => isDragging = false);
-
-    /* Multi-Touch Controls (1-finger Pan & 2-finger Pinch Zoom) */
-    let initialPinchDist = null;
-
-    function getTouchDistance(e) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX;
-      const dy = e.touches[0].clientY - e.touches[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    canvas.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        isDragging = true;
-        startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
-
-        if (fractalType === 1) {
-          juliaCx = (startX / canvas.width) * 2.0 - 1.0;
-          juliaCy = -((startY / canvas.height) * 2.0 - 1.0);
+        function setPalette(idx, name, btnEl) {
+            state.palette = idx;
+            document.getElementById('palette-name').textContent = name;
+            document.querySelectorAll('.palette-chip').forEach(c => c.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            needsRender = true;
         }
-      } else if (e.touches.length === 2) {
-        isDragging = false;
-        initialPinchDist = getTouchDistance(e);
-      }
-    }, { passive: true });
 
-    canvas.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1 && isDragging) {
-        const currentX = e.touches[0].clientX;
-        const currentY = e.touches[0].clientY;
-        const dx = currentX - startX;
-        const dy = -(currentY - startY);
-        const scale = 3.0 / (zoom * Math.min(canvas.width, canvas.height));
-        targetOffsetX += dx * scale;
-        targetOffsetY += dy * scale;
-        startX = currentX;
-        startY = currentY;
-
-        if (fractalType === 1) {
-          juliaCx = (currentX / canvas.width) * 2.0 - 1.0;
-          juliaCy = -((currentY / canvas.height) * 2.0 - 1.0);
+        function applyPreset(re, im, btnEl) {
+            isMorphing = false;
+            updateMorphBtn();
+            state.cRe = re;
+            state.cIm = im;
+            state.centerX = 0.0;
+            state.centerY = 0.0;
+            state.zoom = 1.0;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+            updateUIReadouts();
+            needsRender = true;
         }
-      } else if (e.touches.length === 2 && initialPinchDist) {
-        const currentDist = getTouchDistance(e);
-        const factor = currentDist / initialPinchDist;
-        if (Math.abs(factor - 1) > 0.01) {
-          targetZoom *= factor;
-          initialPinchDist = currentDist;
+
+        function resetView() {
+            state.centerX = 0.0;
+            state.centerY = 0.0;
+            state.zoom = 1.0;
+            updateUIReadouts();
+            needsRender = true;
         }
-      }
-    }, { passive: true });
 
-    canvas.addEventListener('touchend', (e) => {
-      if (e.touches.length < 2) initialPinchDist = null;
-      if (e.touches.length === 0) isDragging = false;
-    });
+        function toggleMorph() {
+            isMorphing = !isMorphing;
+            updateMorphBtn();
+            needsRender = true;
+        }
 
-    requestAnimationFrame(render);
-  </script>
+        function updateMorphBtn() {
+            const btn = document.getElementById('morph-btn');
+            btn.innerHTML = isMorphing
+                ? '<i class="fa-solid fa-pause mr-1"></i>Stop'
+                : '<i class="fa-solid fa-play mr-1"></i>Morf';
+        }
+
+        creSlider.addEventListener('input', (e) => {
+            isMorphing = false;
+            updateMorphBtn();
+            state.cRe = parseFloat(e.target.value);
+            updateUIReadouts();
+            needsRender = true;
+        });
+
+        cimSlider.addEventListener('input', (e) => {
+            isMorphing = false;
+            updateMorphBtn();
+            state.cIm = parseFloat(e.target.value);
+            updateUIReadouts();
+            needsRender = true;
+        });
+
+        iterSlider.addEventListener('input', (e) => {
+            state.maxIter = parseInt(e.target.value, 10);
+            updateUIReadouts();
+            needsRender = true;
+        });
+
+        // --- EGÉR ÉS ÉRINTÉS ZOOM / MOZGATÁS ---
+        let isDragging = false;
+        let lastX = 0, lastY = 0;
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const scale = 2.6 / (Math.min(canvas.width, canvas.height) * state.zoom);
+            state.centerX -= (e.clientX - lastX) * scale * (window.devicePixelRatio || 1);
+            state.centerY += (e.clientY - lastY) * scale * (window.devicePixelRatio || 1);
+            lastX = e.clientX;
+            lastY = e.clientY;
+            needsRender = true;
+        });
+
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const factor = e.deltaY < 0 ? 1.18 : 0.85;
+            state.zoom = Math.max(0.4, Math.min(state.zoom * factor, 250000));
+            updateUIReadouts();
+            needsRender = true;
+        }, { passive: false });
+
+        // Touch támogatás (1 ujj: mozgatás, 2 ujj: csippentéses zoom)
+        let lastPinchDist = 0;
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                lastPinchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const dpr = window.devicePixelRatio || 1;
+            if (e.touches.length === 1 && isDragging) {
+                const scale = 2.6 / (Math.min(canvas.width, canvas.height) * state.zoom);
+                state.centerX -= (e.touches[0].clientX - lastX) * scale * dpr;
+                state.centerY += (e.touches[0].clientY - lastY) * scale * dpr;
+                lastX = e.touches[0].clientX;
+                lastY = e.touches[0].clientY;
+                needsRender = true;
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                if (lastPinchDist > 0) {
+                    state.zoom = Math.max(0.4, Math.min(state.zoom * (dist / lastPinchDist), 250000));
+                    updateUIReadouts();
+                    needsRender = true;
+                }
+                lastPinchDist = dist;
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            isDragging = false;
+            lastPinchDist = 0;
+        });
+
+        function resizeCanvas() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.floor(window.innerWidth * dpr);
+            canvas.height = Math.floor(window.innerHeight * dpr);
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            needsRender = true;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function renderLoop() {
+            if (isMorphing) {
+                morphAngle += 0.008;
+                state.cRe = 0.7885 * Math.cos(morphAngle);
+                state.cIm = 0.7885 * Math.sin(morphAngle);
+                updateUIReadouts();
+                needsRender = true;
+            }
+
+            if (needsRender) {
+                gl.uniform2f(uRes, canvas.width, canvas.height);
+                gl.uniform2f(uCenter, state.centerX, state.centerY);
+                gl.uniform1f(uZoom, state.zoom);
+                gl.uniform2f(uC, state.cRe, state.cIm);
+                gl.uniform1i(uMaxIter, state.maxIter);
+                gl.uniform1i(uPalette, state.palette);
+                gl.uniform1f(uIsLight, isLightMode ? 1.0 : 0.0);
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                needsRender = false;
+            }
+
+            requestAnimationFrame(renderLoop);
+        }
+
+        updateUIReadouts();
+        renderLoop();
+    </script>
 </body>
 </html>
