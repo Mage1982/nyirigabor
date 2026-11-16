@@ -1,0 +1,38 @@
+media:
+  input: assets/images
+  output: /assets/images
+
+content:
+  - name: posts
+    label: Blogbejegyzések
+    type: collection
+    path: content/posts
+    view:
+      fields: [ title, date, published ]
+      primary: title
+      sort: [ date ]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: Cím
+        type: string
+        required: true
+      - name: date
+        label: Dátum
+        type: date
+        required: true
+      - name: published
+        label: Publikálva
+        type: boolean
+        default: true
+      - name: cover
+        label: Borítókép
+        type: image
+      - name: excerpt
+        label: Rövid kivonat
+        type: text
+      - name: body
+        label: Szöveg
+        type: rich-text
