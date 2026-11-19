@@ -171,6 +171,16 @@
             border-color: var(--card-border-hover);
         }
 
+        .app-card-magenta {
+            border-color: rgba(255, 12, 157, 0.30);
+            box-shadow: 0 12px 32px -8px rgba(255, 12, 157, 0.20);
+        }
+
+        .app-card-magenta:hover {
+            border-color: #FF0C9D;
+            box-shadow: 0 16px 38px -8px rgba(255, 12, 157, 0.30);
+        }
+
         .app-surface {
             background: var(--dock-bg);
             backdrop-filter: blur(22px);
@@ -279,6 +289,7 @@
                 <nav aria-label="Gyors navigáció" class="hidden lg:flex items-center gap-1 app-surface px-2 py-1.5 rounded-full">
                     <a href="#home" data-nav="home" class="nav-pill px-3 py-1 rounded-full font-mono text-xs transition-colors" style="color: var(--accent-primary);">00. FŐOLDAL</a>
                     <a href="#kvantum-jatszoter" data-nav="kvantum-jatszoter" class="nav-pill px-3 py-1 rounded-full font-mono text-xs transition-colors" style="color: var(--text-secondary);">01. KVANTUM</a>
+                    <a href="#6ker-cloud" data-nav="6ker-cloud" class="nav-pill px-3 py-1 rounded-full font-mono text-xs transition-colors" style="color: var(--text-secondary);">02. 6KER.CLOUD</a>
                     <a href="https://nyirigabor.hu/index1.html" class="px-3 py-1 rounded-full font-mono text-xs transition-colors flex items-center gap-1.5 hover:opacity-80" style="color: var(--accent-primary);">
                         <span>AI HÍRLEVÉL</span>
                         <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
@@ -340,6 +351,19 @@
                                 </div>
                             </div>
                             <i class="fa-solid fa-arrow-right text-xs text-purple-400 opacity-70 group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                    </a>
+
+                    <a href="#6ker-cloud" onclick="toggleOffcanvas(false)" class="group block rounded-2xl p-4 border transition-all hover:translate-x-1" style="background: var(--card-inner); border-color: var(--card-border);">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3.5">
+                                <span class="font-mono text-xs font-bold px-2 py-1 rounded bg-magenta/20 text-magenta">02</span>
+                                <div>
+                                    <div class="font-orbitron text-sm font-bold" style="color: var(--text-primary);">6ker.cloud</div>
+                                    <div class="text-xs" style="color: var(--text-secondary);">Projekt portál & digitális ökoszisztéma</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-arrow-right text-xs text-magenta opacity-70 group-hover:translate-x-1 transition-transform"></i>
                         </div>
                     </a>
 
@@ -438,7 +462,7 @@
         <!-- =========================================================
              01. TELJES KÉPERNYŐS ALOLDAL: KVANTUM JÁTSZÓTÉR
              ========================================================= -->
-        <section id="kvantum-jatszoter" class="fullscreen-section max-w-6xl mx-auto px-4 sm:px-6 py-24 pb-32 md:pb-24 flex items-center">
+        <section id="kvantum-jatszoter" class="fullscreen-section max-w-6xl mx-auto px-4 sm:px-6 py-24 flex items-center">
             <div class="app-card w-full rounded-3xl p-6 sm:p-10 md:p-14 relative overflow-hidden">
                 <i class="fa-solid fa-atom absolute -right-8 -bottom-8 text-[11rem] sm:text-[15rem] opacity-[0.04] pointer-events-none text-purple-400"></i>
 
@@ -472,9 +496,9 @@
                                 <span>Szimuláció indítása</span>
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
-                            <a href="#home" class="px-5 py-3.5 rounded-2xl border font-mono text-xs font-bold uppercase inline-flex items-center gap-2 hover:opacity-80 transition-opacity" style="border-color: var(--card-border); color: var(--text-secondary);">
-                                <span>Vissza a tetejére</span>
-                                <i class="fa-solid fa-arrow-up"></i>
+                            <a href="#6ker-cloud" class="px-5 py-3.5 rounded-2xl border font-mono text-xs font-bold uppercase inline-flex items-center gap-2 hover:opacity-80 transition-opacity" style="border-color: var(--card-border); color: var(--text-secondary);">
+                                <span>Következő modul</span>
+                                <i class="fa-solid fa-arrow-down"></i>
                             </a>
                         </div>
                     </div>
@@ -494,6 +518,73 @@
                             <div class="pt-2">
                                 <div class="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
                                     <div class="w-3/4 h-full bg-purple-400 rounded-full"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             02. TELJES KÉPERNYŐS ALOLDAL: 6KER.CLOUD
+             ========================================================= -->
+        <section id="6ker-cloud" class="fullscreen-section max-w-6xl mx-auto px-4 sm:px-6 py-24 pb-32 md:pb-24 flex items-center">
+            <div class="app-card app-card-magenta w-full rounded-3xl p-6 sm:p-10 md:p-14 relative overflow-hidden">
+                <i class="fa-solid fa-cloud-bolt absolute -right-8 -bottom-8 text-[11rem] sm:text-[15rem] opacity-[0.04] pointer-events-none text-magenta"></i>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
+                    <div class="lg:col-span-7 space-y-5">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold uppercase bg-magenta/20 text-magenta border border-magenta/30">
+                            <span>MODUL 02 // PROJEKT PORTÁL &amp; ÖKOSZISZTÉMA</span>
+                        </div>
+
+                        <h2 class="section-gradient-title font-orbitron text-3xl sm:text-5xl font-black tracking-tight" style="color: var(--text-primary);">
+                            6ker.cloud
+                        </h2>
+
+                        <p class="text-sm sm:text-base md:text-lg leading-relaxed" style="color: var(--text-secondary);">
+                            Központi felhő alapú projekt portál, digitális ökoszisztéma-csomópont és alkalmazás-hub. Egyetlen összekapcsolt térben egyesíti a fejlesztői kísérleteket, mikroszolgáltatásokat és kreatív webes rendszereket.
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <div class="rounded-2xl p-3.5 border flex items-center gap-3" style="background: var(--card-inner); border-color: rgba(255, 12, 157, 0.25);">
+                                <i class="fa-solid fa-diagram-project text-magenta"></i>
+                                <span class="text-xs sm:text-sm font-medium" style="color: var(--text-primary);">Összekapcsolt projekt-hálózat</span>
+                            </div>
+                            <div class="rounded-2xl p-3.5 border flex items-center gap-3" style="background: var(--card-inner); border-color: rgba(255, 12, 157, 0.25);">
+                                <i class="fa-solid fa-server text-magenta"></i>
+                                <span class="text-xs sm:text-sm font-medium" style="color: var(--text-primary);">Felhő alapú ökoszisztéma hub</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 flex flex-wrap items-center gap-3.5">
+                            <a href="https://6ker.cloud/" target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-2xl bg-magenta text-white font-orbitron text-xs sm:text-sm font-bold tracking-wider uppercase inline-flex items-center gap-2.5 hover:opacity-90 hover:translate-x-0.5 transition-all shadow-lg">
+                                <span>Portál megnyitása</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                            <a href="#home" class="px-5 py-3.5 rounded-2xl border font-mono text-xs font-bold uppercase inline-flex items-center gap-2 hover:opacity-80 transition-opacity" style="border-color: var(--card-border); color: var(--text-secondary);">
+                                <span>Vissza a tetejére</span>
+                                <i class="fa-solid fa-arrow-up"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Vizuális HUD Panel -->
+                    <div class="lg:col-span-5">
+                        <div class="rounded-2xl p-6 border space-y-4 font-mono text-xs" style="background: var(--card-inner); border-color: rgba(255, 12, 157, 0.28);">
+                            <div class="flex items-center justify-between pb-3 border-b" style="border-color: rgba(255, 12, 157, 0.22);">
+                                <span class="text-magenta font-bold">ECOSYSTEM_NODE.NET</span>
+                                <span class="px-2 py-0.5 rounded bg-magenta/20 text-magenta text-[10px]">CLOUD // ONLINE</span>
+                            </div>
+                            <div class="space-y-2.5" style="color: var(--text-secondary);">
+                                <div class="flex justify-between"><span>&gt; Architektúra:</span><span class="text-magenta">MULTI-HUB</span></div>
+                                <div class="flex justify-between"><span>&gt; Hálózati státusz:</span><span class="text-magenta">SYNCHRONIZED</span></div>
+                                <div class="flex justify-between"><span>&gt; Végpont:</span><span>6ker.cloud</span></div>
+                            </div>
+                            <div class="pt-2">
+                                <div class="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                    <div class="w-4/5 h-full bg-magenta rounded-full"></div>
                                 </div>
                             </div>
                         </div>
@@ -610,7 +701,7 @@
 
         const taglines = [
             "Személyes digitális ökoszisztéma és AI labor.",
-            "Kvantum kísérletek & interaktív webes élmények.",
+            "Kvantum kísérletek & felhő alapú projekt portál.",
             "Használd a fejléc menüt a modulok közötti ugráshoz."
         ];
         let tagIdx = 0, charIdx = 0, isDeleting = false;
